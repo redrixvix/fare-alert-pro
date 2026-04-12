@@ -5,7 +5,167 @@
   padding: 0;
 }
 
-html, body {
+html {
+  scroll-behavior: smooth;
   height: 100%;
+}
+
+html, body {
   -webkit-font-smoothing: antialiased;
+}
+
+/* Theme */
+:root {
+  /* Greys */
+  --bg: #0f1117;
+  --card: #1a1d27;
+  --card-hover: #1e2130;
+  --border: #2a2d3a;
+  --text: #e8e9ed;
+  --text-dim: #7a7d8e;
+  --text-muted: #4a4d5a;
+
+  /* Accent */
+  --accent: #4f9cf9;
+  --accent-hover: #6db0ff;
+
+  /* Status */
+  --danger: #e63946;
+  --warn: #f4a261;
+  --success: #2a9d8f;
+
+  /* Cabin colours */
+  --cabin-y: #a0a8c0;
+  --cabin-pe: #a0a8c0;
+  --cabin-j: #c9a84c;
+  --cabin-f: #9b8fe8;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-12: 48px;
+
+  /* Font sizes */
+  --fs-body: 0.875rem;
+  --fs-sm: 0.8125rem;
+  --fs-micro: 0.75rem;
+
+  /* Border radius */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--fs-body);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Base button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  padding: var(--sp-2) var(--sp-4);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled,
+.btn-loading {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.btn-primary:hover {
+  background: #35b5a3;
+  border-color: #35b5a3;
+}
+
+.btn-ghost {
+  background: var(--card);
+  color: var(--text-dim);
+  border-color: var(--border);
+}
+
+.btn-ghost:hover {
+  background: var(--card-hover);
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.btn-danger-ghost {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-danger-ghost:hover {
+  background: rgba(230, 57, 70, 0.1);
+}
+
+.btn-primary-full {
+  display: block;
+  width: 100%;
+  background: var(--success);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.btn-primary-full:hover {
+  background: #35b5a3;
+}
+
+.btn-primary-full:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-primary-full:active {
+  transform: scale(0.97);
+}
+
+.btn-primary-full:disabled,
+.btn-primary-full.btn-loading {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

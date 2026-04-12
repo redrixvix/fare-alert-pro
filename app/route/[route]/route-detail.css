@@ -1,0 +1,116 @@
+/* Route detail page styles */
+.back-link {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.back-link:hover {
+  color: var(--text);
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+}
+
+.price-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.price-table th {
+  text-align: left;
+  padding: 0.5rem 1rem;
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+}
+
+.price-table td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.route-name {
+  font-weight: 600;
+  font-family: 'SF Mono', Monaco, monospace;
+}
+
+.route-price {
+  font-family: 'SF Mono', Monaco, monospace;
+  text-align: right;
+}
+
+.cabin-y { color: #4f9cf9; }
+.cabin-pe { color: #a0a8c0; }
+.cabin-j { color: #c9a84c; font-weight: 600; }
+.cabin-f { color: #9b8fe8; }
+
+.day-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nav-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.date-label {
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 200px;
+  text-align: center;
+}
+
+.date-dots {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s;
+}
+
+.dot:hover {
+  background: var(--text-dim);
+}
+
+.dot.active {
+  background: var(--accent);
+}
+
+.day-price-row td {
+  background: var(--bg);
+}

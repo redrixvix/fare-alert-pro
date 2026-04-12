@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import './landing.css';
+import '../landing.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +26,7 @@ export default function LandingPage() {
             <span className="hero-accent">flight error fare</span>
           </h1>
           <p className="hero-sub">
-            We monitor 30+ routes × 4 cabin classes in real time.
+            We monitor 30+ popular routes × 4 cabin classes in real time.
             When fares crash — business class for $234, first class for $285 — you get notified instantly via Telegram.
           </p>
           <div className="hero-actions">
@@ -60,17 +60,17 @@ export default function LandingPage() {
             <div className="step">
               <div className="step-num">1</div>
               <h3>Pick your routes</h3>
-              <p>Choose the routes you actually fly. Add up to 5 routes on the free plan, unlimited on Pro.</p>
+              <p>Choose the routes you actually fly. We monitor both directions — origin and destination airports you care about.</p>
             </div>
             <div className="step">
               <div className="step-num">2</div>
               <h3>We watch 24/7</h3>
-              <p>Every minute, we check Google Flights across 91 days of travel dates for all 4 cabin classes — thousands of price points daily.</p>
+              <p>Every minute, we check Google Flights for all 4 cabin classes across 91 days of travel dates. That's thousands of price points daily.</p>
             </div>
             <div className="step">
               <div className="step-num">3</div>
               <h3>Telegram alert hits</h3>
-              <p>When a fare drops more than 50% below its historical average, you get a Telegram message instantly with the booking link.</p>
+              <p>When a fare drops more than 50% below its historical average — you get a Telegram message instantly. Booking link included.</p>
             </div>
           </div>
         </div>
@@ -86,10 +86,10 @@ export default function LandingPage() {
               <div className="plan-price">$0<span>/mo</span></div>
               <ul className="plan-features">
                 <li>✓ 5 custom routes</li>
-                <li>✓ Economy cabin alerts</li>
-                <li>✓ Telegram notifications</li>
+                <li>✓ Economy only</li>
+                <li>✓ Telegram alerts</li>
                 <li>✓ 30-day price history</li>
-                <li>✗ Business / First class</li>
+                <li>✗ Business / First alerts</li>
               </ul>
               <Link href="/signup" className="btn-outline-lg">Get Started</Link>
             </div>
@@ -100,13 +100,13 @@ export default function LandingPage() {
               <ul className="plan-features">
                 <li>✓ Unlimited routes</li>
                 <li>✓ All 4 cabin classes</li>
-                <li>✓ Telegram notifications</li>
+                <li>✓ Telegram alerts</li>
                 <li>✓ 90-day history + charts</li>
                 <li>✓ Historical anomaly detection</li>
                 <li>✓ Best deals dashboard</li>
               </ul>
               <Link href="/signup?plan=pro" className="btn-primary-lg">Start 30-Day Free Trial</Link>
-              <p className="plan-trial">Cancel anytime · No card required</p>
+              <p className="plan-trial">Cancel anytime · No card required upfront</p>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function LandingPage() {
       <footer className="landing-footer">
         <div className="footer-inner">
           <span>✈️ FareAlertPro</span>
-          <span>Powered by Google Flights data</span>
+          <span>Built with Google Flights data</span>
         </div>
       </footer>
     </main>

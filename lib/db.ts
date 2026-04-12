@@ -61,18 +61,32 @@ function initSchema() {
 
     CREATE TABLE IF NOT EXISTS user_routes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      route TEXT UNIQUE NOT NULL,
+      route TEXT NOT NULL,
       origin TEXT NOT NULL,
       destination TEXT NOT NULL,
       added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       last_checked DATETIME,
-      active INTEGER DEFAULT 1
+      active INTEGER DEFAULT 1,
+      user_id INTEGER REFERENCES users(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      password_hash TEXT NOT NULL,
+      plan TEXT DEFAULT 'free',
+      telegram_chat_id TEXT,
+      telegram_username TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      is_active INTEGER DEFAULT 1
     );
 
     CREATE INDEX IF NOT EXISTS idx_prices_search_date ON prices(search_date);
     CREATE INDEX IF NOT EXISTS idx_prices_route_date ON prices(route, search_date);
     CREATE INDEX IF NOT EXISTS idx_alerts_created ON alerts(created_at);
     CREATE INDEX IF NOT EXISTS idx_alerts_cabin ON alerts(cabin);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_alerts_unique ON alerts(route, cabin, alert_date);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_user_routes_unique ON user_id, route;
   `);
 
   // Initialize routes if empty
@@ -132,6 +146,8 @@ export function insertPrice(
   durationMin: number | null,
   stops: number
 ) {
+  // Skip invalid prices — fli sometimes returns $0 for unavailable cabin/date combos
+  if (price <= 0) return;
   const db = getDb();
   const stmt = db.prepare(`
     INSERT INTO prices (route, cabin, search_date, price, currency, airline, duration_minutes, stops)
@@ -172,7 +188,7 @@ export function getHistoricalAvg(route: string, cabin: string = 'ECONOMY'): numb
   const db = getDb();
   const result = db.prepare(`
     SELECT AVG(price) as avg_price FROM prices 
-    WHERE route = ? AND cabin = ? AND fetched_at > datetime('now', '-30 days')
+    WHERE route = ? AND cabin = ? AND price > 0 AND fetched_at > datetime('now', '-30 days')
   `).get(route, cabin) as { avg_price: number | null } | undefined;
   return result?.avg_price ?? null;
 }
@@ -189,10 +205,48 @@ export function getAllRoutes() {
   return db.prepare('SELECT * FROM routes ORDER BY category, route').all();
 }
 
+export function getPriceTrend(route: string, cabin: string = 'ECONOMY'): number | null {
+  const db = getDb();
+  // Compare most recent price vs price from ~7 days ago
+  const current = db.prepare(`
+    SELECT price FROM prices
+    WHERE route = ? AND cabin = ? AND price > 0
+    ORDER BY fetched_at DESC LIMIT 1
+  `).get(route, cabin) as { price: number } | undefined;
+
+  const weekAgo = db.prepare(`
+    SELECT price FROM prices
+    WHERE route = ? AND cabin = ? AND price > 0
+      AND fetched_at < datetime('now', '-6 days')
+    ORDER BY fetched_at DESC LIMIT 1
+  `).get(route, cabin) as { price: number } | undefined;
+
+  if (!current || !weekAgo || weekAgo.price === 0) return null;
+  return ((current.price - weekAgo.price) / weekAgo.price) * 100;
+}
+
 export function getLastCheckTime(): string | null {
   const db = getDb();
   const result = db.prepare('SELECT MAX(fetched_at) as last FROM prices').get() as { last: string | null } | undefined;
   return result?.last ?? null;
+}
+
+export function getRecentPrices(limit = 20): (PriceRecord & { savings_pct?: number })[] {
+  const db = getDb();
+  const rows = db.prepare(`
+    SELECT p.*, r.last_price as route_last_price,
+           (SELECT AVG(price) FROM prices WHERE route = p.route AND cabin = p.cabin AND price > 0 AND fetched_at > datetime('now', '-30 days')) as hist_avg
+    FROM prices p
+    LEFT JOIN routes r ON p.route = r.route
+    WHERE p.price > 0
+    ORDER BY p.fetched_at DESC
+    LIMIT ?
+  `).all(limit) as any[];
+
+  return rows.map((row: any) => ({
+    ...row,
+    savings_pct: row.hist_avg ? ((row.hist_avg - row.price) / row.hist_avg) * 100 : null,
+  }));
 }
 
 export interface RouteRecord {
@@ -246,7 +300,7 @@ export function deleteRoute(route: string): boolean {
 export function getRoutePriceHistory(route: string, limit = 50): PriceRecord[] {
   const db = getDb();
   return db.prepare(
-    'SELECT * FROM prices WHERE route = ? ORDER BY fetched_at DESC LIMIT ?'
+    'SELECT * FROM prices WHERE route = ? AND price > 0 ORDER BY fetched_at DESC LIMIT ?'
   ).all(route, limit) as PriceRecord[];
 }
 
@@ -255,7 +309,7 @@ export function getRouteChartData(route: string, days = 90): { date: string; y: 
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   const rows = db.prepare(`
     SELECT search_date, cabin, price FROM prices
-    WHERE route = ? AND search_date >= ?
+    WHERE route = ? AND search_date >= ? AND price > 0
     ORDER BY search_date ASC
   `).all(route, cutoff) as { search_date: string; cabin: string; price: number }[];
 
