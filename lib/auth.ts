@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import { ConvexHttpClient } from 'convex/browser';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-jwt-secret-2024-secure';
-const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
 
 export interface AuthUser {
   userId: number;
@@ -18,7 +16,6 @@ export async function getAuthUser(): Promise<AuthUser | null> {
     const token = cookieStore.get('auth_token')?.value;
     if (!token) return null;
 
-    // Verify JWT locally
     let payload: { userId: number; email: string };
     try {
       payload = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
@@ -26,16 +23,12 @@ export async function getAuthUser(): Promise<AuthUser | null> {
       return null;
     }
 
-    // Fetch user from Convex
-    const client = new ConvexHttpClient(CONVEX_URL);
-    const user = await (client.query as any)('users:getUserById', { userId: payload.userId });
-    
-    if (!user || !user.is_active) return null;
+    // Return minimal user from JWT - the dashboard can fetch full data from Convex client-side
     return {
-      userId: user.numeric_id,
-      email: user.email,
-      plan: user.plan || 'free',
-      telegram_chat_id: user.telegram_chat_id || null,
+      userId: payload.userId,
+      email: payload.email,
+      plan: 'free',  // Default, will be refreshed from Convex client-side
+      telegram_chat_id: null,
     };
   } catch {
     return null;
