@@ -1,6 +1,6 @@
 // FareAlertPro Dashboard (authenticated)
-import { getAllRoutes, getRecentAlerts, getPriceTrend, getHistoricalAvg, getUserRoutes } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
+import { ConvexHttpClient } from 'convex/browser';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import DateSearch from '../DateSearch';
@@ -13,6 +13,31 @@ import '../dashboard.css';
 
 export const dynamic = 'force-dynamic';
 
+function getConvexClient() {
+  const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!url) throw new Error('NEXT_PUBLIC_CONVEX_URL not set');
+  return new ConvexHttpClient(url);
+}
+
+async function fetchDashboardData(userId: number) {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!convexUrl) {
+    return { routes: [], customRoutes: [], alerts: [] };
+  }
+  try {
+    const client = new ConvexHttpClient(convexUrl);
+    const [routes, customRoutes, alerts] = await Promise.all([
+      client.query('routes:getAllRoutes', { includeCustom: false }),
+      client.query('routes:getUserRoutes', { userId }),
+      client.query('alerts:getAlertsHistory', { userId }),
+    ]);
+    return { routes, customRoutes, alerts: alerts.alerts ?? [] };
+  } catch (e) {
+    console.error('Convex query failed:', e);
+    return { routes: [], customRoutes: [], alerts: [] };
+  }
+}
+
 export default async function DashboardPage() {
   const user = await getAuthUser();
   if (!user) redirect('/landing');
@@ -22,9 +47,10 @@ export default async function DashboardPage() {
   let alerts: any[] = [];
 
   try {
-    routes = getAllRoutes();
-    customRoutes = getUserRoutes(user.userId);
-    alerts = getRecentAlerts(20);
+    const data = await fetchDashboardData(user.userId);
+    routes = data.routes;
+    customRoutes = data.customRoutes;
+    alerts = data.alerts;
   } catch (e) {
     console.error('DB not initialized yet:', e);
   }

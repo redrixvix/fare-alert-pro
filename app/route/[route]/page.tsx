@@ -1,4 +1,5 @@
-import { getRouteChartData, getRoutePriceHistory, getAllRoutes } from '@/lib/db';
+import { getRouteChartData, getRoutePriceHistory } from '@/lib/db';
+import { ConvexHttpClient } from 'convex/browser';
 import Link from 'next/link';
 import DateNavigator from './DateNavigator';
 import CheapestDatesGrid from '../../components/CheapestDatesGrid';
@@ -15,6 +16,38 @@ interface PriceRecord {
   duration_minutes: number | null;
   stops: number | null;
   fetched_at: string;
+}
+
+async function getRouteData(route: string) {
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!convexUrl) {
+    // Fallback to SQLite for local dev
+    return { routeRecord: null, priceHistory: [] as PriceRecord[] };
+  }
+  try {
+    const client = new ConvexHttpClient(convexUrl);
+    const [routes, priceHistory] = await Promise.all([
+      client.query('routes:getAllRoutes', { includeCustom: true }),
+      client.query('prices:getPricesByRoute', { route, cabin: 'ECONOMY' }),
+    ]);
+    const routeRecord = (routes as any[]).find((r: any) => r.route === route);
+    // Convert Convex prices to PriceRecord format
+    const records: PriceRecord[] = (priceHistory as any[]).map((p: any) => ({
+      route: p.route,
+      cabin: p.cabin,
+      search_date: p.search_date,
+      price: p.price,
+      currency: p.currency ?? 'USD',
+      airline: p.airline ?? null,
+      duration_minutes: p.duration_minutes ?? null,
+      stops: p.stops ?? null,
+      fetched_at: p.fetched_at ?? '',
+    }));
+    return { routeRecord, priceHistory: records };
+  } catch (e) {
+    console.error('Convex query failed:', e);
+    return { routeRecord: null, priceHistory: [] as PriceRecord[] };
+  }
 }
 
 const CABIN_KEYS = [
@@ -40,8 +73,7 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
   const route = decodeURIComponent(routeParam);
   const [origin, destination] = route.split('-');
 
-  const routes = getAllRoutes() as any[];
-  const routeRecord = routes.find((r: any) => r.route === route);
+  const { routeRecord, priceHistory } = await getRouteData(route);
   if (!routeRecord) {
     return (
       <div className="dashboard">
@@ -56,8 +88,6 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
       </div>
     );
   }
-
-  const priceHistory = getRoutePriceHistory(route, 200) as PriceRecord[];
 
   // Group prices by date for the date navigator
   const byDate: Record<string, Record<string, PriceRecord>> = {};

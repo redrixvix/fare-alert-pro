@@ -1,44 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-
-interface PriceRow {
-  route: string;
-  cabin: string;
-  price: number;
-  currency: string;
-  airline: string;
-  duration_minutes: number;
-  stops: number;
-  fetched_at: string;
-}
+import { useQuery } from 'convex/react';
+import { getPricesByDate } from '../../convex/prices';
+import Link from 'next/link';
 
 export default function DateSearch() {
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
-  const [results, setResults] = useState<PriceRow[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
 
-  const search = async () => {
+  const results = useQuery(getPricesByDate, { date: searched ? date : '' });
+
+  const search = () => {
     if (!date) return;
-    setLoading(true);
-    setError('');
     setSearched(true);
-    try {
-      const res = await fetch(`/api/prices-by-date?date=${date}`);
-      const data = await res.json();
-      if (data.error) {
-        setError(data.error);
-        setResults([]);
-      } else {
-        setResults(data.prices || []);
-      }
-    } catch {
-      setError('Failed to fetch');
-      setResults([]);
-    }
-    setLoading(false);
   };
 
   const cabinLabel = (c: string) => {
@@ -47,10 +22,12 @@ export default function DateSearch() {
   };
 
   // Group results by route
-  const grouped: Record<string, PriceRow[]> = {};
-  for (const r of results) {
-    if (!grouped[r.route]) grouped[r.route] = [];
-    grouped[r.route].push(r);
+  const grouped: Record<string, typeof results extends (infer T)[] ? T[] : never> = {};
+  if (results) {
+    for (const r of results) {
+      if (!grouped[r.route]) grouped[r.route] = [];
+      grouped[r.route].push(r);
+    }
   }
 
   return (
@@ -64,17 +41,17 @@ export default function DateSearch() {
             onChange={(e) => setDate(e.target.value)}
             className="date-input"
           />
-          <button onClick={search} disabled={loading} className="search-btn">
-            {loading ? 'Searching...' : 'Search'}
+          <button onClick={search} className="search-btn">
+            Search
           </button>
         </div>
       </div>
 
-      {error && <p className="search-error">{error}</p>}
-
-      {searched && !loading && (
+      {searched && (
         <div className="date-results">
-          {results.length === 0 ? (
+          {!results ? (
+            <p className="no-results">Loading…</p>
+          ) : results.length === 0 ? (
             <p className="no-results">No price data found for {date}. Try a date within the last 90 days that has been checked.</p>
           ) : (
             <>
@@ -93,13 +70,13 @@ export default function DateSearch() {
                   <tbody>
                     {Object.entries(grouped).map(([route, prices]) => {
                       const get = (cabin: string) => {
-                        const p = prices.find((x) => x.cabin === cabin);
+                        const p = prices.find((x: any) => x.cabin === cabin);
                         return p ? `$${p.price.toFixed(0)}` : null;
                       };
                       return (
                         <tr key={route}>
                           <td className="route-name">
-                            <a href={`/route/${route}`} className="route-link">{route}</a>
+                            <Link href={`/route/${route}`} className="route-link">{route}</Link>
                           </td>
                           <td className="route-price">{get('ECONOMY') || '—'}</td>
                           <td className="route-price pe">{get('PREMIUM_ECONOMY') || '—'}</td>

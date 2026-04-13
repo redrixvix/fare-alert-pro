@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery } from 'convex/react';
 import Link from 'next/link';
+import { getRecentPrices } from '../../convex/prices';
 
 const AIRLINE_NAMES: Record<string, string> = {
   AA: 'American', UA: 'United', DL: 'Delta', SW: 'Southwest',
@@ -53,33 +55,29 @@ export default function LiveFeed() {
   const [newCount, setNewCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const fetch_ = () =>
-    fetch('/api/live-feed')
-      .then((r) => r.json())
-      .then((d) => {
-        const fresh = d.prices || [];
-        setLoading(false);
-        if (fresh.length > 0 && fresh[0].id !== lastId) {
-          setLastId(fresh[0].id);
-          setNewCount((c) => c + 1);
-        }
-        setRows((prev) => {
-          const ids = new Set(prev.map((p) => p.id));
-          const merged = [...fresh, ...prev.filter((p) => !ids.has(p.id))];
-          return merged.slice(0, 20);
-        });
-        setConnected(true);
-      })
-      .catch(() => {
-        setConnected(false);
-        setLoading(false);
-      });
+  const prices = useQuery(getRecentPrices);
 
   useEffect(() => {
-    fetch_();
-    const id = setInterval(fetch_, 15_000);
+    if (prices === undefined) {
+      setLoading(true);
+      return;
+    }
+    setLoading(false);
+    if (prices.length > 0 && prices[0].id !== lastId) {
+      setLastId(prices[0].id as any);
+      setNewCount((c) => c + 1);
+    }
+    setRows((prev) => {
+      const ids = new Set(prev.map((p) => p.id));
+      const merged = [...prices, ...prev.filter((p) => !ids.has(p.id))];
+      return merged.slice(0, 20) as any;
+    });
+    setConnected(true);
+  }, [prices]);
+
+  useEffect(() => {
+    const id = setInterval(() => {}, 15_000);
     return () => clearInterval(id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dismissNew = () => setNewCount(0);

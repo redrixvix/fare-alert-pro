@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation } from 'convex/react';
 import Link from 'next/link';
+import { addUserRoute, deleteUserRoute } from '../../convex/routes';
 
 interface Route {
   route: string;
@@ -20,29 +22,34 @@ export default function ManageRoutes({ initialRoutes }: Props) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  const addRouteMutation = useMutation(addUserRoute);
+  const removeRouteMutation = useMutation(deleteUserRoute);
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
+    setToken(match ? decodeURIComponent(match[1]) : null);
+  }, []);
 
   const add = async () => {
     if (!input.trim()) return;
     setLoading(true);
     setMsg(null);
     try {
-      const r = await fetch('/api/user-routes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ route: input }),
-      });
-      const d = await r.json();
-      if (!r.ok) {
-        setMsg({ type: 'err', text: d.error || 'Failed to add route' });
-      } else {
-        const parsed = input.trim().toUpperCase().match(/^([A-Z]{3})-([A-Z]{3})$/);
-        const routeStr = parsed ? `${parsed[1]}-${parsed[2]}` : input.trim().toUpperCase();
-        setRoutes((prev) => [...prev, { route: routeStr, origin: routeStr.slice(0, 3), destination: routeStr.slice(4, 7), last_checked: null, last_price: null }]);
-        setInput('');
-        setMsg({ type: 'ok', text: `Added ${routeStr} — it will appear in your custom routes and be scanned going forward.` });
+      const parsed = input.trim().toUpperCase().match(/^([A-Z]{3})-([A-Z]{3})$/);
+      if (!parsed) {
+        setMsg({ type: 'err', text: 'Invalid route format. Use "ABC-DEF" airport codes.' });
+        setLoading(false);
+        return;
       }
-    } catch {
-      setMsg({ type: 'err', text: 'Network error — try again.' });
+      const routeStr = `${parsed[1]}-${parsed[2]}`;
+      await addRouteMutation({ route: routeStr, origin: parsed[1], destination: parsed[2], token });
+      setRoutes((prev) => [...prev, { route: routeStr, origin: parsed[1], destination: parsed[2], last_checked: null, last_price: null }]);
+      setInput('');
+      setMsg({ type: 'ok', text: `Added ${routeStr} — it will appear in your custom routes and be scanned going forward.` });
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e.message || 'Failed to add route' });
     }
     setLoading(false);
   };
@@ -50,12 +57,12 @@ export default function ManageRoutes({ initialRoutes }: Props) {
   const remove = async (route: string) => {
     if (!confirm(`Remove ${route}? It will no longer be scanned.`)) return;
     try {
-      const r = await fetch(`/api/user-routes?route=${encodeURIComponent(route)}`, { method: 'DELETE' });
-      if (r.ok) {
-        setRoutes((prev) => prev.filter((x) => x.route !== route));
-        setMsg({ type: 'ok', text: `Removed ${route}` });
-      }
-    } catch {}
+      await removeRouteMutation({ route, token });
+      setRoutes((prev) => prev.filter((x) => x.route !== route));
+      setMsg({ type: 'ok', text: `Removed ${route}` });
+    } catch (e: any) {
+      setMsg({ type: 'err', text: e.message || 'Failed to remove route' });
+    }
   };
 
   return (

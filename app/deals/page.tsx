@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ConvexHttpClient } from 'convex/browser';
 import DealsInteractive from './DealsInteractive';
 import './deals.css';
 
@@ -15,11 +16,22 @@ interface Deal {
 }
 
 async function getDeals(): Promise<{ deals: Deal[]; generated_at: string }> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+  if (!convexUrl) {
+    // Fallback to API route if Convex not configured
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    try {
+      const res = await fetch(`${baseUrl}/api/deals`, { cache: 'no-store' });
+      if (!res.ok) return { deals: [], generated_at: new Date().toISOString() };
+      return res.json();
+    } catch {
+      return { deals: [], generated_at: new Date().toISOString() };
+    }
+  }
   try {
-    const res = await fetch(`${baseUrl}/api/deals`, { cache: 'no-store' });
-    if (!res.ok) return { deals: [], generated_at: new Date().toISOString() };
-    return res.json();
+    const client = new ConvexHttpClient(convexUrl);
+    const result = await client.query('prices:getBestDeals', {});
+    return result;
   } catch {
     return { deals: [], generated_at: new Date().toISOString() };
   }

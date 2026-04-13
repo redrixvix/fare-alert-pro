@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useQuery } from 'convex/react';
+import { getStatus } from '../../convex/status';
 
 interface StatusData {
   totalPrices: number;
@@ -24,19 +26,7 @@ function formatAge(iso: string | null): string {
 const CRON_INTERVAL = 60;
 
 export default function StatusBar() {
-  const [status, setStatus] = useState<StatusData | null>(null);
-
-  useEffect(() => {
-    const fetch_ = () =>
-      fetch('/api/status')
-        .then((r) => r.json())
-        .then((d) => setStatus(d))
-        .catch(() => {});
-
-    fetch_();
-    const id = setInterval(fetch_, 30_000);
-    return () => clearInterval(id);
-  }, []);
+  const status = useQuery(getStatus, {});
 
   if (!status) return null;
 
@@ -77,7 +67,7 @@ export default function StatusBar() {
       </span>
       <span className="status-item">
         <span>→</span>
-        <strong style={{ color: 'var(--text-muted)' }}>~{CRON_INTERVAL}s</strong>
+        <strong style={{ color: 'var(--text-muted)' }}>~{status.cronIntervalSeconds || 60}s</strong>
       </span>
     </div>
   );

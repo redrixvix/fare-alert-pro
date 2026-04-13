@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useQuery, useMutation } from 'convex/react';
+import { getAllRoutes } from '../../convex/routes';
+import { addRouteByAirports as addRouteMutation, deleteRoute as deleteRouteMutation } from '../../convex/routes';
 
 interface RouteData {
   route: string;
@@ -17,12 +20,7 @@ interface RouteData {
 type SortKey = 'route' | 'last_price';
 type SortDir = 'asc' | 'desc';
 
-export default function RoutesClient({
-  initialRoutes,
-}: {
-  initialRoutes: RouteData[];
-}) {
-  const [routes, setRoutes] = useState(initialRoutes);
+export default function RoutesClient() {
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
   const [addError, setAddError] = useState('');
@@ -30,6 +28,12 @@ export default function RoutesClient({
   const [adding, setAdding] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('route');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+
+  const allRoutesResult = useQuery(getAllRoutes, { includeCustom: true });
+  const routes = allRoutesResult ?? [];
+
+  const addRouteFn = useMutation(addRouteMutation);
+  const deleteRouteFn = useMutation(deleteRouteMutation);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -39,27 +43,24 @@ export default function RoutesClient({
       setAddError('Both origin and destination are required');
       return;
     }
+    const o = origin.trim().toUpperCase();
+    const d = destination.trim().toUpperCase();
+    if (!/^[A-Z]{3}$/.test(o) || !/^[A-Z]{3}$/.test(d)) {
+      setAddError('Airport codes must be exactly 3 letters');
+      return;
+    }
+    if (o === d) {
+      setAddError('Origin and destination must be different');
+      return;
+    }
     setAdding(true);
     try {
-      const res = await fetch('/api/routes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ origin: origin.trim(), destination: destination.trim() }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setAddSuccess(`Route ${data.route} added successfully`);
-        setOrigin('');
-        setDestination('');
-        // Refresh routes
-        const refresh = await fetch('/api/routes');
-        const refreshData = await refresh.json();
-        setRoutes(refreshData.routes);
-      } else {
-        setAddError(data.error || 'Failed to add route');
-      }
-    } catch {
-      setAddError('Server error');
+      await addRouteMutation({ origin: o, destination: d });
+      setAddSuccess(`Route ${o}-${d} added successfully`);
+      setOrigin('');
+      setDestination('');
+    } catch (err: any) {
+      setAddError(err.message || 'Failed to add route');
     } finally {
       setAdding(false);
     }
@@ -68,15 +69,9 @@ export default function RoutesClient({
   async function handleDelete(route: string) {
     if (!confirm(`Delete route ${route}?`)) return;
     try {
-      const res = await fetch(`/api/routes/${encodeURIComponent(route)}`, { method: 'DELETE' });
-      const data = await res.json();
-      if (data.success) {
-        setRoutes(prev => prev.filter(r => r.route !== route));
-      } else {
-        alert(data.error || 'Failed to delete');
-      }
-    } catch {
-      alert('Server error');
+      await deleteRouteFn({ route });
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete');
     }
   }
 
@@ -223,7 +218,7 @@ export default function RoutesClient({
                       background: r.is_custom ? '#2a4f8a' : r.category === 'busiest' ? '#1a3a2a' : '#3a2a1a',
                       color: r.is_custom ? 'var(--accent)' : r.category === 'busiest' ? '#2a9d8f' : '#f4a261',
                     }}>
-                      {r.is_custom ? 'Custom' : r.category.replace('_', ' ')}
+                      {r.is_custom ? 'Custom' : (r.category || 'custom').replace('_', ' ')}
                     </span>
                   </td>
                   <td className="route-price">{fmt(r.last_price)}</td>

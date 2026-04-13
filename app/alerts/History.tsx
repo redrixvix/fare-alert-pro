@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useQuery } from 'convex/react';
 import '../dashboard.css';
+import { getAlertsHistory } from '../../convex/alerts';
+
+function getAuthToken(): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 type Alert = {
   id: number;
@@ -84,6 +92,8 @@ function StatCard({ label, value, accent }: { label: string; value: string; acce
 }
 
 export default function History() {
+  const [token, setToken] = useState<string | null>(null);
+  const result = useQuery(getAlertsHistory, { token: token ?? undefined });
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [sort, setSort] = useState<SortKey>('recent');
@@ -91,21 +101,20 @@ export default function History() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/alerts/history')
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load');
-        return res.json();
-      })
-      .then((data) => {
-        setAlerts(data.alerts);
-        setStats(data.stats);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError('Could not load your deal history. Please try again.');
-        setLoading(false);
-      });
+    setToken(getAuthToken());
   }, []);
+
+  useEffect(() => {
+    if (result === undefined) return;
+    if (result.alerts === undefined) {
+      setError('Could not load your deal history. Please try again.');
+      setLoading(false);
+      return;
+    }
+    setAlerts(result.alerts);
+    setStats(result.stats);
+    setLoading(false);
+  }, [result]);
 
   const sortedAlerts = [...alerts].sort((a, b) => {
     if (sort === 'savings') return b.savings_pct - a.savings_pct;

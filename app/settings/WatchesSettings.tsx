@@ -2,7 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery, useMutation } from 'convex/react';
 import '../dashboard.css';
+import { getWatches, deleteWatch } from '../../convex/watches';
+
+function getAuthToken(): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 interface Watch {
   id: number;
@@ -15,36 +23,26 @@ interface Watch {
 }
 
 export default function WatchesSettings() {
-  const [watches, setWatches] = useState<Watch[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
+  const watches = useQuery(getWatches, { token: token ?? undefined });
+  const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const router = useRouter();
 
+  const removeWatch = useMutation(deleteWatch);
+
   useEffect(() => {
-    fetchWatches();
+    setToken(getAuthToken());
   }, []);
 
-  async function fetchWatches() {
-    try {
-      const res = await fetch('/api/watches');
-      if (res.ok) {
-        const data = await res.json();
-        setWatches(data.watches || []);
-      }
-    } catch {
-      // ignore
-    } finally {
-      setLoading(false);
-    }
-  }
+  useEffect(() => {
+    if (watches !== undefined) setLoading(false);
+  }, [watches]);
 
-  async function handleDelete(id: number) {
+  async function handleDelete(id: any) {
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/watches?id=${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setWatches((prev) => prev.filter((w) => w.id !== id));
-      }
+      await removeWatch({ id, token });
     } finally {
       setDeletingId(null);
     }
@@ -107,7 +105,7 @@ export default function WatchesSettings() {
         </button>
       </div>
 
-      {watches.length === 0 ? (
+      {watches && watches.length === 0 ? (
         <div style={{ textAlign: 'center', padding: 'var(--sp-12)', color: 'var(--text-dim)' }}>
           <div style={{ fontSize: '3rem', marginBottom: 'var(--sp-3)' }}>👁</div>
           <h3 style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 'var(--sp-1)' }}>No price watches yet</h3>

@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation } from 'convex/react';
+import { addWatch } from '../../convex/watches';
 
 interface WatchButtonProps {
   route: string;
@@ -15,6 +17,13 @@ export default function WatchButton({ route, defaultDate, onWatchAdded }: WatchB
   const [targetPrice, setTargetPrice] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [token, setToken] = useState<string | null>(null);
+  const addWatchMutation = useMutation(addWatch);
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
+    setToken(match ? decodeURIComponent(match[1]) : null);
+  }, []);
 
   const today = new Date();
   const maxDate = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -32,27 +41,14 @@ export default function WatchButton({ route, defaultDate, onWatchAdded }: WatchB
     }
 
     try {
-      const res = await fetch('/api/watches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ route, cabin, watchDate, targetPrice: price }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Failed to create watch');
-        setLoading(false);
-        return;
-      }
-
-      onWatchAdded?.(data);
+      await addWatchMutation({ userId: 0, route, cabin, watchDate, targetPrice: price, token: token ?? undefined });
+      onWatchAdded?.({ route, cabin, watchDate, targetPrice: price });
       setIsOpen(false);
       setWatchDate('');
       setTargetPrice('');
       setCabin('ECONOMY');
-    } catch {
-      setError('Network error — please try again');
+    } catch (e: any) {
+      setError(e.message || 'Failed to create watch');
     } finally {
       setLoading(false);
     }

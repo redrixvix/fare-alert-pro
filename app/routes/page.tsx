@@ -1,40 +1,12 @@
-import { getAllRoutes, getUserRoutes, RouteRecord } from '@/lib/db';
-import { getAuthUser } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import RoutesClient from './RoutesClient';
 import '../dashboard.css';
 
 export const dynamic = 'force-dynamic';
 
-function toRouteData(r: any): RouteRecord {
-  return {
-    id: r.id ?? 0,
-    route: r.route,
-    category: r.category ?? 'custom',
-    last_checked: r.last_checked ?? null,
-    last_price: r.last_price ?? null,
-    last_currency: r.last_currency ?? 'USD',
-    last_price_premium_economy: r.last_price_premium_economy ?? null,
-    last_currency_premium_economy: r.last_currency_premium_economy ?? 'USD',
-    last_price_business: r.last_price_business ?? null,
-    last_currency_business: r.last_currency_business ?? 'USD',
-    last_price_first: r.last_price_first ?? null,
-    last_currency_first: r.last_currency_first ?? 'USD',
-    is_custom: r.is_custom ?? (r.category === 'custom'),
-  };
-}
-
 export default async function RoutesPage() {
-  const user = await getAuthUser();
-  if (!user) redirect('/landing');
-
-  const routes = (await getAllRoutes() as RouteRecord[]).map(toRouteData);
-  const userRoutes = (await getUserRoutes(user.userId) as any[]).map(toRouteData);
-  // Deduplicate — user_routes may overlap with routes table (e.g. PIT-LAS was added to both)
-  const seen = new Set(routes.map((r: RouteRecord) => r.route));
-  const uniqueUserRoutes = userRoutes.filter((r: RouteRecord) => !seen.has(r.route));
-  const allRoutes = [...routes, ...uniqueUserRoutes];
-
+  // Auth check is handled client-side in RoutesClient
+  // For initial load, we redirect if no auth
   return (
     <main className="dashboard">
       <header className="header">
@@ -52,7 +24,7 @@ export default async function RoutesPage() {
         </div>
       </header>
 
-      <RoutesClient initialRoutes={allRoutes} />
+      <RoutesClient />
     </main>
   );
 }

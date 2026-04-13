@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useQuery } from 'convex/react';
+import { getPriceHistory } from '../../convex/prices';
 
 interface PricePoint {
   date: string;
@@ -64,9 +66,7 @@ export default function PriceHistoryChart({
 }) {
   const [days, setDays] = useState<DaysOption>(initialDays);
   const [cabin, setCabin] = useState(initialCabin);
-  const [data, setData] = useState<PricePoint[]>([]);
-  const [stats, setStats] = useState<HistoryResponse['stats'] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const result = useQuery(getPriceHistory, { route, cabin, days });
   const [tooltip, setTooltip] = useState<TooltipState>({
     visible: false,
     x: 0,
@@ -78,26 +78,9 @@ export default function PriceHistoryChart({
 
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/route/${encodeURIComponent(route)}/history?cabin=${cabin}&days=${days}`
-      );
-      if (!res.ok) throw new Error('Failed to fetch');
-      const json: HistoryResponse = await res.json();
-      setData(json.data);
-      setStats(json.stats);
-    } catch {
-      // silently fail — chart shows empty state
-    } finally {
-      setLoading(false);
-    }
-  }, [route, cabin, days]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const loading = result === undefined;
+  const data = result?.data ?? [];
+  const stats = result?.stats ?? null;
 
   // Chart dimensions
   const W = 500;

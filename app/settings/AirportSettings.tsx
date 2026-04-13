@@ -1,9 +1,15 @@
 'use client';
 
-'use client';
-
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from 'convex/react';
 import '../dashboard.css';
+import { getUserAirports, setUserAirports as setUserAirportsMutation } from '../../convex/airports';
+
+function getAuthToken(): string | null {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 const VALID_AIRPORTS = [
   'ATL', 'ORD', 'DFW', 'DEN', 'LAX', 'JFK', 'LGA', 'EWR', 'SFO', 'SEA',
@@ -18,28 +24,25 @@ interface AirportSettingsProps {
 }
 
 export default function AirportSettings({ homeAreaHint }: AirportSettingsProps) {
+  const [token, setToken] = useState<string | null>(null);
+  const airportsData = useQuery(getUserAirports, { token: token ?? undefined });
   const [airports, setAirports] = useState<string[]>([]);
   const [input, setInput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const updateAirports = useMutation(setUserAirportsMutation);
+
   useEffect(() => {
-    fetchAirports();
+    setToken(getAuthToken());
   }, []);
 
-  async function fetchAirports() {
-    try {
-      const res = await fetch('/api/user/airports');
-      if (res.ok) {
-        const data = await res.json();
-        setAirports(data.airports || []);
-      }
-    } catch {
-      // ignore
-    } finally {
+  useEffect(() => {
+    if (airportsData !== undefined) {
+      setAirports(airportsData);
       setLoading(false);
     }
-  }
+  }, [airportsData]);
 
   function validate(code: string): string | null {
     const upper = code.toUpperCase().trim();
@@ -61,24 +64,21 @@ export default function AirportSettings({ homeAreaHint }: AirportSettingsProps) 
     setAirports((prev) => [...prev, newAirport]);
     setInput('');
 
-    const res = await fetch('/api/user/airports', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ airports: [...airports, newAirport] }),
-    });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || 'Failed to save');
+    try {
+      await updateAirports({ userId: 0, airports: [...airports, newAirport] });
+    } catch (e: any) {
+      setError(e.message || 'Failed to save');
       setAirports((prev) => prev.filter((a) => a !== newAirport));
     }
   }
 
   async function handleRemove(airport: string) {
-    setAirports((prev) => prev.filter((a) => a !== airport));
-    const res = await fetch(`/api/user/airports?airport=${airport}`, { method: 'DELETE' });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error || 'Failed to remove');
+    const newAirports = airports.filter((a) => a !== airport);
+    setAirports(newAirports);
+    try {
+      await updateAirports({ userId: 0, airports: newAirports });
+    } catch (e: any) {
+      setError(e.message || 'Failed to remove');
       setAirports((prev) => [...prev, airport]);
     }
   }

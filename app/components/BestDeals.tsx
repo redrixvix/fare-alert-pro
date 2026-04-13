@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery } from 'convex/react';
 import Link from 'next/link';
+import { getBestDeals } from '../../convex/prices';
 
 interface Deal {
   route: string;
@@ -27,12 +29,25 @@ const CABIN_COLORS: Record<string, string> = {
 export default function BestDeals() {
   const [deals, setDeals] = useState<Record<string, Deal[]>>({});
 
+  const result = useQuery(getBestDeals, {});
+
   useEffect(() => {
-    fetch('/api/best-deals')
-      .then((r) => r.json())
-      .then((d) => setDeals(d))
-      .catch(() => {});
-  }, []);
+    if (result) {
+      // Group deals by... just show all deals directly
+      // The BestDeals component expects deals grouped by cabin key
+      const grouped: Record<string, Deal[]> = { y: [], pe: [], j: [], f: [] };
+      for (const deal of result.deals ?? []) {
+        const key = deal.cabin === 'ECONOMY' ? 'y' : deal.cabin === 'PREMIUM_ECONOMY' ? 'pe' : deal.cabin === 'BUSINESS' ? 'j' : 'f';
+        grouped[key].push({
+          route: deal.route,
+          price: deal.price,
+          airline: deal.airline ?? null,
+          days_out: Math.max(1, Math.round((new Date(deal.date).getTime() - Date.now()) / (1000 * 60 * 60 * 24))),
+        });
+      }
+      setDeals(grouped);
+    }
+  }, [result]);
 
   const cabinOrder = ['y', 'pe', 'j', 'f'];
   const hasDeals = Object.values(deals).some((v) => v && v.length > 0);

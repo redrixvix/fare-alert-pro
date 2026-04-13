@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useQuery } from 'convex/react';
+import { getCheapestDates } from '../../convex/prices';
 
 interface DateEntry {
   date: string;
@@ -57,26 +59,8 @@ export default function CheapestDatesGrid({ route }: CheapestDatesGridProps) {
   const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
   const [months, setMonths] = useState(1);
   const [collapsed, setCollapsed] = useState(true);
-  const [data, setData] = useState<DatesResponse | null>(null);
+  const data = useQuery(getCheapestDates, { route, months });
   const [loading, setLoading] = useState(false);
-
-  const fetchData = useCallback(async (r: string, m: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/route/${encodeURIComponent(r)}/dates?months=${m}`);
-      if (res.ok) {
-        setData(await res.json());
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!collapsed) {
-      fetchData(route, months);
-    }
-  }, [route, months, collapsed, fetchData]);
 
   const goPrevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
