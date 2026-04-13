@@ -105,13 +105,13 @@ export interface PriceWatch {
 
 export function getAllRoutes() {
   const client = getClient();
-  return client.query('routes:getAllRoutes', {});
+  return (client.query as any)('routes:getAllRoutes', {});
 }
 
 export function getUserRoutes(userId?: number) {
   const client = getClient();
   // Convex query can't accept optional — use internal default
-  return client.query('routes:getUserRoutes', { userId: userId ?? -1 });
+  return (client.query as any)('routes:getUserRoutes', { userId: userId ?? -1 });
 }
 
 export function addRoute(userId: number, route: string, origin: string, destination: string) {
@@ -126,12 +126,12 @@ export function deleteRoute(userId: number, route: string) {
 
 export function getRecentAlerts(limit = 20) {
   const client = getClient();
-  return client.query('alerts:getAlertsHistory', { userId: -1, limit });
+  return (client.query as any)('alerts:getAlertsHistory', { userId: -1, limit });
 }
 
 export function getAlertHistory(userId: number) {
   const client = getClient();
-  return client.query('alerts:getAlertsHistory', { userId, limit: 100 });
+  return (client.query as any)('alerts:getAlertsHistory', { userId, limit: 100 });
 }
 
 export function insertAlert(
@@ -152,7 +152,7 @@ export function insertAlert(
 
 export function getRecentPrices(limit = 20) {
   const client = getClient();
-  return client.query('prices:getRecentPrices', { limit });
+  return (client.query as any)('prices:getRecentPrices', { limit });
 }
 
 export function insertPrice(
@@ -181,7 +181,7 @@ export function updateRoutePrice(route: string, cabin: string, price: number, cu
 export function getHistoricalAvg(route: string, cabin: string = 'ECONOMY'): Promise<number | null> {
   const client = getClient();
   // Use getPricesByRoute and compute locally (no complex avg in Convex yet)
-  return client.query('prices:getPricesByRoute', { route, cabin }).then(rows => {
+  return (client.query as any)('prices:getPricesByRoute', { route, cabin }).then(rows => {
     if (!rows || rows.length === 0) return null;
     const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const recent = rows.filter((r: any) => r.fetchedAt >= cutoff && r.price > 0);
@@ -193,7 +193,7 @@ export function getHistoricalAvg(route: string, cabin: string = 'ECONOMY'): Prom
 
 export function getPriceWatches(userId: number) {
   const client = getClient();
-  return client.query('watches:getWatches', { userId });
+  return (client.query as any)('watches:getWatches', { userId });
 }
 
 export function addPriceWatch(
@@ -214,7 +214,7 @@ export function deletePriceWatch(id: number, userId: number) {
 
 export function getMatchingWatches(route: string, cabin: string, watchDate: string) {
   const client = getClient();
-  return client.query('watches:getMatchingWatches', { route, cabin, watchDate });
+  return (client.query as any)('watches:getMatchingWatches', { route, cabin, watchDate });
 }
 
 export function deactivateWatch(id: number) {
@@ -224,7 +224,7 @@ export function deactivateWatch(id: number) {
 
 export function getUserAirports(userId: number) {
   const client = getClient();
-  return client.query('airports:getUserAirports', { userId });
+  return (client.query as any)('airports:getUserAirports', { userId });
 }
 
 export function setUserAirports(userId: number, airports: string[]) {
@@ -244,7 +244,7 @@ export function removeUserAirport(userId: number, airport: string) {
 
 export function getPriceTrend(route: string, cabin: string = 'ECONOMY'): Promise<number | null> {
   const client = getClient();
-  return client.query('prices:getPricesByRoute', { route, cabin }).then((rows: any[]) => {
+  return (client.query as any)('prices:getPricesByRoute', { route, cabin }).then((rows: any[]) => {
     if (!rows || rows.length === 0) return null;
     const sorted = rows.filter((r: any) => r.price > 0).sort((a: any, b: any) =>
       new Date(b.fetchedAt).getTime() - new Date(a.fetchedAt).getTime()
@@ -262,19 +262,19 @@ export function getPriceTrend(route: string, cabin: string = 'ECONOMY'): Promise
 
 export function getLastCheckTime(): Promise<string | null> {
   const client = getClient();
-  return client.query('prices:getRecentPrices', { limit: 1 }).then((rows: any[]) => {
+  return (client.query as any)('prices:getRecentPrices', { limit: 1 }).then((rows: any[]) => {
     return rows && rows.length > 0 ? rows[0].fetchedAt : null;
   });
 }
 
 export function getRoutePriceHistory(route: string, limit = 50) {
   const client = getClient();
-  return client.query('prices:getPriceHistory', { route, limit });
+  return (client.query as any)('prices:getPriceHistory', { route, limit });
 }
 
 export function getRouteChartData(route: string, days = 90) {
   const client = getClient();
-  return client.query('prices:getPriceHistory', { route, limit: 500 }).then((rows: any[]) => {
+  return (client.query as any)('prices:getPriceHistory', { route, limit: 500 }).then((rows: any[]) => {
     const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
     const filtered = rows.filter((r: any) => r.fetchedAt >= cutoff && r.price > 0);
 
