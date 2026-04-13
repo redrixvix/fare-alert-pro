@@ -7,7 +7,7 @@ const PUBLIC_PREFIXES = ['/api/auth', '/_next', '/favicon'];
 
 // Cron/service-to-service APIs — no auth required
 const ALLOWED_SERVICE_PATHS = [
-  '/api/check-prices', '/api/status', '/api/prices-by-date',
+  '/api/check-prices', '/api/status', '/api/prices-by-date', '/api/seed',
   '/api/best-deals', '/api/routes', '/api/debug-auth',
   '/api/live-feed', '/api/debug-db', '/api/alerts/history',
 ];
