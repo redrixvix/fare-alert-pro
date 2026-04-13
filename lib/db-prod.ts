@@ -181,7 +181,7 @@ export function updateRoutePrice(route: string, cabin: string, price: number, cu
 export function getHistoricalAvg(route: string, cabin: string = 'ECONOMY'): Promise<number | null> {
   const client = getClient();
   // Use getPricesByRoute and compute locally (no complex avg in Convex yet)
-  return (client.query as any)('prices:getPricesByRoute', { route, cabin }).then(rows => {
+  return (client.query as any)('prices:getPricesByRoute', { route, cabin }).then((rows: any) => {
     if (!rows || rows.length === 0) return null;
     const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const recent = rows.filter((r: any) => r.fetchedAt >= cutoff && r.price > 0);
