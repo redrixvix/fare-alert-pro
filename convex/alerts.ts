@@ -112,7 +112,7 @@ export const insertAlert = mutation({
 
     if (existing) return null;
 
-    const id = await ctx.insert("alerts", {
+    const id = await ctx.db.insert("alerts", {
       user_id: args.user_id ?? null,
       route: args.route,
       cabin: args.cabin,

@@ -102,7 +102,7 @@ export const addWatch = mutation({
 
     if (existing) throw new Error("A watch for this route, cabin, and date already exists");
 
-    const id = await ctx.insert("price_watches", {
+    const id = await ctx.db.insert("price_watches", {
       user_id: userId,
       route: args.route,
       cabin,
@@ -132,7 +132,7 @@ export const deleteWatch = mutation({
       .first();
     if (!watch) throw new Error("Watch not found");
     if (userId !== null && watch.user_id !== userId) throw new Error("Not authorized");
-    await ctx.patch(watch._id, { active: 0 });
+    await ctx.db.patch(watch._id, { active: 0 });
     return true;
   },
 });

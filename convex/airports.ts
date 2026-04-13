@@ -54,7 +54,7 @@ export const setUserAirports = mutation({
 
     // Insert new
     for (const airport of args.airports) {
-      await ctx.insert("user_airports", {
+      await ctx.db.insert("user_airports", {
         user_id: userId,
         airport: airport.toUpperCase(),
         created_at: new Date().toISOString(),
@@ -79,7 +79,7 @@ export const addUserAirport = mutation({
 
     if (existing) return;
 
-    await ctx.insert("user_airports", {
+    await ctx.db.insert("user_airports", {
       user_id: args.userId,
       airport: code,
       created_at: new Date().toISOString(),

@@ -7,8 +7,7 @@ import { hashPassword, verifyPassword, signToken, verifyToken } from "./auth";
 export const signIn = mutation({
   args: { email: v.string(), password: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx
-      .table("users")
+    const user = await ctx.db.query("users")
       .filter((row) => row.eq(row.field("email"), args.email.toLowerCase()))
       .first();
 
@@ -34,8 +33,7 @@ export const signUp = mutation({
     const email = args.email.toLowerCase();
 
     // Check uniqueness
-    const existing = await ctx
-      .table("users")
+    const existing = await ctx.db.query("users")
       .filter((row) => row.eq(row.field("email"), email))
       .first();
 
@@ -44,19 +42,19 @@ export const signUp = mutation({
     const password_hash = await hashPassword(args.password);
 
     // Generate a numeric ID for JWT compatibility
-    const allUsers = await ctx.table("users").collect();
+    const allUsers = await ctx.db.query("users").collect();
     const maxNumericId = allUsers.reduce(
       (max: number, u: any) => Math.max(max, u.numeric_id ?? 0),
       0
     );
     const numericId = maxNumericId + 1;
 
-    const id = await ctx.insert("users", {
+    const id = await ctx.db.insert("users", {
       email,
       password_hash,
       plan: "free",
-      telegram_chat_id: null,
-      telegram_username: null,
+      telegram_chat_id: undefined,
+      telegram_username: undefined,
       created_at: new Date().toISOString(),
       is_active: 1,
       numeric_id: numericId,
@@ -71,7 +69,7 @@ export const signUp = mutation({
 export const getUserById = query({
   args: { userId: v.number() },
   handler: async (ctx, args) => {
-    const users = await ctx.table("users").collect();
+    const users = await ctx.db.query("users").collect();
     const user = users.find((u: any) => u.numeric_id === args.userId);
 
     if (!user || !user.is_active) return null;
@@ -91,7 +89,7 @@ export const linkTelegramChat = mutation({
   args: { userId: v.number(), chatId: v.string(), username: v.optional(v.string()) },
   handler: async (ctx, args) => {
     // Find user by numeric_id
-    const allUsers = await ctx.table("users").collect();
+    const allUsers = await ctx.db.query("users").collect();
     const user = allUsers.find((u: any) => u.numeric_id === args.userId);
 
     if (!user) throw new Error("User not found");
@@ -100,10 +98,10 @@ export const linkTelegramChat = mutation({
     const existingWithChat = allUsers.find((u: any) => u.telegram_chat_id === args.chatId);
 
     if (existingWithChat && existingWithChat._id !== user._id) {
-      await ctx.patch(existingWithChat._id, { telegram_chat_id: null, telegram_username: null });
+      await ctx.db.patch(existingWithChat._id, { telegram_chat_id: undefined, telegram_username: undefined });
     }
 
-    await ctx.patch(user._id, {
+    await ctx.db.patch(user._id, {
       telegram_chat_id: args.chatId,
       telegram_username: args.username ?? null,
     });
@@ -115,7 +113,7 @@ export const linkTelegramChat = mutation({
 export const getUserByNumericId = query({
   args: { numericId: v.number() },
   handler: async (ctx, args) => {
-    const users = await ctx.table("users").collect();
+    const users = await ctx.db.query("users").collect();
     const user = users.find((u: any) => u.numeric_id === args.numericId);
     if (!user || !user.is_active) return null;
     return {
@@ -133,7 +131,7 @@ export const getUserByNumericId = query({
 export const getTelegramUsers = query({
   args: {},
   handler: async (ctx) => {
-    const users = await ctx.table("users").collect();
+    const users = await ctx.db.query("users").collect();
     return users.filter((u: any) => u.telegram_chat_id && u.is_active);
   },
 });
@@ -142,8 +140,7 @@ export const getTelegramUsers = query({
 export const getUserByTelegramChat = query({
   args: { chatId: v.string() },
   handler: async (ctx, args) => {
-    const user = await ctx
-      .table("users")
+    const user = await ctx.db.query("users")
       .filter((row) => row.eq(row.field("telegram_chat_id"), args.chatId))
       .first();
 

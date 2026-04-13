@@ -6,7 +6,7 @@ import { query, mutation } from "./_generated/server";
 export const getRecentPrices = query({
   args: {},
   handler: async (ctx) => {
-    const rows = await ctx.table("prices").orderBy("fetched_at", "desc").take(20);
+    const rows = await ctx.db.query("prices").orderBy("fetched_at", "desc").take(20);
     return rows.map((r) => ({
       id: r._id,
       route: r.route,
@@ -251,7 +251,7 @@ export const insertPriceRecord = mutation({
   },
   handler: async (ctx, args) => {
     if (args.price <= 0) return null;
-    const id = await ctx.insert("prices", {
+    const id = await ctx.db.insert("prices", {
       route: args.route,
       cabin: args.cabin,
       search_date: args.search_date,
@@ -298,6 +298,6 @@ export const updateRoutePrice = mutation({
       updates.last_price_first = args.price;
     }
 
-    await ctx.patch(routeRow._id, updates);
+    await ctx.db.patch(routeRow._id, updates);
   },
 });

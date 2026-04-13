@@ -17,7 +17,7 @@ export const getAllRoutes = query({
   args: { includeCustom: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
     const includeCustom = args.includeCustom ?? false;
-    const rows = await ctx.table("routes").collect();
+    const rows = await ctx.db.query("routes").collect();
     if (includeCustom) return rows;
     return rows.filter((r) => r.category !== "custom");
   },
@@ -36,13 +36,13 @@ export const addRoute = mutation({
       .first();
 
     if (existing) {
-      await ctx.patch(existing._id, {
+      await ctx.db.patch(existing._id, {
         category: args.category ?? existing.category,
       });
       return existing._id;
     }
 
-    const id = await ctx.insert("routes", {
+    const id = await ctx.db.insert("routes", {
       route: args.route,
       category: args.category ?? "custom",
       last_checked: null,
@@ -76,7 +76,7 @@ export const addRouteByAirports = mutation({
       return existingRoute._id;
     }
 
-    const id = await ctx.insert("routes", {
+    const id = await ctx.db.insert("routes", {
       route,
       category: "custom",
       last_checked: null,
@@ -195,7 +195,7 @@ export const addUserRoute = mutation({
       .first();
 
     if (!existingRoute) {
-      await ctx.insert("routes", {
+      await ctx.db.insert("routes", {
         route: args.route,
         category: "custom",
         last_checked: null,
@@ -216,7 +216,7 @@ export const addUserRoute = mutation({
       .first();
 
     if (existingUserRoute) {
-      await ctx.patch(existingUserRoute._id, {
+      await ctx.db.patch(existingUserRoute._id, {
         origin: args.origin,
         destination: args.destination,
         active: 1,
@@ -224,7 +224,7 @@ export const addUserRoute = mutation({
       return existingUserRoute._id;
     }
 
-    const id = await ctx.insert("user_routes", {
+    const id = await ctx.db.insert("user_routes", {
       user_id: userId,
       route: args.route,
       origin: args.origin,
@@ -257,7 +257,7 @@ export const deleteUserRoute = mutation({
 
     if (!userRoute) return false;
 
-    await ctx.patch(userRoute._id, { active: 0 });
+    await ctx.db.patch(userRoute._id, { active: 0 });
 
     // If no more active user_routes for this route, remove the custom route
     const remaining = await ctx

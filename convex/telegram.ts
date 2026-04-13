@@ -19,10 +19,10 @@ export const linkTelegramChat = mutation({
       .first();
 
     if (existing && existing._id !== args.userId) {
-      await ctx.patch(existing._id, { telegram_chat_id: null, telegram_username: null });
+      await ctx.db.patch(existing._id, { telegram_chat_id: undefined, telegram_username: undefined });
     }
 
-    await ctx.patch(args.userId, {
+    await ctx.db.patch(args.userId, {
       telegram_chat_id: args.chatId,
       telegram_username: args.username ?? null,
     });
@@ -36,7 +36,7 @@ export const sendTestMessage = mutation({
   handler: async (ctx, args) => {
     if (!TELEGRAM_BOT_TOKEN) throw new Error("Telegram bot not configured");
 
-    const users = await ctx.table("users").collect();
+    const users = await ctx.db.query("users").collect();
     const user = users.find((u: any) => u.numeric_id === args.userId);
     if (!user) throw new Error("User not found");
 
@@ -63,10 +63,10 @@ export const sendTestMessage = mutation({
 export const disconnectTelegram = mutation({
   args: { userId: v.number() },
   handler: async (ctx, args) => {
-    const users = await ctx.table("users").collect();
+    const users = await ctx.db.query("users").collect();
     const user = users.find((u: any) => u.numeric_id === args.userId);
     if (!user) throw new Error("User not found");
-    await ctx.patch(user._id, { telegram_chat_id: null, telegram_username: null });
+    await ctx.db.patch(user._id, { telegram_chat_id: undefined, telegram_username: undefined });
     return true;
   },
 });
