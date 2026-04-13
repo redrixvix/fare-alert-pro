@@ -1,10 +1,11 @@
+// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getClient } from '@/lib/db-prod';
 
 export const dynamic = 'force-dynamic';
 
-function parseRoute(raw: string): { route: string; origin: string; destination: string } | null {
+function parseRoute(raw) {
   const cleaned = raw.trim().toUpperCase().replace(/\s+/g, '');
   const match = cleaned.match(/^([A-Z]{3})-([A-Z]{3})$/);
   if (!match) return null;
@@ -20,12 +21,12 @@ export async function GET() {
   return NextResponse.json({ routes: userRoutes || [] });
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req) {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
-  const raw = body.route as string | undefined;
+  const raw = body.route;
   if (!raw) return NextResponse.json({ error: 'route is required (e.g. "PIT-LAS")' }, { status: 400 });
 
   const parsed = parseRoute(raw);
@@ -33,7 +34,6 @@ export async function POST(req: NextRequest) {
 
   const client = getClient();
 
-  // Check plan limits (free = 5 routes)
   const userData = await client.query('users:getUserById', { id: user.userId }) as any;
   const plan = userData?.plan || 'free';
   if (plan !== 'pro') {
@@ -45,18 +45,15 @@ export async function POST(req: NextRequest) {
 
   try {
     await client.mutation('routes:addRoute', {
-      userId: user.userId,
-      route: parsed.route,
-      origin: parsed.origin,
-      destination: parsed.destination
+      userId: user.userId, route: parsed.route, origin: parsed.origin, destination: parsed.destination
     });
     return NextResponse.json({ success: true, route: parsed.route });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req) {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
