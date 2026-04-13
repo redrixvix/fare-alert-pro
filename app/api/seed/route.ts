@@ -9,7 +9,7 @@ export async function POST() {
     
     const client = new ConvexHttpClient(convexUrl);
     
-    const result = await client.mutation('users/signUp', {
+    const result = await client.mutation('users/signUp' as any, {
       email: 'admin@farealertpro.com',
       password: 'FareAlert2026!'
     });
