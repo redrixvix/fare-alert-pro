@@ -12,7 +12,7 @@ const AIRLINE_NAMES: Record<string, string> = {
 
 function googleFlightsUrl(origin: string, destination: string): string {
   const query = `${origin.toUpperCase()} to ${destination.toUpperCase()}`;
-  return `https://www.google.com/travel/flights/search?tfs=CBwQAhoeEgoyCg&tfu=CxD IAEA嘉&hl=en&gl=us&q=${encodeURIComponent(query)}`;
+  return `https://www.google.com/travel/flights/search?tfs=CBwQAhoeEgoyCg&hl=en&gl=us&q=${encodeURIComponent(query)}`;
 }
 
 function timeAgo(iso: string): string {
@@ -52,7 +52,6 @@ export default function LiveFeed() {
   const [connected, setConnected] = useState(false);
   const [newCount, setNewCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const prevIdRef = { current: 0 };
 
   const fetch_ = () =>
     fetch('/api/live-feed')
@@ -61,7 +60,6 @@ export default function LiveFeed() {
         const fresh = d.prices || [];
         setLoading(false);
         if (fresh.length > 0 && fresh[0].id !== lastId) {
-          prevIdRef.current = fresh[0].id;
           setLastId(fresh[0].id);
           setNewCount((c) => c + 1);
         }

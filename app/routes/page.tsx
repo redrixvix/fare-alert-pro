@@ -1,4 +1,6 @@
 import { getAllRoutes, getUserRoutes, RouteRecord } from '@/lib/db';
+import { getAuthUser } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 import RoutesClient from './RoutesClient';
 import '../dashboard.css';
 
@@ -23,8 +25,11 @@ function toRouteData(r: any): RouteRecord {
 }
 
 export default async function RoutesPage() {
+  const user = await getAuthUser();
+  if (!user) redirect('/landing');
+
   const routes = (await getAllRoutes() as RouteRecord[]).map(toRouteData);
-  const userRoutes = (await getUserRoutes() as any[]).map(toRouteData);
+  const userRoutes = (await getUserRoutes(user.userId) as any[]).map(toRouteData);
   // Deduplicate — user_routes may overlap with routes table (e.g. PIT-LAS was added to both)
   const seen = new Set(routes.map((r: RouteRecord) => r.route));
   const uniqueUserRoutes = userRoutes.filter((r: RouteRecord) => !seen.has(r.route));

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb, getUserRoutes, addRoute, deleteRoute } from '@/lib/db';
+import { getDb, addRoute, deleteRoute } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,8 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    addRoute(parsed.route, parsed.origin, parsed.destination);
-    db.prepare('UPDATE user_routes SET user_id = ? WHERE route = ?').run(user.userId, parsed.route);
+    addRoute(user.userId, parsed.route, parsed.origin, parsed.destination);
     return NextResponse.json({ success: true, route: parsed.route });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -64,6 +63,6 @@ export async function DELETE(req: NextRequest) {
   const row = db.prepare('SELECT * FROM user_routes WHERE route = ? AND user_id = ? AND active = 1').get(route, user.userId);
   if (!row) return NextResponse.json({ error: 'Route not found' }, { status: 404 });
 
-  const ok = deleteRoute(route);
+  const ok = deleteRoute(user.userId, route);
   return NextResponse.json({ success: ok });
 }

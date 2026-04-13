@@ -1,6 +1,8 @@
 import { getRouteChartData, getRoutePriceHistory, getAllRoutes } from '@/lib/db';
 import Link from 'next/link';
 import DateNavigator from './DateNavigator';
+import CheapestDatesGrid from '../../components/CheapestDatesGrid';
+import PriceHistoryChart from '../../components/PriceHistoryChart';
 import './route-detail.css';
 
 interface PriceRecord {
@@ -13,14 +15,6 @@ interface PriceRecord {
   duration_minutes: number | null;
   stops: number | null;
   fetched_at: string;
-}
-
-interface ChartPoint {
-  date: string;
-  y: number | null;
-  pe: number | null;
-  j: number | null;
-  f: number | null;
 }
 
 const CABIN_KEYS = [
@@ -39,85 +33,6 @@ function fmtStops(s: number | null): string {
   if (s == null) return '—';
   if (s === 0) return 'Direct';
   return `${s} stop${s > 1 ? 's' : ''}`;
-}
-
-function formatDateLabel(d: string) {
-  return new Date(d + 'T00:00:00').toLocaleDateString('en-US', {
-    weekday: 'short', month: 'short', day: 'numeric', year: 'numeric',
-  });
-}
-
-// Build SVG chart server-side
-function buildChart(data: ChartPoint[]): string {
-  if (!data.length) return '';
-
-  const COLORS: Record<string, string> = { y: '#4f9cf9', pe: '#a0a8c0', j: '#c9a84c', f: '#9b8fe8' };
-  const W = 800, H = 280;
-  const PAD = { top: 20, right: 20, bottom: 50, left: 60 };
-  const cw = W - PAD.left - PAD.right;
-  const ch = H - PAD.top - PAD.bottom;
-
-  const allPrices: number[] = [];
-  data.forEach(d => { ['y', 'pe', 'j', 'f'].forEach(k => { const v = (d as any)[k]; if (v != null) allPrices.push(v); }); });
-  const maxPrice = allPrices.length ? Math.max(...allPrices) * 1.2 : 1000;
-
-  const xS = (i: number) => (i / Math.max(data.length - 1, 1)) * cw;
-  const yS = (p: number) => ch - (p / maxPrice) * ch;
-
-  const labelCount = Math.min(7, data.length);
-  const labelStep = Math.max(1, Math.floor(data.length / labelCount));
-  const xLabels: { i: number; label: string }[] = [];
-  for (let i = 0; i < data.length; i += labelStep) {
-    const dd = new Date(data[i].date + 'T00:00:00');
-    xLabels.push({ i, label: dd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) });
-  }
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;min-width:400px;display:block;overflow:visible">`;
-  svg += `<g transform="translate(${PAD.left},${PAD.top})">`;
-
-  // Gridlines
-  for (let li = 0; li <= 5; li++) {
-    const y = (li / 5) * ch;
-    svg += `<line x1="0" y1="${y.toFixed(1)}" x2="${cw}" y2="${y.toFixed(1)}" stroke="#2a2d3a" stroke-width="1"/>`;
-    svg += `<text x="-8" y="${(y + 4).toFixed(1)}" text-anchor="end" fill="#7a7d8e" font-size="11">$${(maxPrice - (li / 5) * maxPrice).toFixed(0)}</text>`;
-  }
-
-  // Lines and dots
-  (['y', 'pe', 'j', 'f'] as const).forEach(key => {
-    const pts: [number, number][] = [];
-    for (let i = 0; i < data.length; i++) {
-      const v = (data[i] as any)[key];
-      if (v != null) pts.push([xS(i), yS(v)]);
-    }
-    if (!pts.length) return;
-    const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-    svg += `<path d="${d}" stroke="${COLORS[key]}" stroke-width="2" fill="none" stroke-linejoin="round"/>`;
-    pts.forEach(p => {
-      svg += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="${COLORS[key]}"/>`;
-    });
-  });
-
-  // X labels
-  xLabels.forEach(o => {
-    svg += `<text x="${xS(o.i).toFixed(1)}" y="${(ch + 20).toFixed(1)}" text-anchor="middle" fill="#7a7d8e" font-size="11">${o.label}</text>`;
-  });
-
-  // Axes
-  svg += `<line x1="0" y1="0" x2="0" y2="${ch}" stroke="#2a2d3a"/>`;
-  svg += `<line x1="0" y1="${ch}" x2="${cw}" y2="${ch}" stroke="#2a2d3a"/>`;
-  svg += `</g></svg>`;
-
-  // Legend
-  svg += `<div style="display:flex;gap:1.5rem;justify-content:center;margin-top:0.5rem;flex-wrap:wrap;">`;
-  ([['y','Economy'],['pe','Premium Economy'],['j','Business'],['f','First']] as [string, string][]).forEach(([k, label]) => {
-    svg += `<div style="display:flex;align-items:center;gap:0.4rem;">`;
-    svg += `<div style="width:12px;height:12px;border-radius:50%;background:${COLORS[k]};"></div>`;
-    svg += `<span style="font-size:0.8rem;color:#7a7d8e;">${label}</span>`;
-    svg += `</div>`;
-  });
-  svg += `</div>`;
-
-  return svg;
 }
 
 export default async function RoutePage({ params }: { params: Promise<{ route: string }> }) {
@@ -142,10 +57,9 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
     );
   }
 
-  const chartData = getRouteChartData(route, 90);
   const priceHistory = getRoutePriceHistory(route, 200) as PriceRecord[];
 
-  // Group prices by date
+  // Group prices by date for the date navigator
   const byDate: Record<string, Record<string, PriceRecord>> = {};
   for (const p of priceHistory) {
     if (!byDate[p.search_date]) byDate[p.search_date] = {};
@@ -153,8 +67,6 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
     byDate[p.search_date][key] = p;
   }
   const sortedDates = Object.keys(byDate).sort();
-
-  const chartSvg = buildChart(chartData);
 
   return (
     <main className="dashboard">
@@ -169,14 +81,15 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
       </header>
 
       <div className="content">
-        {/* Chart */}
+        {/* Interactive Price History Chart */}
         <section className="section">
           <h2>📊 Price History</h2>
-          {chartSvg ? (
-            <div dangerouslySetInnerHTML={{ __html: chartSvg }} />
-          ) : (
-            <p className="no-data">No price data yet for this route. Run a price check to start collecting data.</p>
-          )}
+          <PriceHistoryChart route={route} initialDays={30} initialCabin="ECONOMY" />
+        </section>
+
+        {/* Cheapest Dates Grid */}
+        <section className="section">
+          <CheapestDatesGrid route={route} />
         </section>
 
         {/* Prices by Date with navigation */}

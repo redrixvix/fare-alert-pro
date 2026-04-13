@@ -58,6 +58,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (e: any) {
+    console.error('Signup error:', e.message, e.stack);
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

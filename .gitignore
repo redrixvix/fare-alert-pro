@@ -39,3 +39,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local SQLite database — use Vercel Postgres in production
+fare_alerts.db
+fare_alerts.db-shm
+fare_alerts.db-wal
+fare_alerts.db.bak
+fare_alerts.db.recovered
+
+# Vercel
+.vercel
+data/

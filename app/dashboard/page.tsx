@@ -1,5 +1,5 @@
 // FareAlertPro Dashboard (authenticated)
-import { getAllRoutes, getRecentAlerts, getPriceTrend, getHistoricalAvg } from '@/lib/db';
+import { getAllRoutes, getRecentAlerts, getPriceTrend, getHistoricalAvg, getUserRoutes } from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -18,17 +18,18 @@ export default async function DashboardPage() {
   if (!user) redirect('/landing');
 
   let routes: any[] = [];
+  let customRoutes: any[] = [];
   let alerts: any[] = [];
 
   try {
     routes = getAllRoutes();
+    customRoutes = getUserRoutes(user.userId);
     alerts = getRecentAlerts(20);
   } catch (e) {
     console.error('DB not initialized yet:', e);
   }
 
   const busiestRoutes = routes.filter((r: any) => r.category === 'busiest');
-  const customRoutes = routes.filter((r: any) => r.category === 'custom');
 
   // Compute deal percentage for each route
   const routeDealPct: Record<string, number | null> = {};

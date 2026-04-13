@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import TelegramSettings from './TelegramSettings';
+import WatchesSettings from './WatchesSettings';
+import AirportSettings from './AirportSettings';
 import '../dashboard.css';
 
 export const dynamic = 'force-dynamic';
@@ -71,6 +73,16 @@ export default async function SettingsPage() {
 
         {/* Telegram */}
         <TelegramSettings user={dbUser} />
+
+        {/* Price Watches */}
+        <section className="section">
+          <WatchesSettings />
+        </section>
+
+        {/* Airport Settings */}
+        <section className="section">
+          <AirportSettings homeAreaHint={dbUser?.telegram_chat_id ? `chat ID ${dbUser.telegram_chat_id}` : undefined} />
+        </section>
 
         {/* Plans */}
         <section className="section" id="plans">

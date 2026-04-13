@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Public paths that don't require authentication
-const PUBLIC_PATHS = ['/', '/landing', '/login', '/signup'];
+const PUBLIC_PATHS = ['/', '/landing', '/login', '/signup', '/deals', '/api/deals'];
 const PUBLIC_PREFIXES = ['/api/auth', '/_next', '/favicon'];
 
 // Cron/service-to-service APIs — no auth required
 const ALLOWED_SERVICE_PATHS = [
   '/api/check-prices', '/api/status', '/api/prices-by-date',
   '/api/best-deals', '/api/routes', '/api/debug-auth',
-  '/api/live-feed',
+  '/api/live-feed', '/api/debug-db', '/api/alerts/history',
 ];
 
 export function middleware(request: NextRequest) {

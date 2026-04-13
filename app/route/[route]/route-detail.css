@@ -114,3 +114,264 @@
 .day-price-row td {
   background: var(--bg);
 }
+
+/* CheapestDatesGrid */
+.cdg-wrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.cdg-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--card);
+  border: none;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  gap: 0.5rem;
+}
+
+.cdg-toggle:hover {
+  background: var(--card-hover);
+}
+
+.cdg-toggle-arrow {
+  color: var(--text-dim);
+  font-size: 0.7rem;
+}
+
+.cdg-body {
+  padding: 1rem;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cdg-loading {
+  text-align: center;
+  color: var(--text-dim);
+  padding: 1rem;
+}
+
+.cdg-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cdg-stats strong {
+  color: var(--text);
+}
+
+.cdg-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.cdg-nav-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+
+.cdg-nav-btn:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.cdg-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.cdg-month-label {
+  font-weight: 600;
+  min-width: 140px;
+  text-align: center;
+}
+
+.cdg-scroll {
+  overflow-x: auto;
+}
+
+.cdg-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  min-width: 320px;
+}
+
+.cdg-day-header {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0;
+}
+
+.cdg-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 0.2rem;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  position: relative;
+  min-height: 52px;
+  gap: 2px;
+}
+
+.cdg-cell-data:hover {
+  transform: scale(1.04);
+  z-index: 1;
+}
+
+.cdg-cell-empty {
+  border: none;
+  cursor: default;
+}
+
+.cdg-cell-empty:hover {
+  transform: none;
+}
+
+.cdg-cell-na {
+  background: var(--card);
+  border-color: var(--border);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.cdg-cell-na:hover {
+  transform: none;
+}
+
+.cell-green { background: rgba(42, 157, 143, 0.2); border-color: var(--success); color: #2a9d8f; }
+.cell-yellow { background: rgba(244, 162, 97, 0.15); border-color: var(--warn); color: #f4a261; }
+.cell-red { background: rgba(230, 57, 70, 0.12); border-color: var(--danger); color: #e63946; }
+
+.cdg-cell-best {
+  border: 2px solid #d4a017 !important;
+  box-shadow: 0 0 8px rgba(212, 160, 23, 0.35);
+}
+
+.cdg-date-num {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  line-height: 1;
+}
+
+.cdg-price {
+  font-family: 'SF Mono', Monaco, monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: inherit;
+  line-height: 1.2;
+}
+
+.cdg-price-na {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.cdg-best-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #d4a017;
+  color: #fff;
+  font-size: 0.5rem;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.cdg-months-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.cdg-label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.cdg-m-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text-dim);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cdg-m-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.cdg-m-btn-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.cdg-legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.cdg-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.cdg-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid;
+  display: inline-block;
+}
+
+.cdg-legend-dot.cell-green { background: rgba(42,157,143,0.3); border-color: var(--success); }
+.cdg-legend-dot.cell-yellow { background: rgba(244,162,97,0.25); border-color: var(--warn); }
+.cdg-legend-dot.cell-red { background: rgba(230,57,70,0.2); border-color: var(--danger); }
+.cdg-legend-dot.cdg-cell-na { background: var(--card); border-color: var(--border); opacity: 0.5; }

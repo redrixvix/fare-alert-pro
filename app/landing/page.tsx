@@ -34,6 +34,9 @@ export default function LandingPage() {
               Start Monitoring Free →
             </Link>
             <span className="hero-note">No credit card · 30-day free trial</span>
+            <Link href="/deals" style={{ color: '#4f9cf9', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 500 }}>
+              See current error fares →
+            </Link>
           </div>
 
           {/* Example alert */}
