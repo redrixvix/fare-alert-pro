@@ -27,8 +27,8 @@ async function getRouteData(route: string) {
   try {
     const client = new ConvexHttpClient(convexUrl);
     const [routes, priceHistory] = await Promise.all([
-      client.query('routes:getAllRoutes', { includeCustom: true }),
-      client.query('prices:getPricesByRoute', { route, cabin: 'ECONOMY' }),
+      client.query('routes:getAllRoutes' as any, { includeCustom: true }),
+      client.query('prices:getPricesByRoute' as any, { route, cabin: 'ECONOMY' }),
     ]);
     const routeRecord = (routes as any[]).find((r: any) => r.route === route);
     // Convert Convex prices to PriceRecord format

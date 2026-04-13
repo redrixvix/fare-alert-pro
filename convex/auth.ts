@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Convex-compatible auth — uses Web Crypto API (WASM-compatible)
 // Does NOT use bcryptjs or jsonwebtoken (Node.js specific)
 

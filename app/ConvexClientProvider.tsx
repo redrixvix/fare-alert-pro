@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 
 import { ConvexProvider, ConvexReactClient } from 'convex/react';

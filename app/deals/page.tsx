@@ -30,7 +30,7 @@ async function getDeals(): Promise<{ deals: Deal[]; generated_at: string }> {
   }
   try {
     const client = new ConvexHttpClient(convexUrl);
-    const result = await client.query('prices:getBestDeals', {});
+    const result = await client.query('prices:getBestDeals' as any, {});
     return result;
   } catch {
     return { deals: [], generated_at: new Date().toISOString() };

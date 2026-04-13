@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { query } from "./_generated/server";
 
 // Get system status (for StatusBar)

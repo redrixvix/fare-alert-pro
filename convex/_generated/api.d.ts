@@ -11,6 +11,7 @@
 import type * as airports from "../airports.js";
 import type * as alerts from "../alerts.js";
 import type * as auth from "../auth.js";
+import type * as checkPrices from "../checkPrices.js";
 import type * as prices from "../prices.js";
 import type * as routes from "../routes.js";
 import type * as seed from "../seed.js";
@@ -29,6 +30,7 @@ declare const fullApi: ApiFromModules<{
   airports: typeof airports;
   alerts: typeof alerts;
   auth: typeof auth;
+  checkPrices: typeof checkPrices;
   prices: typeof prices;
   routes: typeof routes;
   seed: typeof seed;
