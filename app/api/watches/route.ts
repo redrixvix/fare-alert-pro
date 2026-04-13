@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getPriceWatches, addPriceWatch, deletePriceWatch, getAllRoutes } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 const VALID_CABINS = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
 
@@ -16,8 +16,8 @@ function isValidDate(dateStr: string): boolean {
 }
 
 function isValidRoute(route: string): boolean {
-  const routes = getAllRoutes() as { route: string }[];
-  return routes.some(r => r.route === route);
+  // Just validate format XXX-XXX (3 uppercase letters, dash, 3 uppercase letters)
+  return /^[A-Z]{3}-[A-Z]{3}$/.test(route);
 }
 
 export async function GET() {
@@ -26,24 +26,26 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const watches = getPriceWatches(user.userId);
+  const client = getClient();
+  const [watches, routesData] = await Promise.all([
+    client.query('watches:getWatches', { userId: user.userId }),
+    client.query('routes:getAllRoutes', {}),
+  ]) as [any[], any[]];
 
-  // Get current prices for each watch from the routes table
-  const { getDb } = await import('@/lib/db');
-  const db = getDb();
+  const routeMap: Record<string, number> = {};
+  for (const r of routesData) routeMap[r.route] = r.lastPrice ?? null;
 
-  const result = watches.map(watch => {
-    const routeRow = db.prepare('SELECT last_price FROM routes WHERE route = ?').get(watch.route) as { last_price: number | null } | undefined;
-    const currentPrice = routeRow?.last_price ?? null;
+  const result = (watches || []).map((watch: any) => {
+    const currentPrice = routeMap[watch.route] ?? null;
     const savingsPct = currentPrice !== null && currentPrice > 0
-      ? ((watch.target_price - currentPrice) / currentPrice) * 100
+      ? ((watch.targetPrice - currentPrice) / currentPrice) * 100
       : null;
     return {
       id: watch.id,
       route: watch.route,
       cabin: watch.cabin,
-      watchDate: watch.watch_date,
-      targetPrice: watch.target_price,
+      watchDate: watch.watchDate,
+      targetPrice: watch.targetPrice,
       currentPrice,
       savingsPct: savingsPct !== null ? Math.round(savingsPct * 10) / 10 : null,
     };
@@ -67,45 +69,45 @@ export async function POST(request: Request) {
 
   const { route, cabin = 'ECONOMY', watchDate, targetPrice } = body;
 
-  // Validate route
   if (!route || typeof route !== 'string') {
     return NextResponse.json({ error: 'route is required' }, { status: 400 });
   }
   if (!isValidRoute(route)) {
     return NextResponse.json({ error: 'Invalid route' }, { status: 400 });
   }
-
-  // Validate cabin
   if (!VALID_CABINS.includes(cabin)) {
     return NextResponse.json({ error: 'cabin must be one of: ' + VALID_CABINS.join(', ') }, { status: 400 });
   }
-
-  // Validate watchDate
   if (!watchDate || typeof watchDate !== 'string') {
     return NextResponse.json({ error: 'watchDate is required' }, { status: 400 });
   }
   if (!isValidDate(watchDate)) {
     return NextResponse.json({ error: 'watchDate must be within 0-90 days from today (YYYY-MM-DD)' }, { status: 400 });
   }
-
-  // Validate targetPrice
   if (typeof targetPrice !== 'number' || targetPrice <= 0) {
     return NextResponse.json({ error: 'targetPrice must be a positive number' }, { status: 400 });
   }
 
   try {
-    const id = addPriceWatch(user.userId, route, cabin, watchDate, targetPrice);
+    const client = getClient();
+    const result = await client.mutation('watches:addWatch', {
+      userId: user.userId,
+      route,
+      cabin,
+      watchDate,
+      targetPrice,
+    }) as any;
 
-    const { getDb } = await import('@/lib/db');
-    const db = getDb();
-    const routeRow = db.prepare('SELECT last_price FROM routes WHERE route = ?').get(route) as { last_price: number | null } | undefined;
-    const currentPrice = routeRow?.last_price ?? null;
+    // Get current price for savings calculation
+    const routesData = await client.query('routes:getAllRoutes', {}) as any[];
+    const routeRow = routesData.find((r: any) => r.route === route);
+    const currentPrice = routeRow?.lastPrice ?? null;
     const savingsPct = currentPrice !== null && currentPrice > 0
       ? ((targetPrice - currentPrice) / currentPrice) * 100
       : null;
 
     return NextResponse.json({
-      id,
+      id: result,
       route,
       cabin,
       watchDate,
@@ -114,7 +116,7 @@ export async function POST(request: Request) {
       savingsPct: savingsPct !== null ? Math.round(savingsPct * 10) / 10 : null,
     }, { status: 201 });
   } catch (err: any) {
-    if (err.message && err.message.includes('UNIQUE constraint')) {
+    if (err?.message?.includes('UNIQUE constraint')) {
       return NextResponse.json({ error: 'A watch for this route, cabin, and date already exists' }, { status: 409 });
     }
     console.error('addPriceWatch error:', err);
@@ -140,10 +142,11 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'id must be a number' }, { status: 400 });
   }
 
-  const deleted = deletePriceWatch(id, user.userId);
-  if (!deleted) {
+  try {
+    const client = getClient();
+    await client.mutation('watches:deleteWatch', { id, userId: user.userId });
+    return NextResponse.json({ success: true });
+  } catch {
     return NextResponse.json({ error: 'Watch not found' }, { status: 404 });
   }
-
-  return NextResponse.json({ success: true });
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export async function GET(
   _request: Request,
@@ -12,20 +12,7 @@ export async function GET(
   const { route } = await params;
   const decoded = decodeURIComponent(route);
 
-  const db = getDb();
-
-  const routeRecord = db.prepare('SELECT route FROM routes WHERE route=?').get(decoded);
-  if (!routeRecord) {
-    return NextResponse.json({ error: 'not_found' }, { status: 404 });
-  }
-
-  const prices = db.prepare(`
-    SELECT route, cabin, search_date, price, currency, airline,
-           duration_minutes, stops, fetched_at
-    FROM prices
-    WHERE route = ?
-    ORDER BY search_date DESC, cabin ASC
-  `).all(decoded) as any[];
-
+  const client = getClient();
+  const prices = await client.query('prices:getPricesByRoute', { route: decoded, cabin: 'ECONOMY' }) as any[];
   return NextResponse.json({ prices });
 }

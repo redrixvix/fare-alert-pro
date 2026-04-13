@@ -1,27 +1,36 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const db = getDb();
+    const client = getClient();
 
-    const totalPrices = (db.prepare('SELECT COUNT(*) as cnt FROM prices').get() as any).cnt as number;
-    const totalAlerts = (db.prepare('SELECT COUNT(*) as cnt FROM alerts').get() as any).cnt as number;
-    const alertsToday = (db.prepare("SELECT COUNT(*) as cnt FROM alerts WHERE DATE(created_at) = DATE('now')").get() as any).cnt as number;
-    const routesTracked = (db.prepare('SELECT COUNT(*) as cnt FROM routes').get() as any).cnt as number;
+    const [prices, alerts, routes] = await Promise.all([
+      client.query('prices:getRecentPrices', { limit: 1000 }),
+      client.query('alerts:getAlertsHistory', { userId: -1, limit: 100 }),
+      client.query('routes:getAllRoutes', {}),
+    ]) as [any[], any[], any[]];
 
-    // Coverage per route — how many distinct dates each route has
-    const coverageRows = db
-      .prepare("SELECT route, COUNT(DISTINCT search_date) as date_count FROM prices GROUP BY route")
-      .all() as { route: string; date_count: number }[];
+    const totalPrices = prices.length;
+    const totalAlerts = alerts.length;
+    const today = new Date().toISOString().split('T')[0];
+    const alertsToday = alerts.filter((a: any) => a.createdAt && a.createdAt.startsWith(today)).length;
+    const routesTracked = routes.length;
 
-    // Get last check time from the most recent price
-    const lastPrice = db.prepare('SELECT fetched_at FROM prices ORDER BY fetched_at DESC LIMIT 1').get() as { fetched_at: string } | undefined;
-    const lastCheck = lastPrice?.fetched_at || null;
+    // Coverage per route
+    const routeMap: Record<string, Set<string>> = {};
+    for (const p of prices) {
+      if (!routeMap[p.route]) routeMap[p.route] = new Set();
+      routeMap[p.route].add(p.searchDate?.split('T')[0] || '');
+    }
+    const coverage = Object.fromEntries(
+      Object.entries(routeMap).map(([k, v]) => [k, v.size])
+    );
 
-    // Get next scheduled check (cron runs every 60s)
+    // Last check time
+    const lastCheck = prices[0]?.fetchedAt || null;
     const nextCheck = lastCheck
       ? new Date(new Date(lastCheck).getTime() + 60 * 1000).toISOString()
       : null;
@@ -34,10 +43,7 @@ export async function GET() {
       lastCheck,
       nextCheck,
       cronIntervalSeconds: 60,
-      coverage: coverageRows.reduce<Record<string, number>>((acc, row) => {
-        acc[row.route] = row.date_count;
-        return acc;
-      }, {}),
+      coverage,
     });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

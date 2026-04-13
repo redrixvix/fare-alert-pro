@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getUserAirports, setUserAirports, removeUserAirport } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 const VALID_AIRPORTS = [
   'ATL', 'ORD', 'DFW', 'DEN', 'LAX', 'JFK', 'LGA', 'EWR', 'SFO', 'SEA',
@@ -18,8 +18,9 @@ export async function GET() {
   const authUser = await getAuthUser();
   if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const airports = getUserAirports(authUser.userId);
-  return NextResponse.json({ airports });
+  const client = getClient();
+  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
+  return NextResponse.json({ airports: airports || [] });
 }
 
 export async function POST(request: Request) {
@@ -37,7 +38,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'airports must be an array' }, { status: 400 });
   }
 
-  // Validate each airport
   for (const code of body.airports) {
     if (typeof code !== 'string' || code.length !== 3 || !/^[A-Za-z]{3}$/.test(code)) {
       return NextResponse.json(
@@ -53,8 +53,10 @@ export async function POST(request: Request) {
     }
   }
 
-  setUserAirports(authUser.userId, body.airports);
-  return NextResponse.json({ success: true, airports: getUserAirports(authUser.userId) });
+  const client = getClient();
+  await client.mutation('airports:setUserAirports', { userId: authUser.userId, airports: body.airports.map(a => a.toUpperCase()) });
+  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
+  return NextResponse.json({ success: true, airports: airports || [] });
 }
 
 export async function DELETE(request: Request) {
@@ -70,6 +72,8 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: 'Invalid airport code' }, { status: 400 });
   }
 
-  removeUserAirport(authUser.userId, normalized);
-  return NextResponse.json({ success: true, airports: getUserAirports(authUser.userId) });
+  const client = getClient();
+  await client.mutation('airports:removeUserAirport', { userId: authUser.userId, airport: normalized });
+  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
+  return NextResponse.json({ success: true, airports: airports || [] });
 }

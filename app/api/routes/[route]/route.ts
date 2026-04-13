@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { deleteRoute } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export async function DELETE(
   _request: Request,
@@ -12,9 +12,11 @@ export async function DELETE(
   const { route } = await params;
   const decoded = decodeURIComponent(route);
 
-  const ok = deleteRoute(user.userId, decoded);
-  if (!ok) {
-    return NextResponse.json({ success: false, error: 'Route not found or cannot be deleted' }, { status: 404 });
+  try {
+    const client = getClient();
+    await client.mutation('routes:deleteRoute', { userId: user.userId, route: decoded });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Route not found' }, { status: 404 });
   }
-  return NextResponse.json({ success: true });
 }

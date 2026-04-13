@@ -1,61 +1,67 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
+import { v } from 'convex/values';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const db = getDb();
+    const client = getClient();
+    // Get all recent prices from the last 7 days
+    const rows = await client.query('prices:getRecentPrices', { limit: 200 }) as any[];
+    if (!rows || rows.length === 0) {
+      return NextResponse.json({ deals: [], generated_at: new Date().toISOString() });
+    }
 
-    // Get the most recent price per (route, search_date) from the last 7 days for ECONOMY
-    const recentPrices = db.prepare(`
-      SELECT p.route, p.search_date, p.price, p.airline, p.fetched_at,
-             (SELECT AVG(price) FROM prices
-              WHERE route = p.route AND cabin = 'ECONOMY' AND price > 0
-              AND fetched_at >= datetime('now', '-30 days')) as hist_avg
-      FROM prices p
-      WHERE p.cabin = 'ECONOMY'
-        AND p.price > 0
-        AND p.fetched_at >= datetime('now', '-7 days')
-      ORDER BY p.fetched_at DESC
-    `).all() as any[];
+    // Build map: route -> { hist_avg, latest price }
+    const routeStats: Record<string, { histTotal: number; histCount: number; latest: any }> = {};
+    const cutoff30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const cutoff7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    // Deduplicate: keep only the most recent entry per (route, search_date)
-    const seen = new Set<string>();
-    const uniquePrices: any[] = [];
-    for (const row of recentPrices) {
-      const key = `${row.route}::${row.search_date}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        uniquePrices.push(row);
+    for (const row of rows) {
+      const { route, cabin, price, fetchedAt, airline, searchDate } = row;
+      if (cabin !== 'ECONOMY' || price <= 0) continue;
+
+      if (!routeStats[route]) {
+        routeStats[route] = { histTotal: 0, histCount: 0, latest: null };
+      }
+
+      // Accumulate 30-day history for hist_avg
+      if (fetchedAt >= cutoff30 && price > 0) {
+        routeStats[route].histTotal += price;
+        routeStats[route].histCount++;
+      }
+
+      // Keep latest from last 7 days
+      if (fetchedAt >= cutoff7 && (!routeStats[route].latest || fetchedAt > routeStats[route].latest.fetchedAt)) {
+        routeStats[route].latest = { price, airline, fetchedAt, searchDate };
       }
     }
 
-    // Filter: current_price < 50% of 30-day average
-    const errorFares = uniquePrices
-      .filter((row) => row.hist_avg && row.price < 0.5 * row.hist_avg)
-      .map((row) => {
-        const savingsPct = ((row.hist_avg - row.price) / row.hist_avg) * 100;
-        return {
-          route: row.route,
-          date: row.search_date,
-          price: row.price,
-          hist_avg: Math.round(row.hist_avg * 100) / 100,
+    // Filter: price < 50% of 30-day average
+    const errorFares = [];
+    for (const [route, stats] of Object.entries(routeStats)) {
+      if (!stats.latest || stats.histCount === 0) continue;
+      const histAvg = stats.histTotal / stats.histCount;
+      if (stats.latest.price < 0.5 * histAvg) {
+        const savingsPct = ((histAvg - stats.latest.price) / histAvg) * 100;
+        errorFares.push({
+          route,
+          date: stats.latest.searchDate,
+          price: stats.latest.price,
+          hist_avg: Math.round(histAvg * 100) / 100,
           savings_pct: Math.round(savingsPct * 10) / 10,
-          airline: row.airline || 'Unknown',
-          fetched_at: row.fetched_at,
-        };
-      })
-      .sort((a, b) => b.savings_pct - a.savings_pct)
-      .slice(0, 50);
+          airline: stats.latest.airline || 'Unknown',
+          fetched_at: stats.latest.fetchedAt,
+        });
+      }
+    }
+
+    errorFares.sort((a, b) => b.savings_pct - a.savings_pct);
 
     return NextResponse.json(
-      { deals: errorFares, generated_at: new Date().toISOString() },
-      {
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
-        },
-      }
+      { deals: errorFares.slice(0, 50), generated_at: new Date().toISOString() },
+      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
     );
   } catch (err) {
     console.error('[/api/deals] Error:', err);

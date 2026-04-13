@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb, addRoute, deleteRoute } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,12 +15,9 @@ export async function GET() {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const db = getDb();
-  const rows = db
-    .prepare('SELECT r.* FROM user_routes ur JOIN routes r ON ur.route = r.route WHERE ur.user_id = ? AND ur.active = 1')
-    .all(user.userId) as any[];
-
-  return NextResponse.json({ routes: rows });
+  const client = getClient();
+  const userRoutes = await client.query('routes:getUserRoutes', { userId: user.userId }) as any[];
+  return NextResponse.json({ routes: userRoutes || [] });
 }
 
 export async function POST(req: NextRequest) {
@@ -34,17 +31,25 @@ export async function POST(req: NextRequest) {
   const parsed = parseRoute(raw);
   if (!parsed) return NextResponse.json({ error: 'Invalid route format. Use "ABC-DEF" airport codes.' }, { status: 400 });
 
-  const db = getDb();
-  const dbUser = db.prepare('SELECT plan FROM users WHERE id = ?').get(user.userId) as { plan: string } | undefined;
-  if (dbUser?.plan !== 'pro') {
-    const count = db.prepare('SELECT COUNT(*) as cnt FROM user_routes WHERE user_id = ? AND active = 1').get(user.userId) as { cnt: number };
-    if (count.cnt >= 5) {
+  const client = getClient();
+
+  // Check plan limits (free = 5 routes)
+  const userData = await client.query('users:getUserById', { id: user.userId }) as any;
+  const plan = userData?.plan || 'free';
+  if (plan !== 'pro') {
+    const existingRoutes = await client.query('routes:getUserRoutes', { userId: user.userId }) as any[];
+    if ((existingRoutes || []).length >= 5) {
       return NextResponse.json({ error: 'Free plan limited to 5 custom routes. Upgrade to Pro for unlimited.' }, { status: 403 });
     }
   }
 
   try {
-    addRoute(user.userId, parsed.route, parsed.origin, parsed.destination);
+    await client.mutation('routes:addRoute', {
+      userId: user.userId,
+      route: parsed.route,
+      origin: parsed.origin,
+      destination: parsed.destination
+    });
     return NextResponse.json({ success: true, route: parsed.route });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });
@@ -59,10 +64,11 @@ export async function DELETE(req: NextRequest) {
   const route = searchParams.get('route');
   if (!route) return NextResponse.json({ error: 'route is required' }, { status: 400 });
 
-  const db = getDb();
-  const row = db.prepare('SELECT * FROM user_routes WHERE route = ? AND user_id = ? AND active = 1').get(route, user.userId);
-  if (!row) return NextResponse.json({ error: 'Route not found' }, { status: 404 });
-
-  const ok = deleteRoute(user.userId, route);
-  return NextResponse.json({ success: ok });
+  try {
+    const client = getClient();
+    await client.mutation('routes:deleteRoute', { userId: user.userId, route });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'Route not found' }, { status: 404 });
+  }
 }

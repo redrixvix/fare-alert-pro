@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-jwt-secret-2024-secure';
 
 export async function POST(request: Request) {
   try {
@@ -14,19 +14,22 @@ export async function POST(request: Request) {
       const chatId = body.message.chat.id;
       const username = body.message.chat.username || null;
       const text = body.message.text;
-      const params = text.split(' ')[1]; // e.g. /start token_123
+      const params = text.split(' ')[1];
 
       if (params?.startsWith('link_')) {
         // User clicked a link from settings — extract and verify token
         const token = params.replace('link_', '');
         try {
           const payload = jwt.verify(token, JWT_SECRET) as { userId: number };
-          const db = getDb();
-          db.prepare(
-            'UPDATE users SET telegram_chat_id = ?, telegram_username = ? WHERE id = ?'
-          ).run(String(chatId), username, payload.userId);
 
-          // Send confirmation
+          // Update user's telegram_chat_id via Convex mutation
+          const client = getClient();
+          await client.mutation('users:linkTelegramChat', {
+            userId: payload.userId,
+            chatId: String(chatId),
+            username: username,
+          });
+
           if (botToken) {
             await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
               method: 'POST',
@@ -39,7 +42,6 @@ export async function POST(request: Request) {
             });
           }
         } catch {
-          // Invalid token
           if (botToken) {
             await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
               method: 'POST',
@@ -52,7 +54,6 @@ export async function POST(request: Request) {
           }
         }
       } else {
-        // Regular /start — no linking, just greet
         if (botToken) {
           await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
             method: 'POST',

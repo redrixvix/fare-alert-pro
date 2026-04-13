@@ -1,21 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb } from '@/lib/db';
-
-interface PricePoint {
-  date: string;
-  price: number;
-  avg_30: number;
-}
+import { getClient } from '@/lib/db-prod';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ route: string }> }
 ) {
   const user = await getAuthUser();
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { route: routeParam } = await params;
   const route = decodeURIComponent(routeParam);
@@ -27,70 +19,43 @@ export async function GET(
   const validCabins = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
   const cabinParam = validCabins.includes(cabin) ? cabin : 'ECONOMY';
 
-  const db = getDb();
-  const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
-    .toISOString()
-    .split('T')[0];
+  const client = getClient();
+  const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-  // Fetch all prices for the route+cabin within the window
-  const rows = db.prepare(`
-    SELECT search_date, price
-    FROM prices
-    WHERE route = ? AND cabin = ? AND search_date >= ? AND price > 0
-    ORDER BY search_date ASC
-  `).all(route, cabinParam, cutoffDate) as { search_date: string; price: number }[];
+  const rows = await client.query('prices:getPriceHistory', { route, limit: 500 }) as any[];
+  const filtered = rows.filter((r: any) =>
+    r.cabin === cabinParam && r.searchDate >= cutoffDate && r.price > 0
+  ).sort((a: any, b: any) => a.searchDate.localeCompare(b.searchDate));
 
-  if (!rows.length) {
+  if (!filtered.length) {
     return NextResponse.json({
-      route,
-      cabin: cabinParam,
-      days,
-      data: [],
+      route, cabin: cabinParam, days, data: [],
       stats: { min: 0, max: 0, avg: 0, currentVsAvg: 0, trend: 'flat' },
     });
   }
 
-  // Build date -> price map
-  const priceByDate: Record<string, number> = {};
-  for (const row of rows) {
-    priceByDate[row.search_date] = row.price;
-  }
-
   // Compute 30-day rolling average for each date
-  const sortedDates = Object.keys(priceByDate).sort();
-  const data: PricePoint[] = [];
+  const data: { date: string; price: number; avg_30: number }[] = [];
+  const sorted = filtered;
 
-  for (const date of sortedDates) {
-    const windowStart = new Date(new Date(date).getTime() - 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0];
-
-    // Collect prices in the 30-day window ending on this date
-    const windowPrices: number[] = [];
-    for (const d of sortedDates) {
-      if (d >= windowStart && d <= date) {
-        windowPrices.push(priceByDate[d]);
-      }
-    }
-
-    const avg = windowPrices.length
-      ? windowPrices.reduce((a, b) => a + b, 0) / windowPrices.length
-      : priceByDate[date];
-
-    data.push({ date, price: priceByDate[date], avg_30: Math.round(avg * 100) / 100 });
+  for (let i = 0; i < sorted.length; i++) {
+    const date = sorted[i].searchDate;
+    const price = sorted[i].price;
+    const windowStart = new Date(new Date(date).getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const windowPrices = sorted
+      .filter((r: any) => r.searchDate >= windowStart && r.searchDate <= date)
+      .map((r: any) => r.price);
+    const avg = windowPrices.length ? windowPrices.reduce((a: number, b: number) => a + b, 0) / windowPrices.length : price;
+    data.push({ date: date.split('T')[0], price, avg_30: Math.round(avg * 100) / 100 });
   }
 
-  // Stats
   const prices = data.map(d => d.price);
   const min = Math.min(...prices);
   const max = Math.max(...prices);
   const avg = prices.reduce((a, b) => a + b, 0) / prices.length;
-
-  // Current vs avg: compare last price to last avg
   const last = data[data.length - 1];
   const currentVsAvg = last ? Math.round(((last.price - last.avg_30) / last.avg_30) * 1000) / 10 : 0;
 
-  // Trend: compare last 3 prices to previous 3
   let trend: 'up' | 'down' | 'flat' = 'flat';
   if (data.length >= 6) {
     const recent = data.slice(-3).map(d => d.price);
@@ -102,17 +67,5 @@ export async function GET(
     else if (diff < -0.03) trend = 'down';
   }
 
-  return NextResponse.json({
-    route,
-    cabin: cabinParam,
-    days,
-    data,
-    stats: {
-      min: Math.round(min),
-      max: Math.round(max),
-      avg: Math.round(avg),
-      currentVsAvg,
-      trend,
-    },
-  });
+  return NextResponse.json({ route, cabin: cabinParam, days, data, stats: { min: Math.round(min), max: Math.round(max), avg: Math.round(avg), currentVsAvg, trend } });
 }

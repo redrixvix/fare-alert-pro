@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export async function GET(
   request: Request,
@@ -15,42 +15,30 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const months = Math.min(3, Math.max(1, parseInt(searchParams.get('months') ?? '1', 10)));
 
-  const db = getDb();
-
-  const routeRecord = db.prepare('SELECT route FROM routes WHERE route=?').get(route);
-  if (!routeRecord) {
-    return NextResponse.json({ error: 'not_found' }, { status: 404 });
-  }
-
-  const today = new Date();
-  const todayStr = today.toISOString().split('T')[0];
+  const client = getClient();
+  const todayStr = new Date().toISOString().split('T')[0];
   const endDate = new Date(Date.now() + months * 30 * 24 * 60 * 60 * 1000)
     .toISOString().split('T')[0];
 
-  const rows = db.prepare(`
-    SELECT search_date, MIN(price) as min_price
-    FROM prices
-    WHERE route = ?
-      AND cabin = 'ECONOMY'
-      AND price > 0
-      AND search_date >= ?
-      AND search_date <= ?
-    GROUP BY search_date
-    ORDER BY search_date ASC
-  `).all(route, todayStr, endDate) as { search_date: string; min_price: number }[];
+  const rows = await client.query('prices:getCheapestDates', {
+    route,
+    startDate: todayStr,
+    endDate,
+    limit: 500
+  }) as any[];
 
-  if (rows.length === 0) {
+  if (!rows || rows.length === 0) {
     return NextResponse.json({ dates: [], minPrice: null, maxPrice: null, avgPrice: null });
   }
 
-  const minPrice = Math.min(...rows.map(r => r.min_price));
-  const maxPrice = Math.max(...rows.map(r => r.min_price));
-  const avgPrice = rows.reduce((sum, r) => sum + r.min_price, 0) / rows.length;
+  const minPrice = Math.min(...rows.map((r: any) => r.price));
+  const maxPrice = Math.max(...rows.map((r: any) => r.price));
+  const avgPrice = rows.reduce((sum: number, r: any) => sum + r.price, 0) / rows.length;
 
-  const dates = rows.map(r => ({
-    date: r.search_date,
-    price: r.min_price,
-    is_cheapest: r.min_price === minPrice,
+  const dates = rows.map((r: any) => ({
+    date: r.searchDate.split('T')[0],
+    price: r.price,
+    is_cheapest: r.price === minPrice,
   }));
 
   return NextResponse.json({ dates, minPrice, maxPrice, avgPrice });

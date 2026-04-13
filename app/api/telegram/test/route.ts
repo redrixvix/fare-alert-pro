@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export async function POST() {
   try {
@@ -15,21 +15,23 @@ export async function POST() {
       });
     }
 
-    if (!user.telegram_chat_id) {
+    // Fetch full user data including telegram_chat_id from Convex
+    const client = getClient();
+    const userData = await client.query('users:getUserById', { id: user.userId }) as any;
+    if (!userData || !userData.telegram_chat_id) {
       return NextResponse.json({
         success: false,
         error: 'No Telegram chat linked. Start a chat with @FareAlertProBot first.',
       });
     }
 
-    // Send a test message
     const telegramRes = await fetch(
       `https://api.telegram.org/bot${botToken}/sendMessage`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: user.telegram_chat_id,
+          chat_id: userData.telegram_chat_id,
           text: `✅ FareAlertPro connected! You'll receive error fare alerts here.\n\nYour account: ${user.email}`,
           parse_mode: 'Markdown',
         }),

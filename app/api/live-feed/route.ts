@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getRecentPrices } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export const dynamic = 'force-dynamic';
 
-export function GET() {
-  const prices = getRecentPrices(20);
+export async function GET() {
+  const client = getClient();
+  const prices = await client.query('prices:getRecentPrices', { limit: 20 }) as any[];
   return NextResponse.json({ prices });
 }

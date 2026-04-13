@@ -1,36 +1,42 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export const dynamic = 'force-dynamic';
 
-// Returns the cheapest current prices across all routes, grouped by cabin
 export async function GET() {
   try {
-    const db = getDb();
+    const client = getClient();
+    const rows = await client.query('prices:getRecentPrices', { limit: 1000 }) as any[];
+    if (!rows || rows.length === 0) return NextResponse.json({});
 
-    // For each cabin class, find the route with the lowest current price
-    // (most recent price per route per cabin)
     const cabins = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
     const deals: Record<string, { route: string; price: number; airline: string | null; days_out: number }[]> = {};
 
     for (const cabin of cabins) {
-      const rows = db.prepare(`
-        WITH latest AS (
-          SELECT route, price, airline, search_date,
-            ROW_NUMBER() OVER (PARTITION BY route ORDER BY fetched_at DESC) as rn,
-            CAST(julianday(search_date) - julianday('now') AS INTEGER) as days_out
-          FROM prices
-          WHERE cabin = ? AND price > 0 AND search_date >= date('now')
-        )
-        SELECT route, price, airline, days_out
-        FROM latest
-        WHERE rn = 1 AND days_out >= 0
-        ORDER BY price ASC
-        LIMIT 5
-      `).all(cabin) as { route: string; price: number; airline: string | null; days_out: number }[];
+      const cabinRows = rows.filter((r: any) => r.cabin === cabin && r.price > 0 && r.searchDate);
+      // Get latest price per route
+      const routeMap: Record<string, any> = {};
+      for (const row of cabinRows) {
+        const existing = routeMap[row.route];
+        if (!existing || new Date(row.fetchedAt) > new Date(existing.fetchedAt)) {
+          routeMap[row.route] = row;
+        }
+      }
+      const sorted = Object.values(routeMap)
+        .filter((r: any) => {
+          const daysOut = Math.floor((new Date(r.searchDate).getTime() - Date.now()) / 86400000);
+          return daysOut >= 0;
+        })
+        .sort((a: any, b: any) => a.price - b.price)
+        .slice(0, 5);
 
       const cabinKey = cabin === 'ECONOMY' ? 'y' : cabin === 'PREMIUM_ECONOMY' ? 'pe' : cabin === 'BUSINESS' ? 'j' : 'f';
-      deals[cabinKey] = rows;
+      deals[cabinKey] = sorted.map((r: any) => ({
+        route: r.route,
+        price: r.price,
+        airline: r.airline || null,
+        days_out: Math.floor((new Date(r.searchDate).getTime() - Date.now()) / 86400000),
+      }));
     }
 
     return NextResponse.json(deals);

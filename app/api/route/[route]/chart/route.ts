@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getDb } from '@/lib/db';
+import { getClient } from '@/lib/db-prod';
 
 export async function GET(
   _request: Request,
@@ -12,31 +12,18 @@ export async function GET(
   const { route } = await params;
   const decoded = decodeURIComponent(route);
 
-  const db = getDb();
+  const client = getClient();
+  const rows = await client.query('prices:getPriceHistory', { route: decoded, limit: 500 }) as any[];
 
-  // Check if route exists
-  const routeRecord = db.prepare('SELECT route FROM routes WHERE route=?').get(decoded);
-  if (!routeRecord) {
-    return NextResponse.json({ error: 'not_found' }, { status: 404 });
-  }
-
-  // Get all prices for this route in the last 90 days
-  const rows = db.prepare(`
-    SELECT search_date, cabin, price
-    FROM prices
-    WHERE route = ? AND fetched_at > datetime('now', '-90 days')
-    ORDER BY search_date ASC
-  `).all(decoded) as any[];
-
-  // Pivot into chart format: one row per date, columns for each cabin
+  // Group by date and pivot by cabin
   const byDate: Record<string, Record<string, number>> = {};
   for (const row of rows) {
-    if (!byDate[row.search_date]) byDate[row.search_date] = {};
+    const date = row.searchDate.split('T')[0];
+    if (!byDate[date]) byDate[date] = {};
     const key = row.cabin === 'ECONOMY' ? 'y'
       : row.cabin === 'PREMIUM_ECONOMY' ? 'pe'
-      : row.cabin === 'BUSINESS' ? 'j'
-      : 'f';
-    byDate[row.search_date][key] = row.price;
+      : row.cabin === 'BUSINESS' ? 'j' : 'f';
+    byDate[date][key] = row.price;
   }
 
   const data = Object.entries(byDate)
