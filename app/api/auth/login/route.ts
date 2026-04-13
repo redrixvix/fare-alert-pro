@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { ConvexHttpClient } from 'convex/browser';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-secret-change-in-production';
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
 
 export async function POST(request: Request) {
   try {
@@ -13,30 +11,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const db = getDb();
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email) as any;
+    const client = new ConvexHttpClient(convexUrl!);
 
-    if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    let result;
+    try {
+      result = await client.mutation('users:signIn' as any, { email, password });
+    } catch (e: any) {
+      if (e.message?.includes('Invalid email or password')) {
+        return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      }
+      throw e;
     }
-
-    const valid = await bcrypt.compare(password, user.password_hash);
-    if (!valid) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-    }
-
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '30d' }
-    );
 
     const response = NextResponse.json({
       success: true,
-      user: { id: user.id, email: user.email, plan: user.plan, telegram_chat_id: user.telegram_chat_id },
+      user: { id: result.userId, email: result.email, plan: result.plan },
     });
 
-    response.cookies.set('auth_token', token, {
+    response.cookies.set('auth_token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -46,6 +38,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('Login error:', e.message);
+    return NextResponse.json({ error: e.message || 'Login failed' }, { status: 500 });
   }
 }

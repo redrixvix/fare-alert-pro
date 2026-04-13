@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { ConvexHttpClient } from 'convex/browser';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-secret-change-in-production';
+const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
 
 export async function POST(request: Request) {
   try {
@@ -22,33 +20,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    const db = getDb();
+    const client = new ConvexHttpClient(convexUrl!);
 
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
-    if (existing) {
-      return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
+    let result;
+    try {
+      result = await client.mutation('users:signUp' as any, { email, password });
+    } catch (e: any) {
+      if (e.message?.includes('already registered')) {
+        return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
+      }
+      throw e;
     }
-
-    const password_hash = await bcrypt.hash(password, 12);
-
-    const result = db.prepare(
-      'INSERT INTO users (email, password_hash, plan) VALUES (?, ?, ?)'
-    ).run(email, password_hash, 'free');
-
-    const userId = result.lastInsertRowid;
-
-    const token = jwt.sign(
-      { userId, email },
-      JWT_SECRET,
-      { expiresIn: '30d' }
-    );
 
     const response = NextResponse.json({
       success: true,
-      user: { id: userId, email, plan: 'free', telegram_chat_id: null },
+      user: { id: result.userId, email: result.email, plan: result.plan },
     });
 
-    response.cookies.set('auth_token', token, {
+    response.cookies.set('auth_token', result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -58,7 +47,7 @@ export async function POST(request: Request) {
 
     return response;
   } catch (e: any) {
-    console.error('Signup error:', e.message, e.stack);
-    return NextResponse.json({ error: e.message }, { status: 500 });
+    console.error('Signup error:', e.message);
+    return NextResponse.json({ error: e.message || 'Signup failed' }, { status: 500 });
   }
 }
