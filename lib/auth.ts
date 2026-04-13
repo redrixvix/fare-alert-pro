@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { ConvexHttpClient } from 'convex/browser';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-secret-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-jwt-secret-2024-secure';
 const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL!;
 
 export interface AuthUser {
@@ -23,7 +23,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
     try {
       payload = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
     } catch {
-      return null; // Invalid token
+      return null;
     }
 
     // Fetch user from Convex
