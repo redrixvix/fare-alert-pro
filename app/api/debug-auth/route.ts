@@ -25,7 +25,7 @@ export async function GET() {
     const client = getClient();
     let user;
     try {
-      user = await (client.query as any)('users:getUserById', { id: payload.userId });
+      user = await (client.query as any)('users:getUserById', { userId: payload.userId });
     } catch (e) {
       return NextResponse.json({ step: 'convex_query_failed', error: e.message, token: payload });
     }

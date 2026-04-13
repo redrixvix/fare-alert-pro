@@ -34,7 +34,7 @@ export async function POST(req) {
 
   const client = getClient();
 
-  const userData = await client.query('users:getUserById', { id: user.userId }) as any;
+  const userData = await (client.query as any)('users:getUserById', { userId: user.userId });
   const plan = userData?.plan || 'free';
   if (plan !== 'pro') {
     const existingRoutes = await client.query('routes:getUserRoutes', { userId: user.userId }) as any[];

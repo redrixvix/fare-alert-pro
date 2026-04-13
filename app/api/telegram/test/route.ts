@@ -14,7 +14,7 @@ export async function POST() {
     }
 
     const client = getClient();
-    const userData = await client.query('users:getUserById', { id: user.userId }) as any;
+    const userData = await (client.query as any)('users:getUserById', { userId: user.userId }); as any;
     if (!userData || !userData.telegram_chat_id) {
       return NextResponse.json({ success: false, error: 'No Telegram chat linked. Start a chat with @FareAlertProBot first.' });
     }
