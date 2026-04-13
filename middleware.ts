@@ -9,7 +9,7 @@ const PUBLIC_PREFIXES = ['/api/auth', '/_next', '/favicon'];
 const ALLOWED_SERVICE_PATHS = [
   '/api/check-prices', '/api/status', '/api/prices-by-date', '/api/seed',
   '/api/best-deals', '/api/routes', '/api/debug-auth',
-  '/api/live-feed', '/api/debug-db', '/api/alerts/history',
+  '/api/live-feed', '/api/debug-db', '/api/debug-cookie', '/api/alerts/history',
 ];
 
 export function middleware(request: NextRequest) {
