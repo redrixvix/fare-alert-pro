@@ -1,32 +1,33 @@
 // @ts-nocheck
-// Convex-compatible auth — uses Web Crypto API (WASM-compatible)
-// Does NOT use bcryptjs or jsonwebtoken (Node.js specific)
-
-const JWT_SECRET = process.env.JWT_SECRET || "fare-alert-pro-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || "fare-alert-pro-jwt-secret-2024-secure";
+const TOKEN_EXPIRY_DAYS = 30;
 const SALT_LENGTH = 16;
 const ITERATIONS = 100000;
 const KEY_LENGTH = 256;
-const TOKEN_EXPIRY_DAYS = 7;
 
-// --- Base64URL encoding ---
+// Correct base64url encoding using btoa
 function base64UrlEncode(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++) {
+  for (let i = 0; i < bytes.length; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
 }
 
+// Proper base64url string encoding
+function base64UrlEncodeStr(s: string): string {
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
 function base64UrlDecode(str: string): Uint8Array {
-  // Replace URL-safe chars back to standard base64
-  const base64 = str.replace(/-/g, "+").replace(/_/g, "/");
-  // Add padding if needed
-  const padded = base64 + "=".repeat((4 - base64.length % 4) % 4);
+  // Add padding if needed, then decode
+  let padded = str.replace(/-/g, "+").replace(/_/g, "/");
+  const padding = (4 - (padded.length % 4)) % 4;
+  padded += "=".repeat(padding);
   return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
 }
 
-// --- Password Hashing using PBKDF2 (Web Crypto API) ---
 async function pbkdf2Hash(password: string, salt: Uint8Array): Promise<string> {
   const keyMaterial = await crypto.subtle.importKey(
     "raw",
@@ -51,7 +52,6 @@ async function pbkdf2Hash(password: string, salt: Uint8Array): Promise<string> {
 export async function hashPassword(password: string): Promise<string> {
   const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
   const hash = await pbkdf2Hash(password, salt);
-  // Store salt as base64url, then "." then hash
   const saltB64 = base64UrlEncode(salt.buffer);
   return saltB64 + "." + hash;
 }
@@ -68,7 +68,6 @@ export async function verifyPassword(password: string, stored: string): Promise<
   }
 }
 
-// --- JWT using Web Crypto API ---
 async function importSecretKey(secret: string): Promise<CryptoKey> {
   const encoded = new TextEncoder().encode(secret);
   return crypto.subtle.importKey(
@@ -76,23 +75,14 @@ async function importSecretKey(secret: string): Promise<CryptoKey> {
     encoded,
     { name: "HMAC", hash: "SHA-256" },
     false,
-    ["sign"]
+    ["sign", "verify"]
   );
 }
 
-async function base64UrlEncodeStr(s: string): Promise<string> {
-  const bytes = new TextEncoder().encode(s);
-  let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
-}
-
 export async function signToken(userId: number, email: string): Promise<string> {
-  const header = await base64UrlEncodeStr(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const header = base64UrlEncodeStr(JSON.stringify({ alg: "HS256", typ: "JWT" }));
   const exp = Math.floor(Date.now() / 1000) + TOKEN_EXPIRY_DAYS * 24 * 60 * 60;
-  const payload = await base64UrlEncodeStr(JSON.stringify({ userId, email, exp }));
+  const payload = base64UrlEncodeStr(JSON.stringify({ userId, email, exp }));
   const key = await importSecretKey(JWT_SECRET);
   const sigInput = new TextEncoder().encode(`${header}.${payload}`);
   const sig = await crypto.subtle.sign("HMAC", key, sigInput);
@@ -110,7 +100,10 @@ export async function verifyToken(token: string): Promise<{ userId: number; emai
     const sigBytes = base64UrlDecode(signature);
     const valid = await crypto.subtle.verify("HMAC", key, sigBytes, sigInput);
     if (!valid) return null;
-    const decoded = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    // Decode payload - add padding if needed
+    let padded = payload.replace(/-/g, "+").replace(/_/g, "/");
+    while (padded.length % 4) padded += "=";
+    const decoded = JSON.parse(atob(padded));
     if (decoded.exp < Math.floor(Date.now() / 1000)) return null;
     return { userId: decoded.userId, email: decoded.email };
   } catch {
