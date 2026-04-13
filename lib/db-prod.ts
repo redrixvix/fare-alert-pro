@@ -116,12 +116,12 @@ export function getUserRoutes(userId?: number) {
 
 export function addRoute(userId: number, route: string, origin: string, destination: string) {
   const client = getClient();
-  return client.mutation('routes:addRoute', { userId, route, origin, destination });
+  return (client.mutation as any)('routes:addRoute', { userId, route, origin, destination });
 }
 
 export function deleteRoute(userId: number, route: string) {
   const client = getClient();
-  return client.mutation('routes:deleteRoute', { userId, route });
+  return (client.mutation as any)('routes:deleteRoute', { userId, route });
 }
 
 export function getRecentAlerts(limit = 20) {
@@ -145,7 +145,7 @@ export function insertAlert(
   userId?: number
 ) {
   const client = getClient();
-  return client.mutation('alerts:insertAlert', {
+  return (client.mutation as any)('alerts:insertAlert', {
     route, cabin, alertDate, price, normalPrice, savingsPct, airline, userId
   });
 }
@@ -167,7 +167,7 @@ export function insertPrice(
   departureAirport?: string | null
 ) {
   const client = getClient();
-  return client.mutation('prices:insertPriceRecord', {
+  return (client.mutation as any)('prices:insertPriceRecord', {
     route, cabin, searchDate, price, currency, airline,
     durationMinutes: durationMin ?? 0, stops, departureAirport
   });
@@ -175,7 +175,7 @@ export function insertPrice(
 
 export function updateRoutePrice(route: string, cabin: string, price: number, currency: string) {
   const client = getClient();
-  return client.mutation('prices:updateRoutePrice', { route, cabin, price, currency });
+  return (client.mutation as any)('prices:updateRoutePrice', { route, cabin, price, currency });
 }
 
 export function getHistoricalAvg(route: string, cabin: string = 'ECONOMY'): Promise<number | null> {
@@ -204,12 +204,12 @@ export function addPriceWatch(
   targetPrice: number
 ) {
   const client = getClient();
-  return client.mutation('watches:addWatch', { userId, route, cabin, watchDate, targetPrice });
+  return (client.mutation as any)('watches:addWatch', { userId, route, cabin, watchDate, targetPrice });
 }
 
 export function deletePriceWatch(id: number, userId: number) {
   const client = getClient();
-  return client.mutation('watches:deleteWatch', { id, userId });
+  return (client.mutation as any)('watches:deleteWatch', { id, userId });
 }
 
 export function getMatchingWatches(route: string, cabin: string, watchDate: string) {
@@ -219,7 +219,7 @@ export function getMatchingWatches(route: string, cabin: string, watchDate: stri
 
 export function deactivateWatch(id: number) {
   const client = getClient();
-  return client.mutation('watches:deleteWatch', { id, userId: -1 });
+  return (client.mutation as any)('watches:deleteWatch', { id, userId: -1 });
 }
 
 export function getUserAirports(userId: number) {
@@ -229,17 +229,17 @@ export function getUserAirports(userId: number) {
 
 export function setUserAirports(userId: number, airports: string[]) {
   const client = getClient();
-  return client.mutation('airports:setUserAirports', { userId, airports });
+  return (client.mutation as any)('airports:setUserAirports', { userId, airports });
 }
 
 export function addUserAirport(userId: number, airport: string) {
   const client = getClient();
-  return client.mutation('airports:addUserAirport', { userId, airport });
+  return (client.mutation as any)('airports:addUserAirport', { userId, airport });
 }
 
 export function removeUserAirport(userId: number, airport: string) {
   const client = getClient();
-  return client.mutation('airports:removeUserAirport', { userId, airport });
+  return (client.mutation as any)('airports:removeUserAirport', { userId, airport });
 }
 
 export function getPriceTrend(route: string, cabin: string = 'ECONOMY'): Promise<number | null> {
