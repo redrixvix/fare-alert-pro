@@ -58,7 +58,7 @@ export async function POST(request) {
       return NextResponse.json({ success: false, error: 'Route already tracked' }, { status: 409 });
     }
 
-    await client.mutation('routes:addRoute', { userId: user.userId, route, origin: o, destination: d });
+    await (client.mutation as any)('routes:addRoute', { userId: user.userId, route, origin: o, destination: d });
     return NextResponse.json({ success: true, route });
   } catch (err) {
     console.error('Error adding route:', err);

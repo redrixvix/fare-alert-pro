@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
           // Update user's telegram_chat_id via Convex mutation
           const client = getClient();
-          await client.mutation('users:linkTelegramChat', {
+          await (client.mutation as any)('users:linkTelegramChat', {
             userId: payload.userId,
             chatId: String(chatId),
             username: username,

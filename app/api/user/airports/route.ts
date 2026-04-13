@@ -43,7 +43,7 @@ export async function POST(request) {
   }
 
   const client = getClient();
-  await client.mutation('airports:setUserAirports', { userId: authUser.userId, airports: body.airports.map(a => a.toUpperCase()) });
+  await (client.mutation as any)('airports:setUserAirports', { userId: authUser.userId, airports: body.airports.map(a => a.toUpperCase()) });
   const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
   return NextResponse.json({ success: true, airports: airports || [] });
 }
@@ -60,7 +60,7 @@ export async function DELETE(request) {
   if (!isValidAirport(normalized)) return NextResponse.json({ error: 'Invalid airport code' }, { status: 400 });
 
   const client = getClient();
-  await client.mutation('airports:removeUserAirport', { userId: authUser.userId, airport: normalized });
+  await (client.mutation as any)('airports:removeUserAirport', { userId: authUser.userId, airport: normalized });
   const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
   return NextResponse.json({ success: true, airports: airports || [] });
 }

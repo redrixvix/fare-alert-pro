@@ -12,7 +12,7 @@ export async function POST() {
 
     const client = new ConvexHttpClient(convexUrl);
     // @ts-ignore - ConvexHttpClient accepts string function names
-    await client.mutation('telegram:disconnectTelegram', { userId: user.userId });
+    await (client.mutation as any)('telegram:disconnectTelegram', { userId: user.userId });
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

@@ -44,7 +44,7 @@ export async function POST(req) {
   }
 
   try {
-    await client.mutation('routes:addRoute', {
+    await (client.mutation as any)('routes:addRoute', {
       userId: user.userId, route: parsed.route, origin: parsed.origin, destination: parsed.destination
     });
     return NextResponse.json({ success: true, route: parsed.route });
@@ -63,7 +63,7 @@ export async function DELETE(req) {
 
   try {
     const client = getClient();
-    await client.mutation('routes:deleteRoute', { userId: user.userId, route });
+    await (client.mutation as any)('routes:deleteRoute', { userId: user.userId, route });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Route not found' }, { status: 404 });

@@ -70,7 +70,7 @@ export async function POST(request) {
 
   try {
     const client = getClient();
-    const result = await client.mutation('watches:addWatch', {
+    const result = await (client.mutation as any)('watches:addWatch', {
       userId: user.userId, route, cabin, watchDate, targetPrice,
     });
 
@@ -106,7 +106,7 @@ export async function DELETE(request) {
 
   try {
     const client = getClient();
-    await client.mutation('watches:deleteWatch', { id, userId: user.userId });
+    await (client.mutation as any)('watches:deleteWatch', { id, userId: user.userId });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Watch not found' }, { status: 404 });

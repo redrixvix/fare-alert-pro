@@ -12,7 +12,7 @@ export async function DELETE(_request, { params }) {
 
   try {
     const client = getClient();
-    await client.mutation('routes:deleteRoute', { userId: user.userId, route: decoded });
+    await (client.mutation as any)('routes:deleteRoute', { userId: user.userId, route: decoded });
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Route not found' }, { status: 404 });
