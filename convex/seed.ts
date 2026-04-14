@@ -19,7 +19,7 @@ export const seedAdminUser = action({
       return { success: false, error: 'Unauthorized' };
     }
     const existing = await ctx
-      .table('users')
+      .db.query('users')
       .filter((row) => row.eq(row.field('email'), args.email.toLowerCase()))
       .first();
     if (existing) {

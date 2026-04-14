@@ -27,7 +27,7 @@ export const getAlertsHistory = query({
     }
 
     const alerts = await ctx
-      .table("alerts")
+      .db.query("alerts")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
       .orderBy("created_at", "desc")
       .collect();
@@ -104,7 +104,7 @@ export const insertAlert = mutation({
   handler: async (ctx, args) => {
     // Check for duplicate
     const existing = await ctx
-      .table("alerts")
+      .db.query("alerts")
       .withIndex("by_route_cabin_date", (q) =>
         q.eq("route", args.route).eq("cabin", args.cabin).eq("alert_date", args.alert_date)
       )

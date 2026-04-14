@@ -14,7 +14,7 @@ export const linkTelegramChat = mutation({
   handler: async (ctx, args) => {
     // Unlink any existing user with this chat_id
     const existing = await ctx
-      .table("users")
+      .db.query("users")
       .filter((row) => row.eq(row.field("telegram_chat_id"), args.chatId))
       .first();
 

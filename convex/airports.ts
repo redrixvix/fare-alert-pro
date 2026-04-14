@@ -22,7 +22,7 @@ export const getUserAirports = query({
     if (!userId) return [];
 
     const rows = await ctx
-      .table("user_airports")
+      .db.query("user_airports")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
       .collect();
 
@@ -44,7 +44,7 @@ export const setUserAirports = mutation({
 
     // Delete existing
     const existing = await ctx
-      .table("user_airports")
+      .db.query("user_airports")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
       .collect();
 
@@ -72,7 +72,7 @@ export const addUserAirport = mutation({
     const code = args.airport.toUpperCase();
     // Check not already exists
     const existing = await ctx
-      .table("user_airports")
+      .db.query("user_airports")
       .withIndex("by_user", (q) => q.eq("user_id", args.userId))
       .filter((row) => row.eq(row.field("airport"), code))
       .first();
@@ -93,7 +93,7 @@ export const removeUserAirport = mutation({
   handler: async (ctx, args) => {
     const code = args.airport.toUpperCase();
     const row = await ctx
-      .table("user_airports")
+      .db.query("user_airports")
       .withIndex("by_user", (q) => q.eq("user_id", args.userId))
       .filter((row) => row.eq(row.field("airport"), code))
       .first();

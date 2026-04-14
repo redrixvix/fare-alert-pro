@@ -6,6 +6,7 @@ const PUBLIC_PREFIXES = ['/api/auth', '/_next', '/favicon'];
 const ALLOWED_SERVICE_PATHS = [
   '/api/check-prices', '/api/status', '/api/prices-by-date', '/api/seed',
   '/api/best-deals', '/api/routes', '/api/live-feed', '/api/alerts/history', '/api/debug-test',
+  '/api/test-convex',
 ];
 
 export function middleware(request: NextRequest) {

@@ -14,12 +14,17 @@ export async function getAuthUser(): Promise<AuthUser | null> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get('auth_token')?.value;
-    if (!token) return null;
+    if (!token) {
+      console.error('[auth] No token found in cookies');
+      return null;
+    }
 
     let payload: { userId: number; email: string };
     try {
       payload = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
-    } catch {
+      console.error('[auth] Token verified, payload:', JSON.stringify(payload));
+    } catch (e: any) {
+      console.error('[auth] JWT verify failed:', e.message);
       return null;
     }
 
@@ -30,7 +35,8 @@ export async function getAuthUser(): Promise<AuthUser | null> {
       plan: 'free',  // Default, will be refreshed from Convex client-side
       telegram_chat_id: null,
     };
-  } catch {
+  } catch (e: any) {
+    console.error('[auth] Unexpected error in getAuthUser:', e.message, e.stack);
     return null;
   }
 }

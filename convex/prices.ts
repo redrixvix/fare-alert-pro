@@ -31,7 +31,7 @@ export const getPricesByRoute = query({
   handler: async (ctx, args) => {
     const cabin = args.cabin ?? "ECONOMY";
     let rows = await ctx
-      .table("prices")
+      .db.query("prices")
       .withIndex("by_route_cabin", (q) => q.eq("route", args.route).eq("cabin", cabin))
       .collect();
     if (args.startDate) {
@@ -59,7 +59,7 @@ export const getCheapestDates = query({
       .split("T")[0];
 
     const rows = await ctx
-      .table("prices")
+      .db.query("prices")
       .withIndex("by_route_date", (q) =>
         q.eq("route", args.route).gte("search_date", todayStr).lte("search_date", endDate)
       )
@@ -110,7 +110,7 @@ export const getPriceHistory = query({
       .split("T")[0];
 
     const prices = await ctx
-      .table("prices")
+      .db.query("prices")
       .withIndex("by_route_cabin", (q) => q.eq("route", args.route).eq("cabin", cabin))
       .filter((row) => row.gte(row.field("search_date"), cutoff))
       .collect();
@@ -163,7 +163,7 @@ export const getBestDeals = query({
       .split("T")[0];
 
     const recentPrices = await ctx
-      .table("prices")
+      .db.query("prices")
       .filter((row) => row.gt(row.field("price"), 0))
       .filter((row) => row.gte(row.field("fetched_at"), sevenDaysAgo))
       .collect();
@@ -188,7 +188,7 @@ export const getBestDeals = query({
         .toISOString()
         .split("T")[0];
       const histRows = await ctx
-        .table("prices")
+        .db.query("prices")
         .withIndex("by_route_cabin", (q) => q.eq("route", p.route).eq("cabin", p.cabin))
         .filter((row) => row.gt(row.field("price"), 0))
         .filter((row) => row.gte(row.field("fetched_at"), thirtyDaysAgo))
@@ -220,7 +220,7 @@ export const getPricesByDate = query({
   args: { date: v.string() },
   handler: async (ctx, args) => {
     const rows = await ctx
-      .table("prices")
+      .db.query("prices")
       .filter((row) => row.eq(row.field("search_date"), args.date))
       .collect();
     return rows.map((r) => ({
@@ -277,7 +277,7 @@ export const updateRoutePrice = mutation({
   },
   handler: async (ctx, args) => {
     const routeRow = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), args.route))
       .first();
 

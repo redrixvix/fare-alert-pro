@@ -22,7 +22,7 @@ export const getWatches = query({
     if (!userId) return [];
 
     const watches = await ctx
-      .table("price_watches")
+      .db.query("price_watches")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
       .filter((row) => row.eq(row.field("active"), 1))
       .collect();
@@ -30,7 +30,7 @@ export const getWatches = query({
     return watches.map((w) => {
       // Get current price from routes table
       const routeRow = ctx
-        .table("routes")
+        .db.query("routes")
         .filter((row) => row.eq(row.field("route"), w.route))
         .first();
 
@@ -86,14 +86,14 @@ export const addWatch = mutation({
 
     // Validate route exists
     const routeRow = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), args.route))
       .first();
     if (!routeRow) throw new Error("Invalid route");
 
     // Check uniqueness
     const existing = await ctx
-      .table("price_watches")
+      .db.query("price_watches")
       .withIndex("by_route_cabin_date", (q) =>
         q.eq("route", args.route).eq("cabin", cabin).eq("watch_date", args.watchDate)
       )
@@ -127,7 +127,7 @@ export const deleteWatch = mutation({
     }
     // Try to look up the watch
     const watch = await ctx
-      .table("price_watches")
+      .db.query("price_watches")
       .filter((row) => row.eq(row.field("_id"), args.id as any))
       .first();
     if (!watch) throw new Error("Watch not found");
@@ -142,7 +142,7 @@ export const getMatchingWatches = query({
   args: { route: v.string(), cabin: v.string(), watchDate: v.string() },
   handler: async (ctx, args) => {
     return await ctx
-      .table("price_watches")
+      .db.query("price_watches")
       .withIndex("by_route_cabin_date", (q) =>
         q.eq("route", args.route).eq("cabin", args.cabin).eq("watch_date", args.watchDate)
       )

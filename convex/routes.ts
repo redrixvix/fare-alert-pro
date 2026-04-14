@@ -8,7 +8,7 @@ export const getActiveUserRoutes = query({
   args: {},
   handler: async (ctx) => {
     return await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .filter((row) => row.eq(row.field("active"), 1))
       .collect();
   },
@@ -31,7 +31,7 @@ export const addRoute = mutation({
   },
   handler: async (ctx, args) => {
     const existing = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), args.route))
       .first();
 
@@ -64,7 +64,7 @@ export const addRouteByAirports = mutation({
 
     // Check if route already exists in routes table
     const existingRoute = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), route))
       .first();
 
@@ -96,7 +96,7 @@ export const deleteRoute = mutation({
   handler: async (ctx, args) => {
     // Check if any active user_routes reference this route
     const userRoutes = await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .filter((row) => row.eq(row.field("route"), args.route).eq(row.field("active"), 1))
       .collect();
 
@@ -105,7 +105,7 @@ export const deleteRoute = mutation({
     }
 
     const routeRow = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), args.route))
       .first();
 
@@ -140,14 +140,14 @@ export const getUserRoutes = query({
     if (!userId) return [];
 
     const userRoutes = await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
       .filter((row) => row.eq(row.field("active"), 1))
       .collect();
 
     return userRoutes.map((ur) => {
       const routeRow = ctx
-        .table("routes")
+        .db.query("routes")
         .filter((row) => row.eq(row.field("route"), ur.route))
         .first();
       return {
@@ -190,7 +190,7 @@ export const addUserRoute = mutation({
 
     // Upsert route in routes table
     const existingRoute = await ctx
-      .table("routes")
+      .db.query("routes")
       .filter((row) => row.eq(row.field("route"), args.route))
       .first();
 
@@ -209,7 +209,7 @@ export const addUserRoute = mutation({
 
     // Upsert user_route
     const existingUserRoute = await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .filter((row) =>
         row.eq(row.field("user_id"), userId).eq(row.field("route"), args.route)
       )
@@ -249,7 +249,7 @@ export const deleteUserRoute = mutation({
     if (userId === null) throw new Error("Not authenticated");
 
     const userRoute = await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .filter((row) =>
         row.eq(row.field("user_id"), userId).eq(row.field("route"), args.route).eq(row.field("active"), 1)
       )
@@ -261,13 +261,13 @@ export const deleteUserRoute = mutation({
 
     // If no more active user_routes for this route, remove the custom route
     const remaining = await ctx
-      .table("user_routes")
+      .db.query("user_routes")
       .filter((row) => row.eq(row.field("route"), args.route).eq(row.field("active"), 1))
       .collect();
 
     if (remaining.length === 0) {
       const routeRow = await ctx
-        .table("routes")
+        .db.query("routes")
         .filter((row) => row.eq(row.field("route"), args.route).eq(row.field("category"), "custom"))
         .first();
       if (routeRow) {
