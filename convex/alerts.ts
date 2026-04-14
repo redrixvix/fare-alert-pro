@@ -29,8 +29,10 @@ export const getAlertsHistory = query({
     const alerts = await ctx
       .db.query("alerts")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
-      .orderBy("created_at", "desc")
       .collect();
+    
+    // Sort by created_at desc (Convex doesn't support orderBy on indexed queries)
+    alerts.sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""));
 
     const savedAlerts = alerts.map((a) => ({
       id: a._id,
