@@ -153,3 +153,34 @@ export const getUserByTelegramChat = query({
     };
   },
 });
+
+// Update user plan (admin only - add via secret key for safety)
+export const updateUserPlan = mutation({
+  args: { userId: v.number(), plan: v.string(), secret: v.string() },
+  handler: async (ctx, args) => {
+    if (args.secret !== 'fare-alert-pro-admin-2026') {
+      throw new Error("Unauthorized");
+    }
+    const allUsers = await ctx.db.query("users").collect();
+    const user = allUsers.find((u: any) => u.numeric_id === args.userId);
+    if (!user) throw new Error("User not found");
+    await ctx.db.patch(user._id, { plan: args.plan });
+    return { success: true, userId: args.userId, plan: args.plan };
+  },
+});
+
+// Reset password (for admin using secret)
+export const resetPassword = mutation({
+  args: { email: v.string(), newPassword: v.string(), secret: v.string() },
+  handler: async (ctx, args) => {
+    if (args.secret !== 'fare-alert-pro-reset-2026') {
+      throw new Error("Unauthorized");
+    }
+    const allUsers = await ctx.db.query("users").collect();
+    const user = allUsers.find((u: any) => u.email === args.email.toLowerCase());
+    if (!user) throw new Error("User not found");
+    const password_hash = await hashPassword(args.newPassword);
+    await ctx.db.patch(user._id, { password_hash });
+    return { success: true, email: args.email };
+  },
+});

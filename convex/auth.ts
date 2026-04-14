@@ -1,5 +1,5 @@
 // @ts-nocheck
-const JWT_SECRET = process.env.JWT_SECRET || "fare-alert-pro-jwt-secret-2024-secure";
+const JWT_SECRET = process.env.JWT_SECRET || "53d93a79c878a21a8676ee5c590f64cb88df2aa6834bcfc0f16548657a25b115";
 const TOKEN_EXPIRY_DAYS = 30;
 const SALT_LENGTH = 16;
 const ITERATIONS = 100000;
@@ -110,3 +110,6 @@ export async function verifyToken(token: string): Promise<{ userId: number; emai
     return null;
   }
 }
+// NOTE: For production, set JWT_SECRET environment variable in Convex dashboard
+// Currently using the explicit secret below for compatibility with Vercel
+const JWT_SECRET_PROD = "53d93a79c878a21a8676ee5c590f64cb88df2aa6834bcfc0f16548657a25b115";

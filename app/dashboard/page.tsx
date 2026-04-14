@@ -2,6 +2,7 @@ import { getAuthUser } from '@/lib/auth';
 import { ConvexHttpClient } from 'convex/browser';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
 import DateSearch from '../DateSearch';
 import StatusBar from '../components/StatusBar';
 import ScanNowButton from '../components/ScanNowButton';
@@ -37,6 +38,15 @@ async function fetchDashboardData(userId: number) {
   }
 }
 
+function LoadingFallback({ message }: { message: string }) {
+  return (
+    <div style={{ padding: 'var(--sp-4)', textAlign: 'center', color: 'var(--text-muted)' }}>
+      <span style={{ fontSize: '1.5rem' }}>⏳</span>
+      <p>{message}</p>
+    </div>
+  );
+}
+
 export default async function DashboardPage() {
   const user = await getAuthUser();
   if (!user) redirect('/landing');
@@ -70,9 +80,17 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <StatusBar />
-      <ScanNowButton />
-      <DateSearch />
+      <Suspense fallback={<LoadingFallback message="Loading status..." />}>
+        <StatusBar />
+      </Suspense>
+
+      <Suspense fallback={<LoadingFallback message="Loading scan button..." />}>
+        <ScanNowButton />
+      </Suspense>
+
+      <Suspense fallback={<LoadingFallback message="Loading search..." />}>
+        <DateSearch />
+      </Suspense>
 
       <div className="dashboard-grid">
         <div className="dashboard-left">
@@ -92,12 +110,18 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <LiveFeed />
+          <Suspense fallback={<LoadingFallback message="Loading live feed..." />}>
+            <LiveFeed />
+          </Suspense>
         </div>
 
         <div className="dashboard-right">
-          <ManageRoutes initialRoutes={customRoutes} />
-          <BestDeals />
+          <Suspense fallback={<LoadingFallback message="Loading routes..." />}>
+            <ManageRoutes initialRoutes={customRoutes} />
+          </Suspense>
+          <Suspense fallback={<LoadingFallback message="Loading deals..." />}>
+            <BestDeals />
+          </Suspense>
         </div>
       </div>
     </div>

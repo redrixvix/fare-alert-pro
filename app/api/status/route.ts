@@ -9,7 +9,7 @@ export async function GET() {
     const client = getClient();
     const [prices, alerts, routes] = await Promise.all([
       client.query('prices:getRecentPrices', { limit: 1000 }),
-      client.query('alerts:getAlertsHistory', { userId: -1, limit: 100 }),
+      client.query('alerts:getAlertsHistory', { userId: -1 }),
       client.query('routes:getAllRoutes', {}),
     ]) as [any[], any[], any[]];
 
