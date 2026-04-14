@@ -6,7 +6,9 @@ import { query, mutation } from "./_generated/server";
 export const getRecentPrices = query({
   args: {},
   handler: async (ctx) => {
-    const rows = await ctx.db.query("prices").orderBy("fetched_at", "desc").take(20);
+    const rows = await ctx.db.query("prices").take(20);
+    // Sort by fetched_at desc in JavaScript (orderBy not supported on all queries)
+    rows.sort((a, b) => (b.fetched_at ?? "").localeCompare(a.fetched_at ?? ""));
     return rows.map((r) => ({
       id: r._id,
       route: r.route,
