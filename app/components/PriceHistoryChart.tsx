@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useQuery } from 'convex/react';
-import { getPriceHistory } from '@/convex/prices';
 
 interface PricePoint {
   date: string;
@@ -67,7 +65,8 @@ export default function PriceHistoryChart({
 }) {
   const [days, setDays] = useState<DaysOption>(initialDays);
   const [cabin, setCabin] = useState(initialCabin);
-  const result = useQuery(getPriceHistory as any, { route, cabin, days });
+  const [result, setResult] = useState<HistoryResponse | null>(null);
+  const [loading, setLoading] = useState(true);
   const [tooltip, setTooltip] = useState<TooltipState>({
     visible: false,
     x: 0,
@@ -79,7 +78,20 @@ export default function PriceHistoryChart({
 
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const loading = result === undefined;
+  useEffect(() => {
+    setLoading(true);
+    fetch(`/api/route/${encodeURIComponent(route)}/history?cabin=${cabin}&days=${days}`, { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        setResult(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setResult(null);
+        setLoading(false);
+      });
+  }, [route, cabin, days]);
+
   const data = result?.data ?? [];
   const stats = result?.stats ?? null;
 
@@ -128,20 +140,7 @@ export default function PriceHistoryChart({
     );
   };
 
-  const buildAreaPath = (
-    points: [number, number][],
-    baseline: number
-  ): string => {
-    if (!points.length) return '';
-    const top = buildLinePath(points);
-    const bottom = `L${points[points.length - 1][0]},${baseline}L${points[0][0]},${baseline}Z`;
-    return top + bottom;
-  };
-
-  // Compute per-point coloring (green if price < avg, red if price > avg)
-  const pricePoints: [number, number][] = data.map((d: any, i: number) => [xScale(i), yScale(d.price)]);
   const avgPoints: [number, number][] = data.map((d: any, i: number) => [xScale(i), yScale(d.avg_30)]);
-
   const avgLinePath = buildLinePath(avgPoints);
 
   // Hover handlers
@@ -168,6 +167,7 @@ export default function PriceHistoryChart({
   };
 
   const color = CABIN_COLORS[cabin] ?? '#4f9cf9';
+  const pricePoints: [number, number][] = data.map((d: any, i: number) => [xScale(i), yScale(d.price)]);
 
   return (
     <div className="price-history-chart">
@@ -243,28 +243,14 @@ export default function PriceHistoryChart({
               {/* Grid lines */}
               {yLabels.map(({ value, y }) => (
                 <g key={value}>
-                  <line
-                    x1={0}
-                    y1={y}
-                    x2={cw}
-                    y2={y}
-                    stroke="#2a2d3a"
-                    strokeWidth={1}
-                  />
-                  <text
-                    x={-8}
-                    y={y + 4}
-                    textAnchor="end"
-                    fill="#7a7d8e"
-                    fontSize={11}
-                    fontFamily="system-ui, sans-serif"
-                  >
+                  <line x1={0} y1={y} x2={cw} y2={y} stroke="#2a2d3a" strokeWidth={1} />
+                  <text x={-8} y={y + 4} textAnchor="end" fill="#7a7d8e" fontSize={11} fontFamily="system-ui, sans-serif">
                     ${value}
                   </text>
                 </g>
               ))}
 
-              {/* Area fills — green below avg, red above avg */}
+              {/* Area fills */}
               {data.map((d: any, i: number) => {
                 if (i === data.length - 1) return null;
                 const next = data[i + 1];
@@ -285,14 +271,8 @@ export default function PriceHistoryChart({
                 );
               })}
 
-              {/* Average line (dashed) */}
-              <path
-                d={avgLinePath}
-                stroke="#7a7d8e"
-                strokeWidth={1.5}
-                strokeDasharray="6,4"
-                fill="none"
-              />
+              {/* Average line */}
+              <path d={avgLinePath} stroke="#7a7d8e" strokeWidth={1.5} strokeDasharray="6,4" fill="none" />
 
               {/* Price line */}
               <path
@@ -304,28 +284,14 @@ export default function PriceHistoryChart({
                 strokeLinecap="round"
               />
 
-              {/* Price line dots */}
+              {/* Price dots */}
               {pricePoints.map(([x, y], i) => (
-                <circle
-                  key={i}
-                  cx={x}
-                  cy={y}
-                  r={3}
-                  fill={color}
-                />
+                <circle key={i} cx={x} cy={y} r={3} fill={color} />
               ))}
 
               {/* X axis labels */}
               {xLabels.map(({ i, label }) => (
-                <text
-                  key={i}
-                  x={xScale(i)}
-                  y={ch + 20}
-                  textAnchor="middle"
-                  fill="#7a7d8e"
-                  fontSize={11}
-                  fontFamily="system-ui, sans-serif"
-                >
+                <text key={i} x={xScale(i)} y={ch + 20} textAnchor="middle" fill="#7a7d8e" fontSize={11} fontFamily="system-ui, sans-serif">
                   {label}
                 </text>
               ))}
@@ -338,42 +304,26 @@ export default function PriceHistoryChart({
 
           {/* Tooltip */}
           {tooltip.visible && (
-            <div
-              style={{
-                position: 'absolute',
-                left: tooltip.x,
-                top: tooltip.y - 80,
-                transform: 'translateX(-50%)',
-                background: '#1a1d2e',
-                border: '1px solid #3a3d4a',
-                borderRadius: '8px',
-                padding: '0.6rem 0.9rem',
-                pointerEvents: 'none',
-                zIndex: 10,
-                minWidth: 150,
-                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-              }}
-            >
+            <div style={{
+              position: 'absolute',
+              left: tooltip.x,
+              top: tooltip.y - 80,
+              transform: 'translateX(-50%)',
+              background: '#1a1d2e',
+              border: '1px solid #3a3d4a',
+              borderRadius: '8px',
+              padding: '0.6rem 0.9rem',
+              pointerEvents: 'none',
+              zIndex: 10,
+              minWidth: 150,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+            }}>
               <div style={{ fontSize: '0.75rem', color: '#9a9daf', marginBottom: '0.3rem' }}>
-                {new Date(tooltip.date + 'T00:00:00').toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
+                {new Date(tooltip.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </div>
-              <div style={{ fontSize: '1rem', fontWeight: 600, color: color }}>
-                ${tooltip.price.toFixed(0)}
-              </div>
-              <div style={{ fontSize: '0.75rem', color: '#7a7d8e' }}>
-                Avg: ${tooltip.avg_30.toFixed(0)}
-              </div>
-              <div
-                style={{
-                  fontSize: '0.72rem',
-                  marginTop: '0.2rem',
-                  color: tooltip.price < tooltip.avg_30 ? '#22c55e' : '#ef4444',
-                }}
-              >
+              <div style={{ fontSize: '1rem', fontWeight: 600, color: color }}>${tooltip.price.toFixed(0)}</div>
+              <div style={{ fontSize: '0.75rem', color: '#7a7d8e' }}>Avg: ${tooltip.avg_30.toFixed(0)}</div>
+              <div style={{ fontSize: '0.72rem', marginTop: '0.2rem', color: tooltip.price < tooltip.avg_30 ? '#22c55e' : '#ef4444' }}>
                 {tooltip.price < tooltip.avg_30 ? '↓ below average' : '↑ above average'}
               </div>
             </div>
@@ -383,61 +333,27 @@ export default function PriceHistoryChart({
 
       {/* Stats row */}
       {stats && !loading && (
-        <div
-          style={{
-            display: 'flex',
-            gap: '1.5rem',
-            marginTop: '0.75rem',
-            flexWrap: 'wrap',
-            fontSize: '0.8rem',
-            color: '#9a9daf',
-          }}
-        >
-          <span>
-            <span style={{ color: '#7a7d8e' }}>Low:</span> ${stats.min}
-          </span>
-          <span>
-            <span style={{ color: '#7a7d8e' }}>High:</span> ${stats.max}
-          </span>
-          <span>
-            <span style={{ color: '#7a7d8e' }}>Avg:</span> ${stats.avg}
-          </span>
+        <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.75rem', flexWrap: 'wrap', fontSize: '0.8rem', color: '#9a9daf' }}>
+          <span><span style={{ color: '#7a7d8e' }}>Low:</span> ${stats.min}</span>
+          <span><span style={{ color: '#7a7d8e' }}>High:</span> ${stats.max}</span>
+          <span><span style={{ color: '#7a7d8e' }}>Avg:</span> ${stats.avg}</span>
           {stats.currentVsAvg !== 0 && (
-            <span
-              style={{
-                color: stats.currentVsAvg < 0 ? '#22c55e' : '#ef4444',
-              }}
-            >
-              {stats.currentVsAvg < 0 ? '↓' : '↑'}
-              {Math.abs(stats.currentVsAvg)}% vs avg
+            <span style={{ color: stats.currentVsAvg < 0 ? '#22c55e' : '#ef4444' }}>
+              {stats.currentVsAvg < 0 ? '↓' : '↑'}{Math.abs(stats.currentVsAvg)}% vs avg
             </span>
           )}
           {stats.trend !== 'flat' && (
-            <span style={{ color: '#7a7d8e' }}>
-              Trend: {stats.trend === 'up' ? '↗ rising' : '↘ falling'}
-            </span>
+            <span style={{ color: '#7a7d8e' }}>Trend: {stats.trend === 'up' ? '↗ rising' : '↘ falling'}</span>
           )}
         </div>
       )}
 
       {/* Legend */}
       <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem', fontSize: '0.75rem', color: '#7a7d8e', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <div style={{ width: 12, height: 2, background: color }} />
-          <span>Price</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <div style={{ width: 12, height: 1, borderTop: '2px dashed #7a7d8e' }} />
-          <span>30d avg</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <div style={{ width: 8, height: 8, background: '#22c55e33', borderRadius: 2 }} />
-          <span>Below avg</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-          <div style={{ width: 8, height: 8, background: '#ef444422', borderRadius: 2 }} />
-          <span>Above avg</span>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><div style={{ width: 12, height: 2, background: color }} /><span>Price</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><div style={{ width: 12, height: 1, borderTop: '2px dashed #7a7d8e' }} /><span>30d avg</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><div style={{ width: 8, height: 8, background: '#22c55e33', borderRadius: 2 }} /><span>Below avg</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><div style={{ width: 8, height: 8, background: '#ef444422', borderRadius: 2 }} /><span>Above avg</span></div>
       </div>
     </div>
   );

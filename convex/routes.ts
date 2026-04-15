@@ -45,12 +45,12 @@ export const addRoute = mutation({
     const id = await ctx.db.insert("routes", {
       route: args.route,
       category: args.category ?? "custom",
-      last_checked: null,
-      last_price: null,
-      last_currency: "USD",
-      last_price_premium_economy: null,
-      last_price_business: null,
-      last_price_first: null,
+      last_checked: undefined,
+      last_price: undefined,
+      last_currency: undefined,
+      last_price_premium_economy: undefined,
+      last_price_business: undefined,
+      last_price_first: undefined,
     });
     return id;
   },
@@ -79,12 +79,12 @@ export const addRouteByAirports = mutation({
     const id = await ctx.db.insert("routes", {
       route,
       category: "custom",
-      last_checked: null,
-      last_price: null,
-      last_currency: "USD",
-      last_price_premium_economy: null,
-      last_price_business: null,
-      last_price_first: null,
+      last_checked: undefined,
+      last_price: undefined,
+      last_currency: undefined,
+      last_price_premium_economy: undefined,
+      last_price_business: undefined,
+      last_price_first: undefined,
     });
     return id;
   },
@@ -198,12 +198,12 @@ export const addUserRoute = mutation({
       await ctx.db.insert("routes", {
         route: args.route,
         category: "custom",
-        last_checked: null,
-        last_price: null,
-        last_currency: "USD",
-        last_price_premium_economy: null,
-        last_price_business: null,
-        last_price_first: null,
+        last_checked: undefined,
+        last_price: undefined,
+        last_currency: undefined,
+        last_price_premium_economy: undefined,
+        last_price_business: undefined,
+        last_price_first: undefined,
       });
     }
 
@@ -230,7 +230,7 @@ export const addUserRoute = mutation({
       origin: args.origin,
       destination: args.destination,
       added_at: new Date().toISOString(),
-      last_checked: null,
+      last_checked: undefined,
       active: 1,
     });
     return id;

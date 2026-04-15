@@ -1,11 +1,14 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
-import { getClient } from '@/lib/db-prod';
+import { getRecentPrices } from '@/lib/db-pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const client = getClient();
-  const prices = await client.query('prices:getRecentPrices', { limit: 20 }) as any[];
-  return NextResponse.json({ prices });
+  try {
+    const prices = await getRecentPrices(200);
+    return NextResponse.json({ prices });
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
 }

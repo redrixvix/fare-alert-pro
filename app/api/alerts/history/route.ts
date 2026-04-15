@@ -1,13 +1,17 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
-import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { ConvexHttpClient } from 'convex/browser';
+
+const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL || 'https://fiery-opossum-933.convex.cloud';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const user = await getAuthUser();
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const client = getClient();
-  const result = await client.query('alerts:getAlertsHistory', { userId: user.userId, limit: 100 }) as any;
-  return NextResponse.json(result);
+  try {
+    const client = new ConvexHttpClient(CONVEX_URL);
+    const result = await client.query('alerts:getAlertsHistory', { userId: 1 });
+    return NextResponse.json(result);
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
+  }
 }

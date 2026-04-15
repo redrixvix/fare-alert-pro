@@ -2,21 +2,21 @@
 'use client';
 
 import { useState } from 'react';
-import { useAction } from 'convex/react';
-import { checkAllPrices } from '@/convex/checkPrices';
 
 export default function ScanNowButton() {
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-
-  const scanNow = useAction(checkAllPrices as any);
 
   const handleScan = async () => {
     if (scanning) return;
     setScanning(true);
     setResult(null);
     try {
-      const data = await scanNow({});
+      const res = await fetch('/api/scan-now', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      const data = await res.json();
       const r = data.results || {};
       setResult(
         `✓ Checked ${r.checked || 0} pairs · ${r.alerts || 0} alerts · ${r.errors || 0} errors`

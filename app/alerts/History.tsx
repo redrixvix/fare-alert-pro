@@ -3,9 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useQuery } from 'convex/react';
 import '../dashboard.css';
-import { getAlertsHistory } from '@/convex/alerts';
 
 function getAuthToken(): string | null {
   if (typeof document === 'undefined') return null;
@@ -93,8 +91,6 @@ function StatCard({ label, value, accent }: { label: string; value: string; acce
 }
 
 export default function History() {
-  const [token, setToken] = useState<string | null>(null);
-  const result = useQuery(getAlertsHistory as any, { token: token ?? undefined });
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [sort, setSort] = useState<SortKey>('recent');
@@ -102,20 +98,22 @@ export default function History() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setToken(getAuthToken());
+    fetch('/api/alerts/history', { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error || !data.alerts) {
+          setError('Could not load your deal history. Please try again.');
+        } else {
+          setAlerts(data.alerts ?? []);
+          setStats(data.stats ?? null);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Could not load your deal history. Please try again.');
+        setLoading(false);
+      });
   }, []);
-
-  useEffect(() => {
-    if (result === undefined) return;
-    if (result.alerts === undefined) {
-      setError('Could not load your deal history. Please try again.');
-      setLoading(false);
-      return;
-    }
-    setAlerts(result.alerts);
-    setStats(result.stats);
-    setLoading(false);
-  }, [result]);
 
   const sortedAlerts = [...alerts].sort((a, b) => {
     if (sort === 'savings') return b.savings_pct - a.savings_pct;
@@ -229,7 +227,7 @@ export default function History() {
                 </table>
               </div>
 
-              {/* Mobile cards (also used as default) */}
+              {/* Mobile cards */}
               <div className="alerts-grid">
                 {sortedAlerts.map((a) => (
                   <div key={a.id} className="alert-card">

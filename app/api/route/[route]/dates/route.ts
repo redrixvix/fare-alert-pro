@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getCheapestDates } from '@/lib/db-pg';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request, { params }) {
   const user = await getAuthUser();
@@ -13,13 +15,21 @@ export async function GET(request, { params }) {
   const { searchParams } = new URL(request.url);
   const months = Math.min(3, Math.max(1, parseInt(searchParams.get('months') ?? '1', 10)));
 
-  const client = getClient();
-  const result = await client.query('prices:getCheapestDates', { route, months }) as any;
+  const rows = await getCheapestDates(route, months);
 
-  return NextResponse.json({
-    dates: result?.dates ?? [],
-    minPrice: result?.minPrice ?? null,
-    maxPrice: result?.maxPrice ?? null,
-    avgPrice: result?.avgPrice ?? null,
-  });
+  if (!rows || rows.length === 0) {
+    return NextResponse.json({ dates: [], minPrice: null, maxPrice: null, avgPrice: null });
+  }
+
+  const minPrice = Math.min(...rows.map((d) => d.price));
+  const maxPrice = Math.max(...rows.map((d) => d.price));
+  const avgPrice = rows.reduce((s, d) => s + d.price, 0) / rows.length;
+
+  const dates = rows.map((d) => ({
+    date: d.date,
+    price: d.price,
+    is_cheapest: d.price === minPrice,
+  }));
+
+  return NextResponse.json({ dates, minPrice, maxPrice, avgPrice });
 }

@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getWatches, createWatch, deleteWatch, getAllRoutes } from '@/lib/db-pg';
 
 const VALID_CABINS = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
 
@@ -20,30 +20,31 @@ function isValidRoute(route) {
   return /^[A-Z]{3}-[A-Z]{3}$/.test(route);
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const client = getClient();
   const [watches, routesData] = await Promise.all([
-    client.query('watches:getWatches', { userId: user.userId }),
-    client.query('routes:getAllRoutes', {}),
-  ]) as [any[], any[]];
+    getWatches(user.userId),
+    getAllRoutes(),
+  ]);
 
   const routeMap = {};
-  for (const r of routesData) routeMap[r.route] = r.lastPrice ?? null;
+  for (const r of routesData) routeMap[r.route] = r.last_price ?? null;
 
   const result = (watches || []).map((watch) => {
     const currentPrice = routeMap[watch.route] ?? null;
     const savingsPct = currentPrice !== null && currentPrice > 0
-      ? ((watch.targetPrice - currentPrice) / currentPrice) * 100
+      ? ((watch.target_price - currentPrice) / currentPrice) * 100
       : null;
     return {
       id: watch.id,
       route: watch.route,
       cabin: watch.cabin,
-      watchDate: watch.watchDate,
-      targetPrice: watch.targetPrice,
+      watchDate: watch.watch_date,
+      targetPrice: watch.target_price,
       currentPrice,
       savingsPct: savingsPct !== null ? Math.round(savingsPct * 10) / 10 : null,
     };
@@ -69,25 +70,21 @@ export async function POST(request) {
   if (typeof targetPrice !== 'number' || targetPrice <= 0) return NextResponse.json({ error: 'targetPrice must be a positive number' }, { status: 400 });
 
   try {
-    const client = getClient();
-    const result = await (client.mutation as any)('watches:addWatch', {
-      userId: user.userId, route, cabin, watchDate, targetPrice,
-    });
+    const result = await createWatch(user.userId, route, cabin, watchDate, targetPrice);
 
-    const routesData = await client.query('routes:getAllRoutes', {}) as any[];
+    const routesData = await getAllRoutes();
     const routeRow = routesData.find((r) => r.route === route);
-    const currentPrice = routeRow?.lastPrice ?? null;
+    const currentPrice = routeRow?.last_price ?? null;
     const savingsPct = currentPrice !== null && currentPrice > 0
       ? ((targetPrice - currentPrice) / currentPrice) * 100
       : null;
 
     return NextResponse.json({
-      id: result,
+      id: result.id,
       route, cabin, watchDate, targetPrice, currentPrice,
       savingsPct: savingsPct !== null ? Math.round(savingsPct * 10) / 10 : null,
     }, { status: 201 });
   } catch (err) {
-    if (err?.message?.includes('UNIQUE constraint')) return NextResponse.json({ error: 'A watch for this route, cabin, and date already exists' }, { status: 409 });
     console.error('addPriceWatch error:', err);
     return NextResponse.json({ error: 'Failed to create watch' }, { status: 500 });
   }
@@ -105,8 +102,7 @@ export async function DELETE(request) {
   if (isNaN(id)) return NextResponse.json({ error: 'id must be a number' }, { status: 400 });
 
   try {
-    const client = getClient();
-    await (client.mutation as any)('watches:deleteWatch', { id, userId: user.userId });
+    await deleteWatch(id, user.userId);
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Watch not found' }, { status: 404 });

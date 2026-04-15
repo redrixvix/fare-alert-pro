@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getAllRoutes, getUserRoutes, addUserRoute } from '@/lib/db-pg';
 
 function sanitizeAirportCode(value) {
   if (typeof value !== 'string') return null;
@@ -9,15 +9,16 @@ function sanitizeAirportCode(value) {
   return /^[A-Z]{3}$/.test(code) ? code : null;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const client = getClient();
   const [allRoutes, userRoutes] = await Promise.all([
-    client.query('routes:getAllRoutes', {}),
-    client.query('routes:getUserRoutes', { userId: user.userId }),
-  ]) as [any[], any[]];
+    getAllRoutes(),
+    getUserRoutes(user.userId),
+  ]);
 
   const userRouteSet = new Set((userRoutes || []).map((r) => r.route));
   const routeMap = new Map();
@@ -43,22 +44,15 @@ export async function POST(request) {
     if (!o || !d) return NextResponse.json({ success: false, error: 'Airport codes must be exactly 3 letters' }, { status: 400 });
     if (o === d) return NextResponse.json({ success: false, error: 'Origin and destination must be different' }, { status: 400 });
 
-    const AIRPORT_RE = /^[A-Z]{3}$/;
-    if (!AIRPORT_RE.test(o) || !AIRPORT_RE.test(d)) return NextResponse.json({ success: false, error: 'Invalid airport code' }, { status: 400 });
-
     const route = `${o}-${d}`;
-    const client = getClient();
 
-    const [allRoutes, userRoutes] = await Promise.all([
-      client.query('routes:getAllRoutes', {}),
-      client.query('routes:getUserRoutes', { userId: user.userId }),
-    ]) as [any[], any[]];
+    const [allRoutes, userRoutes] = await Promise.all([getAllRoutes(), getUserRoutes(user.userId)]);
 
     if ((allRoutes || []).find((r) => r.route === route) || (userRoutes || []).find((r) => r.route === route)) {
       return NextResponse.json({ success: false, error: 'Route already tracked' }, { status: 409 });
     }
 
-    await (client.mutation as any)('routes:addRoute', { userId: user.userId, route, origin: o, destination: d });
+    await addUserRoute(user.userId, route, o, d);
     return NextResponse.json({ success: true, route });
   } catch (err) {
     console.error('Error adding route:', err);

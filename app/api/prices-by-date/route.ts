@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
-import { getClient } from '@/lib/db-prod';
+import { getPricesByDate } from '@/lib/db-pg';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,7 +12,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing date param' }, { status: 400 });
   }
 
-  const client = getClient();
-  const rows = await client.query('prices:getPricesByDate', { date }) as any[];
+  const rows = await getPricesByDate(date);
   return NextResponse.json({ date, count: rows.length, prices: rows });
 }

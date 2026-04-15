@@ -1,11 +1,8 @@
 // @ts-nocheck
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useQuery, useMutation } from 'convex/react';
-import { getAllRoutes } from '@/convex/routes';
-import { addRouteByAirports as addRouteMutation, deleteRoute as deleteRouteMutation } from '@/convex/routes';
 
 interface RouteData {
   route: string;
@@ -29,12 +26,21 @@ export default function RoutesClient() {
   const [adding, setAdding] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>('route');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [routes, setRoutes] = useState<RouteData[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const allRoutesResult = useQuery(getAllRoutes as any, { includeCustom: true });
-  const routes = allRoutesResult ?? [];
-
-  const addRouteFn = useMutation(addRouteMutation as any);
-  const deleteRouteFn = useMutation(deleteRouteMutation as any);
+  useEffect(() => {
+    fetch('/api/routes-fetch')
+      .then(r => r.json())
+      .then(data => {
+        setRoutes(data.routes ?? []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setRoutes([]);
+        setLoading(false);
+      });
+  }, []);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -56,7 +62,15 @@ export default function RoutesClient() {
     }
     setAdding(true);
     try {
-      await addRouteFn({ origin: o, destination: d });
+      const res = await fetch('/api/routes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ origin: o, destination: d }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to add route');
+      setRoutes(prev => [...prev, { route: `${o}-${d}`, category: 'custom', last_checked: null, last_price: null, last_price_premium_economy: null, last_price_business: null, last_price_first: null, is_custom: true }]);
       setAddSuccess(`Route ${o}-${d} added successfully`);
       setOrigin('');
       setDestination('');
@@ -70,7 +84,15 @@ export default function RoutesClient() {
   async function handleDelete(route: string) {
     if (!confirm(`Delete route ${route}?`)) return;
     try {
-      await deleteRouteFn({ route });
+      const res = await fetch(`/api/routes/${encodeURIComponent(route)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete');
+      }
+      setRoutes(prev => prev.filter(r => r.route !== route));
     } catch (err: any) {
       alert(err.message || 'Failed to delete');
     }
@@ -185,71 +207,77 @@ export default function RoutesClient() {
           <span><strong>J</strong> = Business</span>
           <span><strong>F</strong> = First</span>
         </div>
-        <div className="routes-table-wrap">
-          <table className="routes-table">
-            <thead>
-              <tr>
-                <th onClick={() => handleSort('route')} style={{ cursor: 'pointer' }}>
-                  Route{SortIcon({ k: 'route' })}
-                </th>
-                <th>Category</th>
-                <th onClick={() => handleSort('last_price')} style={{ cursor: 'pointer' }}>
-                  Y{SortIcon({ k: 'last_price' })}
-                </th>
-                <th>PE</th>
-                <th>J</th>
-                <th>F</th>
-                <th>Last Checked</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {sorted.map((r) => (
-                <tr key={r.route}>
-                  <td className="route-name">
-                    <Link href={`/route/${r.route}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>
-                      {r.route}
-                    </Link>
-                  </td>
-                  <td>
-                    <span style={{
-                      fontSize: '0.75rem',
-                      padding: '0.15rem 0.5rem',
-                      borderRadius: '4px',
-                      background: r.is_custom ? '#2a4f8a' : r.category === 'busiest' ? '#1a3a2a' : '#3a2a1a',
-                      color: r.is_custom ? 'var(--accent)' : r.category === 'busiest' ? '#2a9d8f' : '#f4a261',
-                    }}>
-                      {r.is_custom ? 'Custom' : (r.category || 'custom').replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="route-price">{fmt(r.last_price)}</td>
-                  <td className="route-price pe">{fmt(r.last_price_premium_economy)}</td>
-                  <td className="route-price biz">{fmt(r.last_price_business)}</td>
-                  <td className="route-price first">{fmt(r.last_price_first)}</td>
-                  <td className="route-check">{formatTime(r.last_checked)}</td>
-                  <td>
-                    {r.is_custom && (
-                      <button
-                        onClick={() => handleDelete(r.route)}
-                        style={{
-                          background: 'transparent',
-                          border: '1px solid var(--border)',
-                          borderRadius: '4px',
-                          padding: '0.2rem 0.6rem',
-                          color: 'var(--text-dim)',
-                          cursor: 'pointer',
-                          fontSize: '0.75rem',
-                        }}
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </td>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 'var(--sp-6)', color: 'var(--text-dim)' }}>
+            Loading routes...
+          </div>
+        ) : (
+          <div className="routes-table-wrap">
+            <table className="routes-table">
+              <thead>
+                <tr>
+                  <th onClick={() => handleSort('route')} style={{ cursor: 'pointer' }}>
+                    Route{SortIcon({ k: 'route' })}
+                  </th>
+                  <th>Category</th>
+                  <th onClick={() => handleSort('last_price')} style={{ cursor: 'pointer' }}>
+                    Y{SortIcon({ k: 'last_price' })}
+                  </th>
+                  <th>PE</th>
+                  <th>J</th>
+                  <th>F</th>
+                  <th>Last Checked</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {sorted.map((r) => (
+                  <tr key={r.route}>
+                    <td className="route-name">
+                      <Link href={`/route/${r.route}`} style={{ color: 'var(--accent)', textDecoration: 'none' }}>
+                        {r.route}
+                      </Link>
+                    </td>
+                    <td>
+                      <span style={{
+                        fontSize: '0.75rem',
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '4px',
+                        background: r.is_custom ? '#2a4f8a' : r.category === 'busiest' ? '#1a3a2a' : '#3a2a1a',
+                        color: r.is_custom ? 'var(--accent)' : r.category === 'busiest' ? '#2a9d8f' : '#f4a261',
+                      }}>
+                        {r.is_custom ? 'Custom' : (r.category || 'custom').replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="route-price">{fmt(r.last_price)}</td>
+                    <td className="route-price pe">{fmt(r.last_price_premium_economy)}</td>
+                    <td className="route-price biz">{fmt(r.last_price_business)}</td>
+                    <td className="route-price first">{fmt(r.last_price_first)}</td>
+                    <td className="route-check">{formatTime(r.last_checked)}</td>
+                    <td>
+                      {r.is_custom && (
+                        <button
+                          onClick={() => handleDelete(r.route)}
+                          style={{
+                            background: 'transparent',
+                            border: '1px solid var(--border)',
+                            borderRadius: '4px',
+                            padding: '0.2rem 0.6rem',
+                            color: 'var(--text-dim)',
+                            cursor: 'pointer',
+                            fontSize: '0.75rem',
+                          }}
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,0 +1,16 @@
+[Unit]
+Description=FareAlertPro Python Worker (Postgres)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rixvix
+WorkingDirectory=/home/rixvix/.openclaw/workspace/fare-alert-pro
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/rixvix/.openclaw/workspace/fare-alert-pro/.venv-worker/bin/python /home/rixvix/.openclaw/workspace/fare-alert-pro/worker/fare_worker.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

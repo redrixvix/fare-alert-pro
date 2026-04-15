@@ -1,13 +1,12 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
-import { getClient } from '@/lib/db-prod';
+import { getRecentPrices } from '@/lib/db-pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const client = getClient();
-    const rows = await client.query('prices:getRecentPrices', { limit: 200 }) as any[];
+    const rows = await getRecentPrices(200);
     if (!rows || rows.length === 0) {
       return NextResponse.json({ deals: [], generated_at: new Date().toISOString() });
     }
@@ -17,18 +16,18 @@ export async function GET() {
     const cutoff7 = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
     for (const row of rows) {
-      const { route, cabin, price, fetchedAt, airline, searchDate } = row;
+      const { route, cabin, price, fetched_at, airline, search_date } = row;
       if (cabin !== 'ECONOMY' || price <= 0) continue;
 
       if (!routeStats[route]) routeStats[route] = { histTotal: 0, histCount: 0, latest: null };
 
-      if (fetchedAt >= cutoff30 && price > 0) {
+      if (fetched_at >= cutoff30 && price > 0) {
         routeStats[route].histTotal += price;
         routeStats[route].histCount++;
       }
 
-      if (fetchedAt >= cutoff7 && (!routeStats[route].latest || fetchedAt > routeStats[route].latest.fetchedAt)) {
-        routeStats[route].latest = { price, airline, fetchedAt, searchDate };
+      if (fetched_at >= cutoff7 && (!routeStats[route].latest || fetched_at > routeStats[route].latest.fetched_at)) {
+        routeStats[route].latest = { price, airline, fetched_at, search_date };
       }
     }
 
@@ -40,27 +39,19 @@ export async function GET() {
         const savingsPct = ((histAvg - stats.latest.price) / histAvg) * 100;
         errorFares.push({
           route,
-          date: stats.latest.searchDate,
+          date: stats.latest.search_date,
           price: stats.latest.price,
-          hist_avg: Math.round(histAvg * 100) / 100,
-          savings_pct: Math.round(savingsPct * 10) / 10,
-          airline: stats.latest.airline || 'Unknown',
-          fetched_at: stats.latest.fetchedAt,
+          hist_avg: Math.round(histAvg),
+          savings_pct: Math.round(savingsPct),
+          airline: stats.latest.airline,
+          fetched_at: stats.latest.fetched_at,
         });
       }
     }
 
     errorFares.sort((a, b) => b.savings_pct - a.savings_pct);
-
-    return NextResponse.json(
-      { deals: errorFares.slice(0, 50), generated_at: new Date().toISOString() },
-      { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
-    );
-  } catch (err) {
-    console.error('[/api/deals] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch deals', deals: [], generated_at: new Date().toISOString() },
-      { status: 500 }
-    );
+    return NextResponse.json({ deals: errorFares.slice(0, 30), generated_at: new Date().toISOString() });
+  } catch (e) {
+    return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

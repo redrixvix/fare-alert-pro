@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useMutation } from 'convex/react';
-import { addWatch } from '@/convex/watches';
 
 interface WatchButtonProps {
   route: string;
@@ -18,13 +16,6 @@ export default function WatchButton({ route, defaultDate, onWatchAdded }: WatchB
   const [targetPrice, setTargetPrice] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [token, setToken] = useState<string | null>(null);
-  const addWatchMutation = useMutation(addWatch as any);
-
-  useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )auth_token=([^;]*)/);
-    setToken(match ? decodeURIComponent(match[1]) : null);
-  }, []);
 
   const today = new Date();
   const maxDate = new Date(today.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -42,7 +33,14 @@ export default function WatchButton({ route, defaultDate, onWatchAdded }: WatchB
     }
 
     try {
-      await addWatchMutation({ userId: 0, route, cabin, watchDate, targetPrice: price, token: token ?? undefined });
+      const res = await fetch('/api/watches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ route, cabin, watchDate, targetPrice: price }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create watch');
       onWatchAdded?.({ route, cabin, watchDate, targetPrice: price });
       setIsOpen(false);
       setWatchDate('');

@@ -1,0 +1,478 @@
+[2026-04-15T12:58:18.978810Z] fare worker boot
+[2026-04-15T12:58:18.978968Z] cycle starting route=JFK-LAX
+[2026-04-15T12:58:19.143102Z] convex query failed JFK-LAX ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.334612Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.448279Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.533661Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.623259Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.717736Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.826911Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:20.922021Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:21.013258Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:21.127619Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:21.231925Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:21.322867Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:21.418958Z] insert failed JFK-LAX 2026-04-15 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:22.668903Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:22.764969Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:22.852378Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:22.949575Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.034233Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.139873Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.229632Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.319721Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.406223Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.493849Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.587449Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:23.675811Z] insert failed JFK-LAX 2026-04-16 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:24.963327Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.059178Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.159689Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.247776Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.352578Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.455212Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.549704Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.640508Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.734678Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.828260Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:25.924675Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:26.016054Z] insert failed JFK-LAX 2026-04-17 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.313097Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.404953Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.496753Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.591792Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.683007Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.784449Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.871282Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:27.955667Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:28.058035Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:28.153020Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:28.254468Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:28.349432Z] insert failed JFK-LAX 2026-04-18 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.461328Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.552271Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.678283Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.799022Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.894122Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:29.999214Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.104125Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.194952Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.282171Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.368845Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.464474Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:30.553332Z] insert failed JFK-LAX 2026-04-19 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:31.802017Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:31.917903Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.011392Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.100978Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.192413Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.291552Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.393367Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.480669Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.575995Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.661350Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.755146Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.845828Z] insert failed JFK-LAX 2026-04-20 ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:32.937331Z] convex query failed JFK-LAX PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:33.804401Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:33.890438Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:33.978651Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.074843Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.175338Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.279998Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.378312Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.466827Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.553596Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.647096Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:34.750940Z] insert failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:35.669986Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:35.756169Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:35.858423Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:35.955192Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.042645Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.130548Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.220037Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.313936Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.402251Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.494244Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.591993Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:36.694031Z] insert failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.515905Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.604789Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.697273Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.788548Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.886891Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:37.981796Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.074754Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.171570Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.270395Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.376852Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.475434Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:38.575951Z] insert failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:39.376546Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:39.464961Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:39.563510Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:39.883391Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.000987Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.087917Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.174234Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.263618Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.366666Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.460684Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.548543Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:40.649252Z] insert failed JFK-LAX 2026-04-18 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.507097Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.611791Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.698444Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.792587Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.879830Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:41.980711Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.069622Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.177989Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.267820Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.367030Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.468560Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:42.561695Z] insert failed JFK-LAX 2026-04-19 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.349409Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.437229Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.524529Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.616803Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.718245Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:43.814710Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.003754Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.110205Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.201475Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.291043Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.375748Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.466589Z] insert failed JFK-LAX 2026-04-20 PREMIUM_ECONOMY: HTTP Error 404: Not Found
+[2026-04-15T12:58:44.564885Z] convex query failed JFK-LAX BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:45.732350Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:45.819896Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:45.910825Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.000803Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.099867Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.204391Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.299971Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.387545Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.483650Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.580347Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.679670Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T12:58:46.784526Z] insert failed JFK-LAX 2026-04-15 BUSINESS: HTTP Error 404: Not Found
+[2026-04-15T13:02:53.530866+00:00] fare worker boot
+[2026-04-15T13:02:53.530955+00:00] cycle starting route=JFK-LAX
+[2026-04-15T13:02:54.749375+00:00] scrape failed JFK-LAX 2026-07-13 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:54.996782+00:00] scrape failed JFK-LAX 2026-04-15 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:54.997149+00:00] scrape failed JFK-LAX 2026-04-16 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:54.997378+00:00] scrape failed JFK-LAX 2026-04-17 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.406727+00:00] scrape failed JFK-LAX 2026-04-15 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.407045+00:00] scrape failed JFK-LAX 2026-04-16 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.407361+00:00] scrape failed JFK-LAX 2026-04-17 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.724511+00:00] scrape failed JFK-LAX 2026-04-15 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.724897+00:00] scrape failed JFK-LAX 2026-04-16 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.725278+00:00] scrape failed JFK-LAX 2026-04-17 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T13:02:55.725432+00:00] cycle done route=JFK-LAX checked=10 inserted=0
+[2026-04-15T13:16:36.929288+00:00] fare worker boot
+[2026-04-15T13:16:36.929461+00:00] cycle starting route=LAX-JFK
+[2026-04-15T13:17:18.313104+00:00] cycle done route=LAX-JFK checked=10 inserted=120
+[2026-04-15T13:32:18.313949+00:00] cycle starting route=ORD-LGA
+[2026-04-15T13:32:51.895689+00:00] cycle done route=ORD-LGA checked=10 inserted=93
+[2026-04-15T13:33:36.920729+00:00] fare worker boot
+[2026-04-15T13:33:36.920889+00:00] cycle starting route=LGA-ORD
+[2026-04-15T13:34:11.185959+00:00] cycle done route=LGA-ORD checked=10 inserted=91 scrape_failures=0
+[2026-04-15T13:34:11.186588+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T13:39:11.186906+00:00] cycle starting route=LGA-ORD
+[2026-04-15T13:39:56.975257+00:00] cycle done route=LGA-ORD checked=12 inserted=115 scrape_failures=0
+[2026-04-15T13:39:56.975854+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T13:44:56.976170+00:00] cycle starting route=ATL-LAX
+[2026-04-15T13:45:38.588198+00:00] cycle done route=ATL-LAX checked=10 inserted=120 scrape_failures=0
+[2026-04-15T13:45:38.588860+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T13:50:38.589180+00:00] cycle starting route=ATL-LAX
+[2026-04-15T13:51:32.669220+00:00] cycle done route=ATL-LAX checked=12 inserted=144 scrape_failures=0
+[2026-04-15T13:51:32.669808+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T13:56:32.670118+00:00] cycle starting route=LAX-ATL
+[2026-04-15T13:57:16.249494+00:00] cycle done route=LAX-ATL checked=10 inserted=120 scrape_failures=0
+[2026-04-15T13:57:16.250072+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:02:16.250248+00:00] cycle starting route=LAX-ATL
+[2026-04-15T14:03:12.382851+00:00] cycle done route=LAX-ATL checked=12 inserted=144 scrape_failures=0
+[2026-04-15T14:03:12.383726+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:08:12.384010+00:00] cycle starting route=DFW-LAX
+[2026-04-15T14:08:53.677073+00:00] cycle done route=DFW-LAX checked=10 inserted=114 scrape_failures=0
+[2026-04-15T14:08:53.677872+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:13:53.678179+00:00] cycle starting route=DFW-LAX
+[2026-04-15T14:14:52.278550+00:00] cycle done route=DFW-LAX checked=12 inserted=138 scrape_failures=0
+[2026-04-15T14:14:52.279362+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:19:52.279678+00:00] cycle starting route=LAX-DFW
+[2026-04-15T14:20:37.464733+00:00] cycle done route=LAX-DFW checked=10 inserted=120 scrape_failures=0
+[2026-04-15T14:20:37.465416+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:25:37.465731+00:00] cycle starting route=LAX-DFW
+[2026-04-15T14:25:45.322181+00:00] scrape failed LAX-DFW 2026-04-16 ECONOMY: Command '['fli', 'flights', 'LAX', 'DFW', '2026-04-16', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T14:26:37.408095+00:00] cycle done route=LAX-DFW checked=12 inserted=132 scrape_failures=1
+[2026-04-15T14:26:37.408694+00:00] sleeping seconds=300 consecutive_failure_cycles=1
+[2026-04-15T14:31:37.409007+00:00] cycle starting route=SFO-LAX
+[2026-04-15T14:32:18.340209+00:00] cycle done route=SFO-LAX checked=10 inserted=105 scrape_failures=0
+[2026-04-15T14:32:18.340754+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:37:18.341064+00:00] cycle starting route=SFO-LAX
+[2026-04-15T14:38:10.562247+00:00] cycle done route=SFO-LAX checked=12 inserted=129 scrape_failures=0
+[2026-04-15T14:38:10.562772+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:43:10.563087+00:00] cycle starting route=LAX-SFO
+[2026-04-15T14:43:53.101168+00:00] cycle done route=LAX-SFO checked=10 inserted=105 scrape_failures=0
+[2026-04-15T14:43:53.101777+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:48:53.102070+00:00] cycle starting route=LAX-SFO
+[2026-04-15T14:49:46.183152+00:00] cycle done route=LAX-SFO checked=12 inserted=129 scrape_failures=0
+[2026-04-15T14:49:46.183738+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T14:54:46.184053+00:00] cycle starting route=MIA-LAX
+[2026-04-15T14:55:33.776183+00:00] cycle done route=MIA-LAX checked=10 inserted=119 scrape_failures=0
+[2026-04-15T14:55:33.776666+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:00:33.776979+00:00] cycle starting route=MIA-LAX
+[2026-04-15T15:01:33.261700+00:00] cycle done route=MIA-LAX checked=12 inserted=143 scrape_failures=0
+[2026-04-15T15:01:33.262307+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:06:33.262603+00:00] cycle starting route=LAX-MIA
+[2026-04-15T15:07:21.428735+00:00] cycle done route=LAX-MIA checked=10 inserted=120 scrape_failures=0
+[2026-04-15T15:07:21.429234+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:12:21.429543+00:00] cycle starting route=LAX-MIA
+[2026-04-15T15:13:17.578471+00:00] cycle done route=LAX-MIA checked=12 inserted=144 scrape_failures=0
+[2026-04-15T15:13:17.579075+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:18:17.579392+00:00] cycle starting route=SEA-LAX
+[2026-04-15T15:18:56.837268+00:00] cycle done route=SEA-LAX checked=10 inserted=98 scrape_failures=0
+[2026-04-15T15:18:56.837862+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:23:56.838189+00:00] cycle starting route=LAX-SEA
+[2026-04-15T15:24:51.524196+00:00] cycle done route=LAX-SEA checked=10 inserted=96 scrape_failures=0
+[2026-04-15T15:24:51.524746+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:29:51.525061+00:00] cycle starting route=BOS-LAX
+[2026-04-15T15:30:49.851641+00:00] cycle done route=BOS-LAX checked=10 inserted=118 scrape_failures=0
+[2026-04-15T15:30:49.852239+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:35:49.852548+00:00] cycle starting route=LAX-BOS
+[2026-04-15T15:36:39.863937+00:00] cycle done route=LAX-BOS checked=10 inserted=120 scrape_failures=0
+[2026-04-15T15:36:39.864646+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:41:39.864955+00:00] cycle starting route=JFK-LHR
+[2026-04-15T15:42:18.909290+00:00] cycle done route=JFK-LHR checked=10 inserted=107 scrape_failures=0
+[2026-04-15T15:42:18.909745+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:47:18.910071+00:00] cycle starting route=LHR-JFK
+[2026-04-15T15:47:57.531385+00:00] cycle done route=LHR-JFK checked=10 inserted=112 scrape_failures=0
+[2026-04-15T15:47:57.531983+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:52:57.532264+00:00] cycle starting route=JFK-CDG
+[2026-04-15T15:53:38.312807+00:00] cycle done route=JFK-CDG checked=10 inserted=113 scrape_failures=0
+[2026-04-15T15:53:38.313334+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T15:58:38.313660+00:00] cycle starting route=CDG-JFK
+[2026-04-15T15:59:16.747762+00:00] cycle done route=CDG-JFK checked=10 inserted=107 scrape_failures=0
+[2026-04-15T15:59:16.748410+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:04:16.748717+00:00] cycle starting route=JFK-FRA
+[2026-04-15T16:04:56.509955+00:00] cycle done route=JFK-FRA checked=10 inserted=117 scrape_failures=0
+[2026-04-15T16:04:56.510469+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:09:56.510778+00:00] cycle starting route=FRA-JFK
+[2026-04-15T16:09:58.321128+00:00] scrape failed FRA-JFK 2026-04-21 ECONOMY: Command '['fli', 'flights', 'FRA', 'JFK', '2026-04-21', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T16:10:30.231575+00:00] cycle done route=FRA-JFK checked=10 inserted=98 scrape_failures=1
+[2026-04-15T16:10:30.232237+00:00] sleeping seconds=300 consecutive_failure_cycles=1
+[2026-04-15T16:15:30.232493+00:00] cycle starting route=IST-JFK
+[2026-04-15T16:16:03.339825+00:00] cycle done route=IST-JFK checked=10 inserted=88 scrape_failures=0
+[2026-04-15T16:16:03.340389+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:21:03.340710+00:00] cycle starting route=JFK-IST
+[2026-04-15T16:21:41.378154+00:00] cycle done route=JFK-IST checked=10 inserted=111 scrape_failures=0
+[2026-04-15T16:21:41.378705+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:26:41.379018+00:00] cycle starting route=SIN-LAX
+[2026-04-15T16:26:47.911445+00:00] scrape failed SIN-LAX 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T16:26:56.717472+00:00] scrape failed SIN-LAX 2026-04-15 BUSINESS: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T16:27:07.060009+00:00] scrape failed SIN-LAX 2026-04-15 FIRST: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T16:27:07.060266+00:00] cycle done route=SIN-LAX checked=8 inserted=60 scrape_failures=3
+[2026-04-15T16:27:07.060786+00:00] sleeping seconds=300 consecutive_failure_cycles=1
+[2026-04-15T16:32:07.061100+00:00] cycle starting route=LAX-SIN
+[2026-04-15T16:32:38.866600+00:00] cycle done route=LAX-SIN checked=10 inserted=82 scrape_failures=0
+[2026-04-15T16:32:38.866903+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:37:38.867227+00:00] cycle starting route=HND-LAX
+[2026-04-15T16:37:40.634964+00:00] scrape failed HND-LAX 2026-04-15 ECONOMY: Command '['fli', 'flights', 'HND', 'LAX', '2026-04-15', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T16:37:50.866244+00:00] scrape failed HND-LAX 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'HND', 'LAX', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T16:37:59.980328+00:00] scrape failed HND-LAX 2026-04-15 BUSINESS: Command '['fli', 'flights', 'HND', 'LAX', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T16:38:08.478284+00:00] scrape failed HND-LAX 2026-04-15 FIRST: Command '['fli', 'flights', 'HND', 'LAX', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T16:38:15.302779+00:00] cycle done route=HND-LAX checked=12 inserted=96 scrape_failures=4
+[2026-04-15T16:38:15.303432+00:00] sleeping seconds=300 consecutive_failure_cycles=1
+[2026-04-15T16:43:15.303743+00:00] cycle starting route=LAX-HND
+[2026-04-15T16:43:55.592872+00:00] cycle done route=LAX-HND checked=10 inserted=116 scrape_failures=0
+[2026-04-15T16:43:55.593484+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:48:55.593790+00:00] cycle starting route=JFK-LAX
+[2026-04-15T16:49:40.265003+00:00] cycle done route=JFK-LAX checked=10 inserted=116 scrape_failures=0
+[2026-04-15T16:49:40.265640+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T16:54:40.265961+00:00] cycle starting route=JFK-LAX
+[2026-04-15T16:55:32.721752+00:00] cycle done route=JFK-LAX checked=12 inserted=140 scrape_failures=0
+[2026-04-15T16:55:32.722380+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:00:32.722685+00:00] cycle starting route=LAX-JFK
+[2026-04-15T17:01:30.713395+00:00] cycle done route=LAX-JFK checked=12 inserted=144 scrape_failures=0
+[2026-04-15T17:01:30.714135+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:06:30.714356+00:00] cycle starting route=LAX-JFK
+[2026-04-15T17:07:30.019170+00:00] cycle done route=LAX-JFK checked=12 inserted=144 scrape_failures=0
+[2026-04-15T17:07:30.019851+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:12:30.020159+00:00] cycle starting route=ORD-LGA
+[2026-04-15T17:12:51.204687+00:00] scrape failed ORD-LGA 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'ORD', 'LGA', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T17:13:18.709612+00:00] cycle done route=ORD-LGA checked=12 inserted=114 scrape_failures=1
+[2026-04-15T17:13:18.710272+00:00] sleeping seconds=300 consecutive_failure_cycles=1
+[2026-04-15T17:18:18.710587+00:00] cycle starting route=ORD-LGA
+[2026-04-15T17:18:40.493757+00:00] scrape failed ORD-LGA 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'ORD', 'LGA', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T17:19:07.399773+00:00] cycle done route=ORD-LGA checked=12 inserted=114 scrape_failures=1
+[2026-04-15T17:19:07.400411+00:00] sleeping seconds=300 consecutive_failure_cycles=2
+[2026-04-15T17:24:07.400722+00:00] cycle starting route=LGA-ORD
+[2026-04-15T17:24:56.366378+00:00] cycle done route=LGA-ORD checked=12 inserted=115 scrape_failures=0
+[2026-04-15T17:24:56.366987+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:29:56.367325+00:00] cycle starting route=LGA-ORD
+[2026-04-15T17:30:47.791591+00:00] cycle done route=LGA-ORD checked=12 inserted=115 scrape_failures=0
+[2026-04-15T17:30:47.792240+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:35:47.792548+00:00] cycle starting route=ATL-LAX
+[2026-04-15T17:36:43.936866+00:00] cycle done route=ATL-LAX checked=12 inserted=140 scrape_failures=0
+[2026-04-15T17:36:43.937590+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:41:43.937812+00:00] cycle starting route=ATL-LAX
+[2026-04-15T17:42:42.548695+00:00] cycle done route=ATL-LAX checked=12 inserted=140 scrape_failures=0
+[2026-04-15T17:42:42.549396+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:47:42.549706+00:00] cycle starting route=LAX-ATL
+[2026-04-15T17:48:49.953472+00:00] cycle done route=LAX-ATL checked=12 inserted=144 scrape_failures=0
+[2026-04-15T17:48:49.954182+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:53:49.954494+00:00] cycle starting route=LAX-ATL
+[2026-04-15T17:54:49.682756+00:00] cycle done route=LAX-ATL checked=12 inserted=144 scrape_failures=0
+[2026-04-15T17:54:49.683366+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T17:59:49.683669+00:00] cycle starting route=DFW-LAX
+[2026-04-15T18:00:49.921477+00:00] cycle done route=DFW-LAX checked=12 inserted=137 scrape_failures=0
+[2026-04-15T18:00:49.922058+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:05:49.922362+00:00] cycle starting route=DFW-LAX
+[2026-04-15T18:06:47.695672+00:00] cycle done route=DFW-LAX checked=12 inserted=137 scrape_failures=0
+[2026-04-15T18:06:47.696426+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:11:47.696741+00:00] cycle starting route=LAX-DFW
+[2026-04-15T18:12:48.525474+00:00] cycle done route=LAX-DFW checked=12 inserted=144 scrape_failures=0
+[2026-04-15T18:12:48.526135+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:17:48.526447+00:00] cycle starting route=LAX-DFW
+[2026-04-15T18:18:48.277416+00:00] cycle done route=LAX-DFW checked=12 inserted=144 scrape_failures=0
+[2026-04-15T18:18:48.278154+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:23:48.278479+00:00] cycle starting route=SFO-LAX
+[2026-04-15T18:24:41.349011+00:00] cycle done route=SFO-LAX checked=12 inserted=129 scrape_failures=0
+[2026-04-15T18:24:41.349703+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:29:41.350020+00:00] cycle starting route=SFO-LAX
+[2026-04-15T18:30:35.727773+00:00] cycle done route=SFO-LAX checked=12 inserted=129 scrape_failures=0
+[2026-04-15T18:30:35.728435+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:35:35.728751+00:00] cycle starting route=LAX-SFO
+[2026-04-15T18:36:29.064432+00:00] cycle done route=LAX-SFO checked=12 inserted=130 scrape_failures=0
+[2026-04-15T18:36:29.065037+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:41:29.065413+00:00] cycle starting route=LAX-SFO
+[2026-04-15T18:42:20.312480+00:00] cycle done route=LAX-SFO checked=12 inserted=130 scrape_failures=0
+[2026-04-15T18:42:20.313125+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:47:20.313440+00:00] cycle starting route=MIA-LAX
+[2026-04-15T18:48:22.190624+00:00] cycle done route=MIA-LAX checked=12 inserted=140 scrape_failures=0
+[2026-04-15T18:48:22.191220+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:53:22.191533+00:00] cycle starting route=MIA-LAX
+[2026-04-15T18:54:20.004803+00:00] cycle done route=MIA-LAX checked=12 inserted=140 scrape_failures=0
+[2026-04-15T18:54:20.005436+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T18:59:20.005762+00:00] cycle starting route=LAX-MIA
+[2026-04-15T19:00:21.784982+00:00] cycle done route=LAX-MIA checked=12 inserted=144 scrape_failures=0
+[2026-04-15T19:00:21.785659+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:05:21.785984+00:00] cycle starting route=LAX-MIA
+[2026-04-15T19:06:21.422419+00:00] cycle done route=LAX-MIA checked=12 inserted=144 scrape_failures=0
+[2026-04-15T19:06:21.423033+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:11:21.423343+00:00] cycle starting route=SEA-LAX
+[2026-04-15T19:12:10.714646+00:00] cycle done route=SEA-LAX checked=12 inserted=121 scrape_failures=0
+[2026-04-15T19:12:10.715194+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:17:10.715511+00:00] cycle starting route=LAX-SEA
+[2026-04-15T19:18:01.234773+00:00] cycle done route=LAX-SEA checked=12 inserted=120 scrape_failures=0
+[2026-04-15T19:18:01.235424+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:23:01.235740+00:00] cycle starting route=BOS-LAX
+[2026-04-15T19:23:55.650876+00:00] cycle done route=BOS-LAX checked=12 inserted=138 scrape_failures=0
+[2026-04-15T19:23:55.651406+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:28:55.651630+00:00] cycle starting route=LAX-BOS
+[2026-04-15T19:29:53.644990+00:00] cycle done route=LAX-BOS checked=12 inserted=144 scrape_failures=0
+[2026-04-15T19:29:53.645638+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:34:53.645942+00:00] cycle starting route=JFK-LHR
+[2026-04-15T19:35:41.105485+00:00] cycle done route=JFK-LHR checked=12 inserted=122 scrape_failures=0
+[2026-04-15T19:35:41.105957+00:00] sleeping seconds=300 consecutive_failure_cycles=0
+[2026-04-15T19:38:54.070858+00:00] fare worker boot
+[2026-04-15T19:38:54.070988+00:00] cycle starting route=LHR-JFK
+[2026-04-15T19:39:32.132208+00:00] scrape failed LHR-JFK 2026-04-15 FIRST: Command '['fli', 'flights', 'LHR', 'JFK', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T19:39:39.083994+00:00] cycle done route=LHR-JFK checked=12 inserted=118 scrape_failures=1
+[2026-04-15T19:39:39.084785+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T19:54:39.085112+00:00] cycle starting route=JFK-CDG
+[2026-04-15T19:55:25.529291+00:00] cycle done route=JFK-CDG checked=12 inserted=134 scrape_failures=0
+[2026-04-15T19:55:25.529999+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T20:10:25.530246+00:00] cycle starting route=CDG-JFK
+[2026-04-15T20:10:26.898736+00:00] scrape failed CDG-JFK 2026-04-15 ECONOMY: Command '['fli', 'flights', 'CDG', 'JFK', '2026-04-15', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:10:37.951088+00:00] scrape failed CDG-JFK 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'CDG', 'JFK', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:10:46.263253+00:00] scrape failed CDG-JFK 2026-04-15 BUSINESS: Command '['fli', 'flights', 'CDG', 'JFK', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T20:10:54.953086+00:00] scrape failed CDG-JFK 2026-04-15 FIRST: Command '['fli', 'flights', 'CDG', 'JFK', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T20:11:02.285311+00:00] cycle done route=CDG-JFK checked=12 inserted=96 scrape_failures=4
+[2026-04-15T20:11:02.285808+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T20:26:02.286128+00:00] cycle starting route=JFK-FRA
+[2026-04-15T20:26:49.005160+00:00] cycle done route=JFK-FRA checked=12 inserted=121 scrape_failures=0
+[2026-04-15T20:26:49.005670+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T20:41:49.005979+00:00] cycle starting route=FRA-JFK
+[2026-04-15T20:41:50.599499+00:00] scrape failed FRA-JFK 2026-04-21 ECONOMY: Command '['fli', 'flights', 'FRA', 'JFK', '2026-04-21', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:41:51.564677+00:00] scrape failed FRA-JFK 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'FRA', 'JFK', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:41:59.910493+00:00] scrape failed FRA-JFK 2026-04-15 BUSINESS: Command '['fli', 'flights', 'FRA', 'JFK', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T20:42:08.304429+00:00] scrape failed FRA-JFK 2026-04-15 FIRST: Command '['fli', 'flights', 'FRA', 'JFK', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T20:42:15.436249+00:00] cycle done route=FRA-JFK checked=10 inserted=71 scrape_failures=4
+[2026-04-15T20:42:15.436775+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T20:57:15.437088+00:00] cycle starting route=IST-JFK
+[2026-04-15T20:57:16.707266+00:00] scrape failed IST-JFK 2026-04-15 ECONOMY: Command '['fli', 'flights', 'IST', 'JFK', '2026-04-15', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:57:25.202782+00:00] scrape failed IST-JFK 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'IST', 'JFK', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T20:57:33.327680+00:00] scrape failed IST-JFK 2026-04-15 BUSINESS: Command '['fli', 'flights', 'IST', 'JFK', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T20:57:41.790742+00:00] scrape failed IST-JFK 2026-04-15 FIRST: Command '['fli', 'flights', 'IST', 'JFK', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T20:57:49.107892+00:00] cycle done route=IST-JFK checked=12 inserted=96 scrape_failures=4
+[2026-04-15T20:57:49.108385+00:00] sleeping seconds=900 consecutive_failure_cycles=2
+[2026-04-15T21:12:49.108693+00:00] cycle starting route=JFK-IST
+[2026-04-15T21:13:29.672830+00:00] cycle done route=JFK-IST checked=12 inserted=126 scrape_failures=0
+[2026-04-15T21:13:29.673403+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T21:28:29.673748+00:00] cycle starting route=SIN-LAX
+[2026-04-15T21:28:30.943746+00:00] scrape failed SIN-LAX 2026-04-15 ECONOMY: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T21:28:42.615111+00:00] scrape failed SIN-LAX 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T21:28:51.730678+00:00] scrape failed SIN-LAX 2026-04-15 BUSINESS: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-15T21:29:00.536275+00:00] scrape failed SIN-LAX 2026-04-15 FIRST: Command '['fli', 'flights', 'SIN', 'LAX', '2026-04-15', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-15T21:29:00.536483+00:00] cycle done route=SIN-LAX checked=10 inserted=72 scrape_failures=4
+[2026-04-15T21:29:00.536961+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T21:33:01.421170+00:00] fare worker boot (postgres edition)
+[2026-04-15T21:33:02.183049+00:00] cycle starting route=LAX-ATL
+[2026-04-15T21:33:02.268089+00:00] scrape failed LAX-ATL 2026-04-15 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.268380+00:00] scrape failed LAX-ATL 2026-04-16 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.268681+00:00] scrape failed LAX-ATL 2026-04-17 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.268966+00:00] scrape failed LAX-ATL 2026-04-18 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.269251+00:00] scrape failed LAX-ATL 2026-04-19 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.269532+00:00] scrape failed LAX-ATL 2026-04-20 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.269789+00:00] scrape failed LAX-ATL 2026-04-21 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.270092+00:00] scrape failed LAX-ATL 2026-04-22 ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.300380+00:00] scrape failed LAX-ATL 2026-04-15 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.300664+00:00] scrape failed LAX-ATL 2026-04-16 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.300934+00:00] scrape failed LAX-ATL 2026-04-17 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.301226+00:00] scrape failed LAX-ATL 2026-04-18 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.301507+00:00] scrape failed LAX-ATL 2026-04-19 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.301784+00:00] scrape failed LAX-ATL 2026-04-20 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.301992+00:00] scrape failed LAX-ATL 2026-04-21 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.302214+00:00] scrape failed LAX-ATL 2026-04-22 PREMIUM_ECONOMY: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.332793+00:00] scrape failed LAX-ATL 2026-04-15 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.333015+00:00] scrape failed LAX-ATL 2026-04-16 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.333319+00:00] scrape failed LAX-ATL 2026-04-17 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.333586+00:00] scrape failed LAX-ATL 2026-04-18 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.333845+00:00] scrape failed LAX-ATL 2026-04-19 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.334120+00:00] scrape failed LAX-ATL 2026-04-20 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.334341+00:00] scrape failed LAX-ATL 2026-04-21 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.334564+00:00] scrape failed LAX-ATL 2026-04-22 BUSINESS: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.372460+00:00] scrape failed LAX-ATL 2026-04-15 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.372736+00:00] scrape failed LAX-ATL 2026-04-16 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.372985+00:00] scrape failed LAX-ATL 2026-04-17 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.373306+00:00] scrape failed LAX-ATL 2026-04-18 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.373578+00:00] scrape failed LAX-ATL 2026-04-19 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.373810+00:00] scrape failed LAX-ATL 2026-04-20 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.374056+00:00] scrape failed LAX-ATL 2026-04-21 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.374318+00:00] scrape failed LAX-ATL 2026-04-22 FIRST: [Errno 2] No such file or directory: 'fli'
+[2026-04-15T21:33:02.374569+00:00] cycle done route=LAX-ATL checked=32 inserted=0 scrape_failures=32
+[2026-04-15T21:33:02.374635+00:00] sleeping seconds=900 consecutive_failure_cycles=2
+[2026-04-15T21:42:51.234275+00:00] fare worker boot (postgres edition)
+[2026-04-15T21:42:52.090967+00:00] cycle starting route=DFW-LAX
+[2026-04-15T21:42:53.324658+00:00] cycle fatal: could not determine data type of parameter $6
+[2026-04-15T21:42:53.324881+00:00] sleeping seconds=960 consecutive_failure_cycles=3
+[2026-04-15T21:52:54.274594+00:00] fare worker boot (postgres edition)
+[2026-04-15T21:52:56.049270+00:00] cycle starting route=DFW-LAX
+[2026-04-15T21:52:57.700902+00:00] cycle fatal: could not determine data type of parameter $6
+[2026-04-15T21:52:57.701210+00:00] sleeping seconds=1020 consecutive_failure_cycles=4
+[2026-04-15T21:54:01.756848+00:00] cycle starting route=DFW-LAX
+[2026-04-15T21:54:38.904326+00:00] cycle starting route=JFK-LAX
+[2026-04-15T21:55:46.913634+00:00] cycle done route=JFK-LAX checked=32 inserted=208 scrape_failures=0
+[2026-04-15T22:09:58.679227+00:00] cycle starting route=LAX-JFK
+[2026-04-15T22:09:59.931922+00:00] cycle fatal: could not determine data type of parameter $6
+[2026-04-15T22:09:59.932202+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T22:25:00.797197+00:00] cycle starting route=LAX-JFK
+[2026-04-15T22:25:01.968689+00:00] cycle fatal: could not determine data type of parameter $6
+[2026-04-15T22:25:01.968904+00:00] sleeping seconds=900 consecutive_failure_cycles=2
+[2026-04-15T22:35:44.356081+00:00] fare worker boot (postgres edition)
+[2026-04-15T22:35:44.600184+00:00] cycle starting route=LAX-JFK
+[2026-04-15T22:36:52.932321+00:00] cycle done route=LAX-JFK checked=32 inserted=200 scrape_failures=0
+[2026-04-15T22:36:52.932373+00:00] sleeping seconds=900 consecutive_failure_cycles=0

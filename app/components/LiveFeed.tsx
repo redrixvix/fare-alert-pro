@@ -2,9 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery } from 'convex/react';
 import Link from 'next/link';
-import { getRecentPrices } from '@/convex/prices';
 
 const AIRLINE_NAMES: Record<string, string> = {
   AA: 'American', UA: 'United', DL: 'Delta', SW: 'Southwest',
@@ -56,29 +54,33 @@ export default function LiveFeed() {
   const [newCount, setNewCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const prices = useQuery(getRecentPrices as any);
-
   useEffect(() => {
-    if (prices === undefined) {
-      setLoading(true);
-      return;
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch('/api/live-feed');
+        const data = await res.json();
+        if (cancelled) return;
+        const prices = data.prices ?? [];
+        if (prices.length > 0 && prices[0].id !== lastId) {
+          setLastId(prices[0].id as any);
+          setNewCount((c) => c + 1);
+        }
+        setRows((prev) => {
+          const ids = new Set(prev.map((p) => p.id));
+          const merged = [...prices, ...prev.filter((p) => !ids.has(p.id))];
+          return merged.slice(0, 20) as any;
+        });
+        setConnected(true);
+      } catch {
+        // silent
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
-    setLoading(false);
-    if (prices.length > 0 && prices[0].id !== lastId) {
-      setLastId(prices[0].id as any);
-      setNewCount((c) => c + 1);
-    }
-    setRows((prev) => {
-      const ids = new Set(prev.map((p) => p.id));
-      const merged = [...prices, ...prev.filter((p) => !ids.has(p.id))];
-      return merged.slice(0, 20) as any;
-    });
-    setConnected(true);
-  }, [prices]);
-
-  useEffect(() => {
-    const id = setInterval(() => {}, 15_000);
-    return () => clearInterval(id);
+    load();
+    const id = setInterval(load, 15_000);
+    return () => { cancelled = true; clearInterval(id); };
   }, []);
 
   const dismissNew = () => setNewCount(0);

@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getPriceHistory } from '@/lib/db-pg';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(_request, { params }) {
   const user = await getAuthUser();
@@ -10,17 +12,18 @@ export async function GET(_request, { params }) {
   const { route } = await params;
   const decoded = decodeURIComponent(route);
 
-  const client = getClient();
-  const rows = await client.query('prices:getPriceHistory', { route: decoded, limit: 500 }) as any[];
+  const cabins = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
+  const byDate: Record<string, Record<string, number | null>> = {};
 
-  const byDate = {};
-  for (const row of rows) {
-    const date = row.searchDate.split('T')[0];
-    if (!byDate[date]) byDate[date] = {};
-    const key = row.cabin === 'ECONOMY' ? 'y'
-      : row.cabin === 'PREMIUM_ECONOMY' ? 'pe'
-      : row.cabin === 'BUSINESS' ? 'j' : 'f';
-    byDate[date][key] = row.price;
+  for (const cabin of cabins) {
+    const rows = await getPriceHistory(decoded, cabin, 90);
+    for (const r of rows) {
+      if (!byDate[r.date]) byDate[r.date] = {};
+      const key = cabin === 'ECONOMY' ? 'y'
+        : cabin === 'PREMIUM_ECONOMY' ? 'pe'
+        : cabin === 'BUSINESS' ? 'j' : 'f';
+      byDate[r.date][key] = r.price;
+    }
   }
 
   const data = Object.entries(byDate)

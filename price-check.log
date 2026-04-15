@@ -1,0 +1,22 @@
+[2026-04-14T13:55:26.220Z] Price checker starting | 28 routes x 2 days
+[2026-04-14T13:55:26.376Z] Connected to Convex | 33 routes, 7 prices
+[2026-04-14T13:57:36.954Z] Price checker starting | 28 routes x 1 days
+[2026-04-14T13:57:37.086Z] Connected to Convex | 33 routes, 1579 prices
+[2026-04-14T13:59:45.948Z] Price checker starting | 28 routes x 1 days
+[2026-04-14T13:59:46.083Z] Connected to Convex | 33 routes, 4872 prices
+[2026-04-14T14:00:03.563Z] Price checker starting | 28 routes x 1 days
+[2026-04-14T14:00:03.688Z] Connected to Convex | 33 routes, 5525 prices
+[2026-04-14T14:01:23.486Z] One-shot complete: 28 checks, 2787 inserted, 0 errors
+[2026-04-14T14:19:37.019Z] Price checker starting | 28 routes x 1 days
+[2026-04-14T14:19:37.477Z] Connected to Convex | 33 routes, 11811 prices
+[2026-04-14T14:30:08.452Z] Price checker starting | 28 routes x 1 days
+[2026-04-14T14:30:08.803Z] Connected to Convex | 33 routes, 13254 prices
+[2026-04-14T14:31:00.916Z] One-shot complete: 28 checks, 301 inserted, 0 errors
+[2026-04-14T14:41:55.332Z] Price checker starting | 28 routes x 90 days | start offset 0
+[2026-04-14T14:41:55.692Z] Connected to Convex | 33 routes, 13555 prices
+[2026-04-14T16:11:49.595Z] One-shot complete: 2520 checks, 30190 inserted, 0 errors
+[2026-04-14T17:51:37.915Z] Price checker starting | 28 routes x 1 days | start offset 0
+[2026-04-14T17:51:38.079Z] Connected to Convex | 33 routes, 43745 prices
+[2026-04-14T17:54:29.844Z] One-shot complete: 28 checks, 912 inserted, 0 errors
+[2026-04-14T17:54:40.497Z] Price checker starting | 28 routes x 90 days | start offset 0
+[2026-04-14T17:54:40.720Z] Connected to Convex | 33 routes, 44657 prices

@@ -1,20 +1,29 @@
 // @ts-nocheck
 'use client';
 
-import { useState } from 'react';
-import { useQuery } from 'convex/react';
-import { getPricesByDate } from '@/convex/prices';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function DateSearch() {
   const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [searched, setSearched] = useState(false);
-
-  const results = useQuery(getPricesByDate as any, { date: searched ? date : '' }) as any[] | undefined;
+  const [results, setResults] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const search = () => {
     if (!date) return;
     setSearched(true);
+    setLoading(true);
+    fetch(`/api/prices-by-date?date=${date}`, { credentials: 'include' })
+      .then(r => r.json())
+      .then(data => {
+        setResults(data.prices ?? []);
+        setLoading(false);
+      })
+      .catch(() => {
+        setResults([]);
+        setLoading(false);
+      });
   };
 
   const cabinLabel = (c: string) => {
@@ -50,13 +59,13 @@ export default function DateSearch() {
 
       {searched && (
         <div className="date-results">
-          {!results ? (
+          {loading ? (
             <p className="no-results">Loading…</p>
-          ) : results.length === 0 ? (
+          ) : results?.length === 0 ? (
             <p className="no-results">No price data found for {date}. Try a date within the last 90 days that has been checked.</p>
           ) : (
             <>
-              <p className="results-count">{results.length} prices found for {date}</p>
+              <p className="results-count">{results?.length} prices found for {date}</p>
               <div className="routes-table-wrap">
                 <table className="routes-table">
                   <thead>

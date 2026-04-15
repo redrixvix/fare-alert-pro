@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import { getUserByEmail } from '@/lib/db-pg';
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+const JWT_SECRET = process.env.JWT_SECRET!;
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
@@ -11,24 +16,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const client = new ConvexHttpClient(convexUrl!);
-
-    let result;
-    try {
-      result = await client.mutation('users:signIn' as any, { email, password });
-    } catch (e: any) {
-      if (e.message?.includes('Invalid email or password')) {
-        return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-      }
-      throw e;
+    const user = await getUserByEmail(email);
+    if (!user) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
+
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+    );
 
     const response = NextResponse.json({
       success: true,
-      user: { id: result.userId, email: result.email, plan: result.plan },
+      user: { id: user.id, email: user.email, plan: user.plan || 'free' },
     });
 
-    response.cookies.set('auth_token', result.token, {
+    response.cookies.set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

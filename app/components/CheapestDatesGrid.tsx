@@ -1,10 +1,8 @@
 // @ts-nocheck
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useQuery } from 'convex/react';
-import { getCheapestDates } from '@/convex/prices';
 
 interface DateEntry {
   date: string;
@@ -24,7 +22,6 @@ interface CheapestDatesGridProps {
 }
 
 const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-const MONTHS_MAX = 3;
 
 function getMonthDays(year: number, month: number): (Date | null)[] {
   const firstDay = new Date(year, month, 1);
@@ -57,11 +54,26 @@ export default function CheapestDatesGrid({ route }: CheapestDatesGridProps) {
   const router = useRouter();
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
+  const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [months, setMonths] = useState(1);
   const [collapsed, setCollapsed] = useState(true);
-  const data = useQuery(getCheapestDates as any, { route, months });
+  const [data, setData] = useState<DatesResponse | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (collapsed) return;
+    setLoading(true);
+    fetch(`/api/route/${encodeURIComponent(route)}/dates?months=${months}`, { credentials: 'include' })
+      .then(r => r.json())
+      .then(d => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(() => {
+        setData(null);
+        setLoading(false);
+      });
+  }, [route, months, collapsed]);
 
   const goPrevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
@@ -77,7 +89,6 @@ export default function CheapestDatesGrid({ route }: CheapestDatesGridProps) {
   const minPrice = data?.minPrice ?? 0;
   const maxPrice = data?.maxPrice ?? 0;
 
-  // Validate viewMonth is in range given months
   const now = new Date();
   const viewDate = new Date(viewYear, viewMonth, 1);
   const maxViewDate = new Date(now.getFullYear(), now.getMonth() + months, 1);
@@ -135,12 +146,10 @@ export default function CheapestDatesGrid({ route }: CheapestDatesGridProps) {
               {/* Calendar grid */}
               <div className="cdg-scroll">
                 <div className="cdg-grid">
-                  {/* Day headers */}
                   {DAYS.map(d => (
                     <div key={d} className="cdg-day-header">{d}</div>
                   ))}
 
-                  {/* Cells */}
                   {cells.map((date, i) => {
                     if (!date) return <div key={`pad-${i}`} className="cdg-cell cdg-cell-empty" />;
 

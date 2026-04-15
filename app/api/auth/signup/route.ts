@@ -1,8 +1,12 @@
-// @ts-nocheck
 import { NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
+import { getUserByEmail, createUser } from '@/lib/db-pg';
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+const JWT_SECRET = process.env.JWT_SECRET!;
+
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
@@ -11,20 +15,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const client = new ConvexHttpClient(convexUrl!);
-    let result;
-    try {
-      result = await (client.mutation as any)('users:signUp', { email, password });
-    } catch (e: any) {
-      return NextResponse.json({ error: e.message || 'Signup failed' }, { status: 400 });
+    const existing = await getUserByEmail(email);
+    if (existing) {
+      return NextResponse.json({ error: 'Email already registered' }, { status: 400 });
     }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await createUser(email, passwordHash);
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '30d' }
+    );
 
     const response = NextResponse.json({
       success: true,
-      user: { id: result.userId, email: result.email, plan: result.plan },
+      user: { id: user.id, email: user.email, plan: user.plan || 'free' },
     });
 
-    response.cookies.set('auth_token', result.token, {
+    response.cookies.set('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

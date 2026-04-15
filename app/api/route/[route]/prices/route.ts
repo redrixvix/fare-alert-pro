@@ -1,7 +1,9 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getPricesByRoute } from '@/lib/db-pg';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(_request, { params }) {
   const user = await getAuthUser();
@@ -10,7 +12,6 @@ export async function GET(_request, { params }) {
   const { route } = await params;
   const decoded = decodeURIComponent(route);
 
-  const client = getClient();
-  const prices = await client.query('prices:getPricesByRoute', { route: decoded, cabin: 'ECONOMY' }) as any[];
-  return NextResponse.json({ prices });
+  const rows = await getPricesByRoute(decoded, 'ECONOMY');
+  return NextResponse.json({ prices: rows });
 }

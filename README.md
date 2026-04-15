@@ -80,9 +80,66 @@ Or connect your GitHub repo to Vercel for automatic deploys on push.
 | `POST /api/user/airports` | Yes | Set airports |
 | `GET /api/check-prices` | Cron | Triggered by Vercel cron every minute |
 
+## Local Python Worker on This Machine
+
+FareAlertPro now has a dedicated Python ingestion worker intended to run continuously on Alexander's always-on machine instead of relying on Vercel for freshness.
+
+### Why this exists
+- Google Flights-style fare data changes too often for a once-per-day web cron to feel trustworthy
+- the Next.js app is the UI layer, while the Python worker handles long-running route scanning and inserts fresh prices into Convex
+- this machine already has `fli` working, which makes it the best place to run continuous scraping
+
+### What the worker does
+- scans one route per cycle across all 4 cabin classes
+- prioritizes missing future dates first across the next 90 days
+- gives busiest routes extra passes so they refresh more often than the rest
+- inserts sanitized fares into Convex
+- repeats continuously on a timer under `systemd`, with automatic backoff if scrape failures spike
+
+### Worker files
+- `worker/fare_worker.py` — continuous ingestion worker
+- `worker/fare-worker.service` — `systemd` service unit
+- `worker/README.md` — operational notes for local service management
+- `logs/fare-worker.log` — plain text worker log
+- `state/fare-worker-state.json` — remembers which route to scan next
+
+### First-time setup on this machine
+Ubuntu/Debian needs `python3.12-venv` installed first.
+
+```bash
+sudo apt update
+sudo apt install -y python3.12-venv
+
+cd /home/rixvix/.openclaw/workspace/fare-alert-pro
+python3 -m venv .venv-worker
+./.venv-worker/bin/pip install convex
+
+sudo cp /home/rixvix/.openclaw/workspace/fare-alert-pro/worker/fare-worker.service /etc/systemd/system/fare-worker.service
+sudo sed -i 's|ExecStart=/usr/bin/python3 /home/rixvix/.openclaw/workspace/fare-alert-pro/worker/fare_worker.py|ExecStart=/home/rixvix/.openclaw/workspace/fare-alert-pro/.venv-worker/bin/python /home/rixvix/.openclaw/workspace/fare-alert-pro/worker/fare_worker.py|' /etc/systemd/system/fare-worker.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now fare-worker.service
+```
+
+### Check status
+```bash
+sudo systemctl status fare-worker.service --no-pager
+journalctl -u fare-worker.service -f
+cat /home/rixvix/.openclaw/workspace/fare-alert-pro/logs/fare-worker.log
+```
+
+### Restart the worker
+```bash
+sudo systemctl restart fare-worker.service
+```
+
+### Important notes
+- the worker depends on the local `fli` CLI being installed and working for the `rixvix` user
+- the worker writes directly to Convex, so Convex functions must be deployed when backend query/mutation code changes
+- Vercel still serves the UI, but freshness now comes from the local Python worker, not from Vercel cron alone
+
 ## Cron Job
 
-On Vercel, the `/api/check-prices` endpoint runs every minute via Vercel Cron. It checks all tracked routes across all cabin classes and fires Telegram alerts when prices drop below the 30-day average by 50%+ or when a price watch is hit.
+The Vercel `/api/check-prices` endpoint still exists, but the primary freshness path is now the local Python worker on this machine. Treat the Vercel cron as secondary compared with the systemd worker.
 
 ## Project Structure
 
@@ -101,6 +158,12 @@ fare-alert-pro/
 │   ├── auth.ts           # JWT authentication
 │   ├── db.ts             # SQLite (local dev)
 │   └── db-prod.ts        # Vercel Postgres (production)
-├── check-prices.sh       # Local cron wrapper
+├── worker/
+│   ├── fare_worker.py    # Local continuous ingestion worker
+│   ├── fare-worker.service # systemd unit for this machine
+│   └── README.md         # Worker operation notes
+├── logs/                 # Worker logs
+├── state/                # Worker state files
+├── check-prices.sh       # Older local cron wrapper
 └── vercel.json           # Vercel config
 ```

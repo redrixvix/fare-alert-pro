@@ -1,9 +1,7 @@
 // @ts-nocheck
 'use client';
 
-import { useEffect } from 'react';
-import { useQuery } from 'convex/react';
-import { getStatus } from '@/convex/status';
+import { useState, useEffect } from 'react';
 
 interface StatusData {
   totalPrices: number;
@@ -12,6 +10,7 @@ interface StatusData {
   routesTracked: number;
   lastCheck: string | null;
   coverage: Record<string, number>;
+  cronIntervalSeconds?: number;
 }
 
 function formatAge(iso: string | null): string {
@@ -24,15 +23,27 @@ function formatAge(iso: string | null): string {
   return `${Math.floor(mins / 60)}h`;
 }
 
-const CRON_INTERVAL = 60;
-
 export default function StatusBar() {
-  const status = useQuery(getStatus as any, {});
+  const [status, setStatus] = useState<StatusData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!status) return null;
+  useEffect(() => {
+    fetch('/api/status')
+      .then(r => r.json())
+      .then(data => {
+        setStatus(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
 
-  const avgCoverage = Object.values(status.coverage || {}).length
-    ? Object.values(status.coverage as Record<string, number>).reduce((s: number, v: number) => s + v, 0) / Object.keys(status.coverage as Record<string, number>).length
+  if (loading || !status) return null;
+
+  const coverage = status.coverage || {};
+  const avgCoverage = Object.keys(coverage).length
+    ? Object.values(coverage as Record<string, number>).reduce((s: number, v: number) => s + v, 0) / Object.keys(coverage as Record<string, number>).length
     : 0;
 
   const dotClass = status.alertsToday > 0 ? 'status-dot-red' : 'status-dot-green';
