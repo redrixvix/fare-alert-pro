@@ -375,3 +375,70 @@
 .cdg-legend-dot.cell-yellow { background: rgba(244,162,97,0.25); border-color: var(--warn); }
 .cdg-legend-dot.cell-red { background: rgba(230,57,70,0.2); border-color: var(--danger); }
 .cdg-legend-dot.cdg-cell-na { background: var(--card); border-color: var(--border); opacity: 0.5; }
+
+/* ── Mobile ─────────────────────────────────── */
+@media (max-width: 640px) {
+  .day-nav {
+    gap: 0.5rem;
+  }
+  .nav-btn {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+  }
+  .date-label {
+    font-size: 0.85rem;
+    min-width: 140px;
+  }
+  .date-dots {
+    gap: 0.3rem;
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+  .price-table th,
+  .price-table td {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+  }
+  .lf-book-btn {
+    padding: 2px 6px;
+    font-size: 0;
+  }
+  .lf-book-btn::after {
+    content: 'Book';
+    font-size: var(--fs-micro);
+  }
+
+  /* Price history chart */
+  .price-history-chart .price-history-chart {
+    font-size: 0.75rem;
+  }
+
+  /* Cheapest dates grid — keep horizontal scroll */
+  .cdg-grid {
+    min-width: 300px;
+  }
+  .cdg-cell {
+    min-height: 48px;
+    padding: 0.3rem 0.15rem;
+  }
+
+  /* Route detail header */
+  .header h1 {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .day-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .date-label {
+    width: 100%;
+    order: -1;
+    min-width: unset;
+    margin-bottom: var(--sp-1);
+  }
+}

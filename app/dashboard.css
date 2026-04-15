@@ -789,36 +789,114 @@
 .lf-airline { color: var(--text-muted); font-size: var(--fs-micro); }
 .lf-ago { color: var(--text-muted); font-size: var(--fs-micro); text-align: right; }
 
-@media (max-width: 600px) {
-  .live-feed-row {
-    grid-template-columns: 80px 36px 56px 1fr;
+@media (max-width: 640px) {
+  /* ── Header ─────────────────────────────────── */
+  .header { padding: var(--sp-4); }
+  .header h1 { font-size: 1.2rem; }
+  .header-inner > div {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
   }
-  .lf-date, .lf-ago { display: none; }
-  .lf-airline { grid-column: 1 / -1; }
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .settings-btn {
+    flex: 1;
+    text-align: center;
+    padding: var(--sp-3) var(--sp-4) !important;
+  }
+
+  /* ── Content / Sections ─────────────────────── */
+  .content {
+    padding: var(--sp-4);
+    gap: var(--sp-4);
+  }
+  .section {
+    padding: var(--sp-4);
+    border-radius: var(--r-sm);
+  }
+  .section h2 { font-size: var(--fs-sm); margin-bottom: var(--sp-3); }
+
+  /* ── Status bar ─────────────────────────────── */
+  .status-bar { gap: var(--sp-3); padding: var(--sp-3); }
+  .status-item { font-size: 0.7rem; }
+
+  /* ── Busiest/Trending routes grid ────────────── */
+  .section > div[style*="grid"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: var(--sp-2) !important;
+  }
+  .section > div[style*="grid"] > a > div {
+    padding: var(--sp-3) !important;
+  }
+  .section > div[style*="grid"] > a > div > div:first-child {
+    font-size: var(--fs-micro) !important;
+  }
+
+  /* ── Routes table ────────────────────────────── */
+  .routes-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--r-sm);
+  }
+  .routes-table {
+    font-size: var(--fs-micro);
+    min-width: 560px;
+  }
+  .routes-table th,
+  .routes-table td {
+    padding: var(--sp-2) var(--sp-3);
+    white-space: nowrap;
+  }
+  .cabin-legend {
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    font-size: var(--fs-micro);
+  }
+
+  /* ── Quick links ─────────────────────────────── */
+  .section:has(h2[class*="Quick"]) > div {
+    flex-direction: column;
+  }
+  .section:has(h2[class*="Quick"]) > div > a {
+    justify-content: center;
+  }
+
+  /* ── Best deals grid ─────────────────────────── */
+  .deals-grid {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--sp-3);
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--sp-2);
+  }
+  .deals-grid > a {
+    flex: 0 0 140px;
+    scroll-snap-align: start;
+  }
+  .deals-grid > a .deal-card { min-width: 140px; }
+
+  /* ── Date search ─────────────────────────────── */
+  .date-input-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .date-input { width: 100%; }
+  .search-btn { padding: var(--sp-3); }
+
+  /* ── Back link on route detail ───────────────── */
+  .back-link { font-size: var(--fs-micro); }
 }
 
-.lf-book-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--success);
-  color: #fff;
-  font-size: var(--fs-micro);
-  font-weight: 700;
-  text-decoration: none;
-  border-radius: var(--r-sm);
-  padding: 2px 8px;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.lf-book-btn:hover {
-  background: #35b5a3;
-  transform: scale(1.04);
-}
-
-.live-feed-row {
-  grid-template-columns: 100px 40px 64px 80px 1fr 64px 56px;
+@media (max-width: 480px) {
+  .header h1 { font-size: 1.1rem; }
+  .section > div[style*="grid"] {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 @media (max-width: 600px) {
