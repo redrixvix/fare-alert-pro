@@ -62,15 +62,20 @@ export const getCheapestDates = query({
 
     const rows = await ctx
       .db.query("prices")
-      .withIndex("by_route_date", (q) =>
-        q.eq("route", args.route).gte("search_date", todayStr).lte("search_date", endDate)
-      )
-      .filter((row) => row.eq(row.field("cabin"), "ECONOMY").gt(row.field("price"), 0))
+      .withIndex("by_route_date", (q) => q.eq("route", args.route))
       .collect();
+
+    const filtered = rows.filter(
+      (r) =>
+        r.search_date >= todayStr &&
+        r.search_date <= endDate &&
+        r.cabin === "ECONOMY" &&
+        r.price > 0
+    );
 
     // Group by search_date, min price per date
     const byDate: Record<string, number> = {};
-    for (const r of rows) {
+    for (const r of filtered) {
       if (!byDate[r.search_date] || r.price < byDate[r.search_date]) {
         byDate[r.search_date] = r.price;
       }
