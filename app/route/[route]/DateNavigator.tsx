@@ -102,8 +102,8 @@ export default function DateNavigator({
                   </td>
                 ))}
                 <td>{currentCabins.y?.airline || currentCabins.pe?.airline || currentCabins.j?.airline || currentCabins.f?.airline || '—'}</td>
-                <td>{fmtDuration(currentCabins.y?.duration_minutes ?? currentCabins.pe?.duration_minutes ?? null)}</td>
-                <td>{fmtStops(currentCabins.y?.stops ?? currentCabins.pe?.stops ?? null)}</td>
+                <td>{fmtDuration(currentCabins.y?.duration_minutes ?? currentCabins.pe?.duration_minutes ?? currentCabins.j?.duration_minutes ?? currentCabins.f?.duration_minutes ?? null)}</td>
+                <td>{fmtStops(currentCabins.y?.stops ?? currentCabins.pe?.stops ?? currentCabins.j?.stops ?? currentCabins.f?.stops ?? null)}</td>
                 <td style={{ textAlign: 'center' }}>
                   {currentDate && (
                     <a

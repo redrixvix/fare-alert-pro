@@ -252,14 +252,45 @@ export const insertPriceRecord = mutation({
     departure_airport: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    if (args.price <= 0) return null;
+    const cabinCaps: Record<string, number> = {
+      ECONOMY: 3000,
+      PREMIUM_ECONOMY: 7000,
+      BUSINESS: 12000,
+      FIRST: 20000,
+    };
+
+    if (args.price <= 0 || args.price > (cabinCaps[args.cabin] ?? 3000)) return null;
+    if (args.duration_minutes != null && (args.duration_minutes <= 0 || args.duration_minutes > 24 * 60)) return null;
+    if (args.stops != null && (args.stops < 0 || args.stops > 4)) return null;
+
+    const airline = args.airline?.trim().toUpperCase();
+    const normalizedAirline = airline && /^[A-Z0-9]{2,3}$/.test(airline) ? airline : undefined;
+
+    const recent = await ctx
+      .db.query("prices")
+      .withIndex("by_route_cabin", (q) => q.eq("route", args.route).eq("cabin", args.cabin))
+      .collect();
+
+    const duplicate = recent.find(
+      (row) =>
+        row.search_date === args.search_date &&
+        row.price === args.price &&
+        (row.airline ?? undefined) === normalizedAirline &&
+        (row.duration_minutes ?? undefined) === (args.duration_minutes ?? undefined) &&
+        (row.stops ?? 0) === (args.stops ?? 0) &&
+        (row.departure_airport ?? undefined) === (args.departure_airport ?? undefined) &&
+        row.fetched_at && Date.now() - new Date(row.fetched_at).getTime() < 10 * 60 * 1000
+    );
+
+    if (duplicate) return duplicate._id;
+
     const id = await ctx.db.insert("prices", {
       route: args.route,
       cabin: args.cabin,
       search_date: args.search_date,
       price: args.price,
       currency: args.currency ?? "USD",
-      airline: args.airline ?? null,
+      airline: normalizedAirline ?? null,
       duration_minutes: args.duration_minutes ?? null,
       stops: args.stops ?? 0,
       fetched_at: new Date().toISOString(),

@@ -21,18 +21,22 @@ interface PriceRecord {
 async function getRouteData(route: string) {
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
   if (!convexUrl) {
-    // Fallback to SQLite for local dev
     return { routeRecord: null, priceHistory: [] as PriceRecord[] };
   }
+
   try {
     const client = new ConvexHttpClient(convexUrl);
-    const [routes, priceHistory] = await Promise.all([
+    const cabins = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
+
+    const [routes, ...priceResults] = await Promise.all([
       client.query('routes:getAllRoutes' as any, { includeCustom: true }),
-      client.query('prices:getPricesByRoute' as any, { route, cabin: 'ECONOMY' }),
+      ...cabins.map((cabin) => client.query('prices:getPricesByRoute' as any, { route, cabin })),
     ]);
+
     const routeRecord = (routes as any[]).find((r: any) => r.route === route);
-    // Convert Convex prices to PriceRecord format
-    const records: PriceRecord[] = (priceHistory as any[]).map((p: any) => ({
+    const mergedPrices = (priceResults as any[][]).flat();
+
+    const records: PriceRecord[] = mergedPrices.map((p: any) => ({
       route: p.route,
       cabin: p.cabin,
       search_date: p.search_date,
@@ -43,6 +47,7 @@ async function getRouteData(route: string) {
       stops: p.stops ?? null,
       fetched_at: p.fetched_at ?? '',
     }));
+
     return { routeRecord, priceHistory: records };
   } catch (e) {
     console.error('Convex query failed:', e);
@@ -89,12 +94,15 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
     );
   }
 
-  // Group prices by date for the date navigator
+  // Group prices by date and keep the cheapest record per cabin
   const byDate: Record<string, Record<string, PriceRecord>> = {};
   for (const p of priceHistory) {
     if (!byDate[p.search_date]) byDate[p.search_date] = {};
     const key = p.cabin === 'ECONOMY' ? 'y' : p.cabin === 'PREMIUM_ECONOMY' ? 'pe' : p.cabin === 'BUSINESS' ? 'j' : 'f';
-    byDate[p.search_date][key] = p;
+    const current = byDate[p.search_date][key];
+    if (!current || p.price < current.price) {
+      byDate[p.search_date][key] = p;
+    }
   }
   const sortedDates = Object.keys(byDate).sort();
 
@@ -164,8 +172,8 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
                           </td>
                         ))}
                         <td>{cabins.y?.airline || cabins.pe?.airline || cabins.j?.airline || cabins.f?.airline || '—'}</td>
-                        <td>{fmtDuration(cabins.y?.duration_minutes ?? cabins.pe?.duration_minutes ?? null)}</td>
-                        <td>{fmtStops(cabins.y?.stops ?? cabins.pe?.stops ?? null)}</td>
+                        <td>{fmtDuration(cabins.y?.duration_minutes ?? cabins.pe?.duration_minutes ?? cabins.j?.duration_minutes ?? cabins.f?.duration_minutes ?? null)}</td>
+                        <td>{fmtStops(cabins.y?.stops ?? cabins.pe?.stops ?? cabins.j?.stops ?? cabins.f?.stops ?? null)}</td>
                         <td style={{ textAlign: 'center' }}>
                           <a
                             href={`https://www.google.com/travel/flights/search?tfs=CBwQAhoeEgoyCg&tfu=CxD&hl=en&gl=us&q=${encodeURIComponent(route)}&date=${date.replace(/-/g, '')}`}
