@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import StatusBar from '../components/StatusBar';
 import BestDeals from '../components/BestDeals';
+import '../dashboard.css';
 
 const CABIN_COLORS: Record<string, string> = {
   y: '#4f9cf9', pe: '#a0a8c0', j: '#c9a84c', f: '#9b8fe8',
@@ -34,19 +35,17 @@ export default function DashboardClient() {
       {/* Sticky header */}
       <div className="header">
         <div className="header-inner">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--sp-3)' }}>
-            <div>
-              <h1>✈️ FareAlertPro</h1>
-              <p className="subtitle">Your flight deal overview</p>
-            </div>
-            <div className="header-actions" style={{ display: 'flex', gap: 'var(--sp-2)', flexShrink: 0 }}>
-              <Link href="/settings" className="btn btn-ghost" style={{ fontSize: 'var(--fs-micro)', padding: '6px 12px' }}>
-                ⚙
-              </Link>
-              <Link href="/routes" className="btn btn-primary" style={{ fontSize: 'var(--fs-micro)', padding: '6px 14px' }}>
-                ✏ Routes
-              </Link>
-            </div>
+          <div className="header-brand">
+            <div className="header-logo">✈️ FareAlert<span>Pro</span></div>
+            <span className="header-subtitle">Your flight deal overview</span>
+          </div>
+          <div className="header-actions">
+            <Link href="/settings" className="btn btn-ghost" style={{ fontSize: 'var(--fs-micro)', padding: '6px 10px' }}>
+              ⚙
+            </Link>
+            <Link href="/routes" className="btn btn-primary" style={{ fontSize: 'var(--fs-micro)', padding: '6px 14px' }}>
+              Routes
+            </Link>
           </div>
         </div>
       </div>
@@ -65,9 +64,9 @@ export default function DashboardClient() {
             {/* Trending Routes */}
             {busiestRoutes.length > 0 ? (
               <section className="section">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
-                  <h2 style={{ marginBottom: 0 }}>🔥 Trending Routes</h2>
-                  <Link href="/routes" style={{ fontSize: 'var(--fs-micro)', color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>View all →</Link>
+                <div className="section-header">
+                  <span className="section-title">🔥 Trending Routes</span>
+                  <Link href="/routes" className="section-link">View all →</Link>
                 </div>
                 <div className="trending-grid">
                   {busiestRoutes.map((r: any) => {
@@ -75,12 +74,14 @@ export default function DashboardClient() {
                     return (
                       <Link key={r.route} href={`/route/${r.route}`} style={{ textDecoration: 'none' }}>
                         <div className="trending-card">
-                          <div className="trending-route" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <span style={{ fontFamily: 'monospace', fontWeight: 800 }}>{origin}</span>
-                            <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>→</span>
-                            <span style={{ fontFamily: 'monospace', fontWeight: 800 }}>{destination}</span>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                              <span style={{ fontFamily: 'Inter, monospace', fontWeight: 800 }}>{origin}</span>
+                              <span className="trending-arrow">→</span>
+                              <span style={{ fontFamily: 'Inter, monospace', fontWeight: 800 }}>{destination}</span>
+                            </div>
+                            <div className="trending-from">Economy from</div>
                           </div>
-                          <div className="trending-from">Economy from</div>
                           <div className="trending-price" style={{ color: r.last_price ? 'var(--success)' : 'var(--text-muted)' }}>
                             {fmt(r.last_price)}
                           </div>
@@ -108,7 +109,7 @@ export default function DashboardClient() {
                   <div className="empty-state-icon">🛫</div>
                   <h3>No trending routes yet</h3>
                   <p>Popular routes will appear here as we track them.</p>
-                  <Link href="/routes" className="btn btn-primary" style={{ display: 'inline-flex', fontSize: 'var(--fs-sm)' }}>
+                  <Link href="/routes" className="btn btn-primary" style={{ fontSize: 'var(--fs-sm)' }}>
                     Browse routes →
                   </Link>
                 </div>
@@ -118,9 +119,9 @@ export default function DashboardClient() {
             {/* Custom Routes */}
             {customRoutes.length > 0 ? (
               <section className="section">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
-                  <h2 style={{ marginBottom: 0 }}>✏ Your Routes</h2>
-                  <Link href="/routes" style={{ fontSize: 'var(--fs-micro)', color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Manage →</Link>
+                <div className="section-header">
+                  <span className="section-title">✏ Your Routes</span>
+                  <Link href="/routes" className="section-link">Manage →</Link>
                 </div>
                 <div className="routes-table-wrap">
                   <table className="routes-table">
@@ -138,7 +139,7 @@ export default function DashboardClient() {
                       {customRoutes.map((r: any) => (
                         <tr key={r.route}>
                           <td className="route-name">
-                            <Link href={`/route/${r.route}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 700 }}>{r.route}</Link>
+                            <Link href={`/route/${r.route}`} style={{ color: 'var(--accent-text)', textDecoration: 'none', fontWeight: 700 }}>{r.route}</Link>
                           </td>
                           <td className={`route-price ${r.last_price ? '' : 'no-price'}`}>{fmt(r.last_price)}</td>
                           <td className={`route-price pe ${r.last_price_premium_economy ? '' : 'no-price'}`}>{fmt(r.last_price_premium_economy)}</td>
@@ -159,7 +160,7 @@ export default function DashboardClient() {
                   <div className="empty-state-icon">📍</div>
                   <h3>No custom routes yet</h3>
                   <p>Add routes you care about and we&apos;ll alert you when fares drop.</p>
-                  <Link href="/routes" className="btn btn-primary" style={{ display: 'inline-flex', fontSize: 'var(--fs-sm)' }}>
+                  <Link href="/routes" className="btn btn-primary" style={{ fontSize: 'var(--fs-sm)' }}>
                     Add your first route →
                   </Link>
                 </div>
@@ -168,14 +169,16 @@ export default function DashboardClient() {
 
             {/* Quick Links */}
             <section className="section">
-              <h2>🔗 Quick Links</h2>
+              <div className="section-header">
+                <span className="section-title">🔗 Quick Links</span>
+              </div>
               <div className="quick-links">
                 <Link href="/routes" className="quick-link">
-                  <div className="ql-icon" style={{ background: 'rgba(45,90,61,0.15)', color: 'var(--green)' }}>📍</div>
+                  <div className="ql-icon" style={{ background: 'rgba(45,90,61,0.2)', color: 'var(--green-light)' }}>📍</div>
                   <span className="ql-label">Browse All Routes</span>
                 </Link>
                 <Link href="/deals" className="quick-link">
-                  <div className="ql-icon" style={{ background: 'rgba(232,168,56,0.12)', color: 'var(--gold)' }}>💰</div>
+                  <div className="ql-icon" style={{ background: 'rgba(232,168,56,0.15)', color: 'var(--gold)' }}>💰</div>
                   <span className="ql-label">Current Best Deals</span>
                 </Link>
                 <Link href="/alerts" className="quick-link">
@@ -183,7 +186,7 @@ export default function DashboardClient() {
                   <span className="ql-label">Deal History</span>
                 </Link>
                 <Link href="/settings" className="quick-link">
-                  <div className="ql-icon" style={{ background: 'rgba(79,156,249,0.1)', color: 'var(--accent)' }}>⚙️</div>
+                  <div className="ql-icon" style={{ background: 'rgba(79,156,249,0.1)', color: 'var(--cabin-y)' }}>⚙️</div>
                   <span className="ql-label">Settings</span>
                 </Link>
               </div>

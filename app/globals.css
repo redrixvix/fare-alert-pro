@@ -1,4 +1,5 @@
 /* FareAlertPro — Global Styles */
+/* Dark theme flight deal SaaS */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 /* ── Reset ─────────────────────────────────────── */
@@ -11,52 +12,60 @@ html, body {
 
 /* ── Theme tokens ───────────────────────────────── */
 :root {
-  /* Greys */
+  /* Brand: green #2D5A3D as primary, gold #E8A838 as accent */
+  --green:        #2D5A3D;
+  --green-light:  #3a7a50;
+  --green-dim:    rgba(45, 90, 61, 0.18);
+  --green-glow:   rgba(45, 90, 61, 0.35);
+
+  --gold:         #E8A838;
+  --gold-dim:     rgba(232, 168, 56, 0.15);
+
+  /* Dark surface palette */
   --bg:           #0a0a0f;
+  --bg-raised:    #0d0d14;
   --card:         #13151e;
-  --card-hover:   #181b28;
+  --card-hover:   #181c27;
   --border:       #1e2130;
+  --border-subtle: rgba(30, 33, 48, 0.7);
+
+  /* Text */
   --text:         #e8e9ed;
   --text-dim:     #7a7d8e;
   --text-muted:   #4a4d5e;
 
-  /* Accent */
-  --accent:       #4f9cf9;
-  --accent-hover: #6db0ff;
-  --accent-dim:   rgba(79, 156, 249, 0.12);
-
-  /* Primary & Gold */
-  --green:        #2D5A3D;
-  --green-hover:  #3a7a50;
-  --green-glow:    rgba(45, 90, 61, 0.35);
-  --gold:         #E8A838;
-  --gold-dim:     rgba(232, 168, 56, 0.12);
+  /* Action accent (links, focus) */
+  --accent:       #2D5A3D;
+  --accent-hover: #3a7a50;
+  --accent-text:  #4ade80;  /* readable green for links */
 
   /* Status */
   --danger:       #e63946;
+  --danger-dim:   rgba(230, 57, 70, 0.12);
+  --success:      #22c55e;
   --warn:         #f4a261;
-  --success:      #2a9d8f;
 
-  /* Cabin colours */
+  /* Cabin class colours */
   --cabin-y:  #4f9cf9;
   --cabin-pe: #a0a8c0;
   --cabin-j:  #c9a84c;
   --cabin-f:  #9b8fe8;
 
-  /* Spacing */
-  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px;
-  --sp-4: 16px; --sp-6: 24px; --sp-8: 32px;
-  --sp-12: 48px;
+  /* Spacing scale */
+  --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;
+  --sp-4: 16px;  --sp-5: 20px;  --sp-6: 24px;
+  --sp-8: 32px;  --sp-10: 40px; --sp-12: 48px;
 
   /* Font sizes */
-  --fs-body: 0.875rem;
-  --fs-sm:   0.8125rem;
-  --fs-micro: 0.75rem;
+  --fs-micro: 0.6875rem;
+  --fs-sm:    0.8125rem;
+  --fs-body:  0.9375rem;
 
   /* Border radius */
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 14px;
+  --r-xl: 18px;
 }
 
 /* ── Base ───────────────────────────────────────── */
@@ -66,7 +75,7 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: var(--fs-body);
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 /* ── Buttons ────────────────────────────────────── */
@@ -74,49 +83,53 @@ body {
   display: inline-flex; align-items: center; justify-content: center;
   gap: var(--sp-2); border: 1px solid transparent; border-radius: var(--r-sm);
   padding: var(--sp-2) var(--sp-4); font-size: var(--fs-body); font-weight: 600;
-  cursor: pointer; transition: all 0.15s ease; text-decoration: none;
+  cursor: pointer; transition: all 0.18s ease; text-decoration: none;
   line-height: 1; white-space: nowrap; font-family: inherit;
+  outline: none;
 }
-.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .btn:active { transform: scale(0.97); }
-.btn:disabled, .btn-loading { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
 .btn-primary {
   background: var(--green); color: #fff; border-color: var(--green);
   box-shadow: 0 2px 12px var(--green-glow);
 }
-.btn-primary:hover { background: var(--green-hover); border-color: var(--green-hover); }
+.btn-primary:hover { background: var(--green-light); border-color: var(--green-light); }
 
 .btn-ghost {
   background: var(--card); color: var(--text-dim); border-color: var(--border);
 }
 .btn-ghost:hover { background: var(--card-hover); color: var(--text); border-color: var(--accent); }
 
-.btn-danger-ghost {
-  background: transparent; color: var(--danger); border-color: var(--danger);
-}
-.btn-danger-ghost:hover { background: rgba(230,57,70,0.1); }
-
+/* Full-width primary button (used in auth forms) */
 .btn-primary-full {
   display: block; width: 100%;
-  background: var(--green); color: #fff; border: none; border-radius: var(--r-sm);
+  background: var(--green); color: #fff; border: none; border-radius: var(--r-md);
   padding: var(--sp-3) var(--sp-4); font-size: var(--fs-body); font-weight: 700;
-  cursor: pointer; transition: all 0.15s ease; text-align: center;
+  cursor: pointer; transition: all 0.18s ease; text-align: center;
   font-family: inherit; box-shadow: 0 2px 16px var(--green-glow);
 }
-.btn-primary-full:hover { background: var(--green-hover); }
-.btn-primary-full:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary-full:hover { background: var(--green-light); }
+.btn-primary-full:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 .btn-primary-full:active { transform: scale(0.97); }
-.btn-primary-full:disabled, .btn-primary-full.btn-loading { opacity: 0.6; cursor: not-allowed; }
+.btn-primary-full:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Scrollbar ──────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
-/* ── Text selection ─────────────────────────────── */
-::selection { background: rgba(79,156,249,0.25); color: var(--text); }
+/* ── Selection ──────────────────────────────────── */
+::selection { background: var(--green-dim); color: var(--text); }
 
-/* ── Focus visible (generic) ─────────────────────── */
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* ── Focus ──────────────────────────────────────── */
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+
+/* ── Utility: visually hidden ─────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

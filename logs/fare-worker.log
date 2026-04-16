@@ -716,3 +716,9 @@
 [2026-04-16T17:46:40.057264+00:00] cycle starting route=ATL-LAX
 [2026-04-16T17:47:30.835103+00:00] cycle done route=ATL-LAX checked=20 inserted=159 scrape_failures=0
 [2026-04-16T17:47:30.835159+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T18:02:31.859304+00:00] cycle starting route=LAX-ATL
+[2026-04-16T18:03:25.901806+00:00] cycle done route=LAX-ATL checked=20 inserted=176 scrape_failures=0
+[2026-04-16T18:03:25.901873+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T18:18:26.143125+00:00] cycle starting route=DFW-LAX
+[2026-04-16T18:19:08.140430+00:00] cycle done route=DFW-LAX checked=18 inserted=104 scrape_failures=0
+[2026-04-16T18:19:08.140485+00:00] sleeping seconds=900 consecutive_failure_cycles=0

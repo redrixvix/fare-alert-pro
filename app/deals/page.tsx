@@ -23,7 +23,7 @@ export default async function DealsPage() {
       <nav className="deals-nav">
         <div className="deals-nav-inner">
           <Link href="/" className="deals-nav-logo">
-            ✈️ FareAlertPro
+            ✈️ FareAlert<span>Pro</span>
           </Link>
           <div className="deals-nav-links">
             <Link href="/login" style={{ color: '#a0a8c0', textDecoration: 'none', fontSize: '0.88rem', fontWeight: 500, padding: '0.4rem 0.9rem', border: '1px solid #2a2d3a', borderRadius: '6px' }}>Log in</Link>

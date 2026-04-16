@@ -8,7 +8,7 @@ import '../auth.css';
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0b0f' }}><p style={{ color: '#7a7d8e' }}>Loading…</p></div>}>
+    <Suspense fallback={<div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}><p style={{ color: 'var(--text-dim)' }}>Loading…</p></div>}>
       <LoginForm />
     </Suspense>
   );
@@ -47,7 +47,7 @@ function LoginForm() {
   return (
     <main className="auth-page">
       <div className="auth-card">
-        <div className="auth-logo">✈️ FareAlertPro</div>
+        <div className="auth-logo">✈️ FareAlert<span>Pro</span></div>
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-sub">Sign in to check your routes and alerts</p>
 
