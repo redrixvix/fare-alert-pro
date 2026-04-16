@@ -1,16 +1,13 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
-import { ConvexHttpClient } from 'convex/browser';
-
-const CONVEX_URL = process.env.NEXT_PUBLIC_CONVEX_URL || 'https://fiery-opossum-933.convex.cloud';
+import { getAlertsHistory } from '@/lib/db-pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const client = new ConvexHttpClient(CONVEX_URL);
-    const result = await client.query('alerts:getAlertsHistory', { userId: 1 });
-    return NextResponse.json(result);
+    const alerts = await getAlertsHistory(1, 200);
+    return NextResponse.json({ alerts });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }

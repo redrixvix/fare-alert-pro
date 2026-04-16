@@ -1,6 +1,5 @@
-import { getRouteChartData, getRoutePriceHistory } from '@/lib/db';
-import { ConvexHttpClient } from 'convex/browser';
 import Link from 'next/link';
+import { getAllRoutes, getPricesByRoute } from '@/lib/db-pg';
 import DateNavigator from './DateNavigator';
 import CheapestDatesGrid from '../../components/CheapestDatesGrid';
 import PriceHistoryChart from '../../components/PriceHistoryChart';
@@ -19,24 +18,13 @@ interface PriceRecord {
 }
 
 async function getRouteData(route: string) {
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!convexUrl) {
-    return { routeRecord: null, priceHistory: [] as PriceRecord[] };
-  }
-
   try {
-    const client = new ConvexHttpClient(convexUrl);
-    const cabins = ['ECONOMY', 'PREMIUM_ECONOMY', 'BUSINESS', 'FIRST'];
-
-    const [routes, ...priceResults] = await Promise.all([
-      client.query('routes:getAllRoutes' as any, { includeCustom: true }),
-      ...cabins.map((cabin) => client.query('prices:getPricesByRoute' as any, { route, cabin })),
+    const [routes, prices] = await Promise.all([
+      getAllRoutes(),
+      getPricesByRoute(route),
     ]);
-
-    const routeRecord = (routes as any[]).find((r: any) => r.route === route);
-    const mergedPrices = (priceResults as any[][]).flat();
-
-    const records: PriceRecord[] = mergedPrices.map((p: any) => ({
+    const routeRecord = routes.find((r: any) => r.route === route);
+    const records: PriceRecord[] = (prices as any[]).map((p: any) => ({
       route: p.route,
       cabin: p.cabin,
       search_date: p.search_date,
@@ -47,10 +35,9 @@ async function getRouteData(route: string) {
       stops: p.stops ?? null,
       fetched_at: p.fetched_at ?? '',
     }));
-
     return { routeRecord, priceHistory: records };
   } catch (e) {
-    console.error('Convex query failed:', e);
+    console.error('Failed to load route data:', e);
     return { routeRecord: null, priceHistory: [] as PriceRecord[] };
   }
 }
@@ -76,7 +63,7 @@ function fmtStops(s: number | null): string {
 export default async function RoutePage({ params }: { params: Promise<{ route: string }> }) {
   const { route: routeParam } = await params;
   const route = decodeURIComponent(routeParam);
-  const [origin, destination] = route.split('-');
+  const [origin] = route.split('-');
 
   const { routeRecord, priceHistory } = await getRouteData(route);
   if (!routeRecord) {
@@ -114,35 +101,29 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
             <Link href="/routes" className="back-link">← Routes</Link>
             <h1>✈️ {route}</h1>
           </div>
-          <p className="subtitle">{origin} → {destination} · 90-day price history</p>
+          <p className="subtitle">{origin} → {route.split('-')[1]} · 90-day price history</p>
         </div>
       </header>
 
       <div className="content">
-        {/* Interactive Price History Chart */}
         <section className="section">
           <h2>📊 Price History</h2>
           <PriceHistoryChart route={route} initialDays={30} initialCabin="ECONOMY" />
         </section>
 
-        {/* Cheapest Dates Grid */}
         <section className="section">
           <CheapestDatesGrid route={route} />
         </section>
 
-        {/* Prices by Date with navigation */}
         <section className="section">
           <h2>📅 Prices by Date</h2>
           {sortedDates.length === 0 ? (
             <p className="no-data">No price records yet for this route.</p>
           ) : (
-            <>
-              <DateNavigator dates={sortedDates} initialPrices={byDate} route={route} />
-            </>
+            <DateNavigator dates={sortedDates} initialPrices={byDate} route={route} />
           )}
         </section>
 
-        {/* All records */}
         {sortedDates.length > 0 && (
           <section className="section">
             <h2>📋 All Price Records</h2>
@@ -150,14 +131,8 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
               <table className="price-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Y</th>
-                    <th>PE</th>
-                    <th>J</th>
-                    <th>F</th>
-                    <th>Airline</th>
-                    <th>Duration</th>
-                    <th>Stops</th>
+                    <th>Date</th><th>Y</th><th>PE</th><th>J</th><th>F</th>
+                    <th>Airline</th><th>Duration</th><th>Stops</th><th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -177,13 +152,9 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
                         <td style={{ textAlign: 'center' }}>
                           <a
                             href={`https://www.google.com/travel/flights/search?tfs=CBwQAhoeEgoyCg&tfu=CxD&hl=en&gl=us&q=${encodeURIComponent(route)}&date=${date.replace(/-/g, '')}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="lf-book-btn"
+                            target="_blank" rel="noopener noreferrer" className="lf-book-btn"
                             title={`Book ${route} on ${date}`}
-                          >
-                            Book →
-                          </a>
+                          >Book →</a>
                         </td>
                       </tr>
                     );
@@ -194,7 +165,6 @@ export default async function RoutePage({ params }: { params: Promise<{ route: s
           </section>
         )}
       </div>
-
     </main>
   );
 }

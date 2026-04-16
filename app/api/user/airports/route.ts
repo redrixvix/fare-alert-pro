@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getUserAirports, setUserAirports } from '@/lib/db-pg';
 
 const VALID_AIRPORTS = [
   'ATL', 'ORD', 'DFW', 'DEN', 'LAX', 'JFK', 'LGA', 'EWR', 'SFO', 'SEA',
@@ -15,18 +15,19 @@ function isValidAirport(code) {
   return VALID_AIRPORTS.includes(code.toUpperCase());
 }
 
-export async function GET() {
-  const authUser = await getAuthUser();
-  if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export const dynamic = 'force-dynamic';
 
-  const client = getClient();
-  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
-  return NextResponse.json({ airports: airports || [] });
+export async function GET() {
+  const user = await getAuthUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const airports = await getUserAirports(user.userId);
+  return NextResponse.json({ airports: airports.map((a) => a.airport) });
 }
 
 export async function POST(request) {
-  const authUser = await getAuthUser();
-  if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const user = await getAuthUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   let body;
   try { body = await request.json(); } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }); }
@@ -42,25 +43,7 @@ export async function POST(request) {
     }
   }
 
-  const client = getClient();
-  await (client.mutation as any)('airports:setUserAirports', { userId: authUser.userId, airports: body.airports.map(a => a.toUpperCase()) });
-  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
-  return NextResponse.json({ success: true, airports: airports || [] });
-}
-
-export async function DELETE(request) {
-  const authUser = await getAuthUser();
-  if (!authUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-  const { searchParams } = new URL(request.url);
-  const airport = searchParams.get('airport');
-  if (!airport) return NextResponse.json({ error: 'airport query param required' }, { status: 400 });
-
-  const normalized = airport.trim().toUpperCase();
-  if (!isValidAirport(normalized)) return NextResponse.json({ error: 'Invalid airport code' }, { status: 400 });
-
-  const client = getClient();
-  await (client.mutation as any)('airports:removeUserAirport', { userId: authUser.userId, airport: normalized });
-  const airports = await client.query('airports:getUserAirports', { userId: authUser.userId }) as string[];
-  return NextResponse.json({ success: true, airports: airports || [] });
+  await setUserAirports(user.userId, body.airports.map((a) => a.toUpperCase()));
+  const airports = await getUserAirports(user.userId);
+  return NextResponse.json({ success: true, airports: airports.map((a) => a.airport) });
 }

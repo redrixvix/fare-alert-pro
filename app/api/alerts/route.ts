@@ -1,13 +1,14 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getAlertsHistory } from '@/lib/db-pg';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const user = await getAuthUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const client = getClient();
-  const alerts = await client.query('alerts:getAlertsHistory', { userId: -1, limit: 50 }) as any[];
+  const alerts = await getAlertsHistory(user.userId, 50);
   return NextResponse.json({ alerts });
 }

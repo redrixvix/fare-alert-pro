@@ -8,8 +8,9 @@ const client = pg({
   connect_timeout: 15,
 });
 async function test() {
-  const result = await client`SELECT COUNT(*) as cnt FROM prices`;
-  console.log('pg npm works, prices count:', result[0].cnt);
+  const rows = await client`SELECT route, cabin, COUNT(*) as cnt FROM prices GROUP BY route, cabin ORDER BY route, cabin`;
+  console.log('Prices by route+cabin:');
+  rows.forEach(r => console.log(' ', r.route, r.cabin, ':', r.cnt));
   await client.end();
 }
 test().catch(e => console.error(e.message));

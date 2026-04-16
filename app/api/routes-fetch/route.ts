@@ -1,7 +1,8 @@
-import { ConvexHttpClient } from 'convex/browser';
+// @ts-nocheck
+import { NextResponse } from 'next/server';
+import { getAllRoutes, getUserRoutes } from '@/lib/db-pg';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
-import { NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -20,12 +21,18 @@ export async function GET() {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-    if (!convexUrl) return NextResponse.json({ routes: [] });
+    const [allRoutes, userRoutes] = await Promise.all([
+      getAllRoutes(),
+      getUserRoutes(payload.userId),
+    ]);
 
-    const client = new ConvexHttpClient(convexUrl);
-    const routes = await client.query('routes:getAllRoutes' as any, { includeCustom: true });
-    return NextResponse.json({ routes });
+    const userRouteSet = new Set((userRoutes || []).map((r) => r.route));
+    const routeMap = new Map();
+    for (const r of allRoutes) routeMap.set(r.route, { ...r, is_custom: userRouteSet.has(r.route) });
+    for (const r of userRoutes || []) routeMap.set(r.route, { ...r, is_custom: true });
+    const routesWithFlag = Array.from(routeMap.values());
+
+    return NextResponse.json({ routes: routesWithFlag });
   } catch (e: any) {
     return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 });
   }

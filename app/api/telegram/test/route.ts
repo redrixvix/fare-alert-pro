@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { getClient } from '@/lib/db-prod';
+import { getUserById } from '@/lib/db-pg';
 
 export async function POST() {
   try {
@@ -13,8 +13,7 @@ export async function POST() {
       return NextResponse.json({ success: false, error: 'Telegram bot not configured. Add TELEGRAM_BOT_TOKEN to your .env file.' });
     }
 
-    const client = getClient();
-    const userData = await (client.query as any)('users:getUserById', { userId: user.userId });
+    const userData = await getUserById(user.userId);
     if (!userData || !userData.telegram_chat_id) {
       return NextResponse.json({ success: false, error: 'No Telegram chat linked. Start a chat with @FareAlertProBot first.' });
     }

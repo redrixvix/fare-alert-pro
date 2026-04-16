@@ -8,19 +8,19 @@ import BestDeals from '../components/BestDeals';
 const CABIN_COLORS: Record<string, string> = {
   y: '#4f9cf9', pe: '#a0a8c0', j: '#c9a84c', f: '#9b8fe8',
 };
+const fmt = (v: any) => v != null && v > 0 ? `$${Number(v).toFixed(0)}` : '—';
 
 export default function DashboardClient() {
   const [routes, setRoutes] = useState<any[]>([]);
-  const [deals, setDeals] = useState<any[]>([]);
+  const [deals, setDeals] = useState<any>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       fetch('/api/routes-fetch', { credentials: 'include' }).then(r => r.json()).catch(() => ({ routes: [] })),
-      fetch('/api/best-deals', { credentials: 'include' }).then(r => r.json()).catch(() => ({ deals: [] })),
+      fetch('/api/best-deals', { credentials: 'include' }).then(r => r.json()).catch(() => ({})),
     ]).then(([routesData, dealsData]) => {
       setRoutes(routesData.routes ?? []);
-      // dealsData is {y:[], pe:[], j:[], f:[]} from /api/best-deals
       setDeals(dealsData || {});
       setLoading(false);
     });
@@ -28,182 +28,168 @@ export default function DashboardClient() {
 
   const busiestRoutes = routes.filter((r: any) => r.category === 'busiest').slice(0, 6);
   const customRoutes = routes.filter((r: any) => r.is_custom).slice(0, 5);
-  const fmt = (v: any) => v != null && v > 0 ? `$${Number(v).toFixed(0)}` : '—';
-
-  if (loading) {
-    return (
-      <div className="dashboard">
-        <div className="header">
-          <div className="header-inner">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <h1>✈️ FareAlertPro</h1>
-                <p className="subtitle">Welcome back! Here&apos;s your flight deal overview.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="content">
-          <div style={{ textAlign: 'center', padding: 'var(--sp-12)', color: 'var(--text-dim)' }}>
-            Loading…
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="dashboard">
+      {/* Sticky header */}
       <div className="header">
         <div className="header-inner">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--sp-3)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--sp-3)' }}>
             <div>
               <h1>✈️ FareAlertPro</h1>
-              <p className="subtitle">Welcome back! Here&apos;s your flight deal overview.</p>
+              <p className="subtitle">Your flight deal overview</p>
             </div>
-            <div style={{ display: 'flex', gap: 'var(--sp-3)' }}>
-              <Link href="/settings" className="settings-btn" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-2)', background: 'var(--card)', color: 'var(--text-dim)', border: '1px solid var(--border)', borderRadius: 'var(--r-sm)', padding: 'var(--sp-2) var(--sp-4)', fontSize: 'var(--fs-sm)', fontWeight: 600, textDecoration: 'none', whiteSpace: 'nowrap' }}>⚙ Settings</Link>
-              <Link href="/routes" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-2)',
-                background: 'var(--accent)', color: '#fff', border: 'none',
-                borderRadius: 'var(--r-sm)', padding: 'var(--sp-2) var(--sp-4)',
-                fontSize: 'var(--fs-sm)', fontWeight: 600, textDecoration: 'none',
-              }}>✏ Manage Routes</Link>
+            <div className="header-actions" style={{ display: 'flex', gap: 'var(--sp-2)', flexShrink: 0 }}>
+              <Link href="/settings" className="btn btn-ghost" style={{ fontSize: 'var(--fs-micro)', padding: '6px 12px' }}>
+                ⚙
+              </Link>
+              <Link href="/routes" className="btn btn-primary" style={{ fontSize: 'var(--fs-micro)', padding: '6px 14px' }}>
+                ✏ Routes
+              </Link>
             </div>
           </div>
         </div>
       </div>
 
       <div className="content">
-        <StatusBar />
-
-        {deals.length > 0 && <BestDeals initialDeals={deals} />}
-
-        {/* Busiest Routes */}
-        {busiestRoutes.length > 0 && (
-          <section className="section">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-4)' }}>
-              <h2>🔥 Trending Routes</h2>
-              <Link href="/routes" style={{ fontSize: 'var(--fs-sm)', color: 'var(--accent)', textDecoration: 'none' }}>View all →</Link>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--sp-3)' }}>
-              {busiestRoutes.map((r: any) => {
-                const [origin, destination] = r.route.split('-');
-                return (
-                  <Link key={r.route} href={`/route/${r.route}`} style={{ textDecoration: 'none' }}>
-                    <div style={{
-                      background: 'var(--bg)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 'var(--r-md)',
-                      padding: 'var(--sp-4)',
-                      transition: 'border-color 0.15s, transform 0.15s',
-                      cursor: 'pointer',
-                    }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--accent)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-1px)'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-2)', marginBottom: 'var(--sp-2)' }}>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 'var(--fs-body)', color: 'var(--text)' }}>{origin}</span>
-                        <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>→</span>
-                        <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: 'var(--fs-body)', color: 'var(--text)' }}>{destination}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <span style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-dim)' }}>Economy from</span>
-                        <span style={{ fontSize: 'var(--fs-body)', fontWeight: 700, color: r.last_price ? 'var(--success)' : 'var(--text-muted)' }}>
-                          {fmt(r.last_price)}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', gap: 'var(--sp-3)', marginTop: 'var(--sp-2)' }}>
-                        {[
-                          { label: 'Y', val: r.last_price, color: 'var(--cabin-y)' },
-                          { label: 'J', val: r.last_price_business, color: 'var(--cabin-j)' },
-                          { label: 'F', val: r.last_price_first, color: 'var(--cabin-f)' },
-                        ].map(c => (
-                          <div key={c.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>{c.label}</span>
-                            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: c.val ? c.color : 'var(--text-muted)' }}>
-                              {fmt(c.val)}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* Custom Routes */}
-        {customRoutes.length > 0 && (
-          <section className="section">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-4)' }}>
-              <h2>✏️ Your Custom Routes</h2>
-              <Link href="/routes" style={{ fontSize: 'var(--fs-sm)', color: 'var(--accent)', textDecoration: 'none' }}>Manage →</Link>
-            </div>
-            <div className="routes-table-wrap">
-              <table className="routes-table">
-                <thead>
-                  <tr>
-                    <th>Route</th>
-                    <th>Y</th>
-                    <th>PE</th>
-                    <th>J</th>
-                    <th>F</th>
-                    <th>Last Checked</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {customRoutes.map((r: any) => (
-                    <tr key={r.route}>
-                      <td className="route-name">
-                        <Link href={`/route/${r.route}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 700 }}>{r.route}</Link>
-                      </td>
-                      <td className="route-price">{fmt(r.last_price)}</td>
-                      <td className="route-price pe">{fmt(r.last_price_premium_economy)}</td>
-                      <td className="route-price biz">{fmt(r.last_price_business)}</td>
-                      <td className="route-price first">{fmt(r.last_price_first)}</td>
-                      <td className="route-check">
-                        {r.last_checked ? new Date(r.last_checked).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : 'Not yet'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-        )}
-
-        {/* Quick links */}
-        <section className="section">
-          <h2>🔗 Quick Links</h2>
-          <div style={{ display: 'flex', gap: 'var(--sp-3)', flexWrap: 'wrap' }}>
-            {[
-              { href: '/routes', label: '📍 Browse All Routes', color: 'var(--accent)' },
-              { href: '/alerts', label: '💰 Deal History', color: 'var(--success)' },
-              { href: '/settings', label: '⚙️ Settings', color: 'var(--cabin-y)' },
-            ].map(link => (
-              <Link key={link.href} href={link.href} style={{
-                display: 'inline-flex', alignItems: 'center', gap: 'var(--sp-2)',
-                padding: 'var(--sp-3) var(--sp-4)',
-                background: 'var(--bg)',
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--r-md)',
-                color: link.color,
-                fontWeight: 600,
-                fontSize: 'var(--fs-sm)',
-                textDecoration: 'none',
-                transition: 'border-color 0.15s',
-              }}
-                onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = link.color; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'var(--border)'; }}
-              >
-                {link.label}
-              </Link>
-            ))}
+        {loading ? (
+          <div className="empty-state">
+            <div className="empty-state-icon">✈️</div>
+            <h3>Loading your dashboard…</h3>
           </div>
-        </section>
+        ) : (
+          <>
+            <StatusBar />
+            <BestDeals initialDeals={deals} />
+
+            {/* Trending Routes */}
+            {busiestRoutes.length > 0 ? (
+              <section className="section">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
+                  <h2 style={{ marginBottom: 0 }}>🔥 Trending Routes</h2>
+                  <Link href="/routes" style={{ fontSize: 'var(--fs-micro)', color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>View all →</Link>
+                </div>
+                <div className="trending-grid">
+                  {busiestRoutes.map((r: any) => {
+                    const [origin, destination] = r.route.split('-');
+                    return (
+                      <Link key={r.route} href={`/route/${r.route}`} style={{ textDecoration: 'none' }}>
+                        <div className="trending-card">
+                          <div className="trending-route" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <span style={{ fontFamily: 'monospace', fontWeight: 800 }}>{origin}</span>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.65rem' }}>→</span>
+                            <span style={{ fontFamily: 'monospace', fontWeight: 800 }}>{destination}</span>
+                          </div>
+                          <div className="trending-from">Economy from</div>
+                          <div className="trending-price" style={{ color: r.last_price ? 'var(--success)' : 'var(--text-muted)' }}>
+                            {fmt(r.last_price)}
+                          </div>
+                          <div className="trending-cabins">
+                            {[
+                              { label: 'Y', val: r.last_price, color: 'var(--cabin-y)' },
+                              { label: 'J', val: r.last_price_business, color: 'var(--cabin-j)' },
+                              { label: 'F', val: r.last_price_first, color: 'var(--cabin-f)' },
+                            ].map(c => (
+                              <div key={c.label} className="trending-cabin">
+                                <span className="trending-cabin-label" style={{ color: c.color }}>{c.label}</span>
+                                <span className="trending-cabin-price" style={{ color: c.val ? c.color : 'var(--text-muted)' }}>{fmt(c.val)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : (
+              <section className="section">
+                <div className="empty-state" style={{ padding: 'var(--sp-6) 0' }}>
+                  <div className="empty-state-icon">🛫</div>
+                  <h3>No trending routes yet</h3>
+                  <p>Popular routes will appear here as we track them.</p>
+                  <Link href="/routes" className="btn btn-primary" style={{ display: 'inline-flex', fontSize: 'var(--fs-sm)' }}>
+                    Browse routes →
+                  </Link>
+                </div>
+              </section>
+            )}
+
+            {/* Custom Routes */}
+            {customRoutes.length > 0 ? (
+              <section className="section">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
+                  <h2 style={{ marginBottom: 0 }}>✏ Your Routes</h2>
+                  <Link href="/routes" style={{ fontSize: 'var(--fs-micro)', color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Manage →</Link>
+                </div>
+                <div className="routes-table-wrap">
+                  <table className="routes-table">
+                    <thead>
+                      <tr>
+                        <th>Route</th>
+                        <th>Y</th>
+                        <th>PE</th>
+                        <th>J</th>
+                        <th>F</th>
+                        <th>Checked</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {customRoutes.map((r: any) => (
+                        <tr key={r.route}>
+                          <td className="route-name">
+                            <Link href={`/route/${r.route}`} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 700 }}>{r.route}</Link>
+                          </td>
+                          <td className={`route-price ${r.last_price ? '' : 'no-price'}`}>{fmt(r.last_price)}</td>
+                          <td className={`route-price pe ${r.last_price_premium_economy ? '' : 'no-price'}`}>{fmt(r.last_price_premium_economy)}</td>
+                          <td className={`route-price biz ${r.last_price_business ? '' : 'no-price'}`}>{fmt(r.last_price_business)}</td>
+                          <td className={`route-price first ${r.last_price_first ? '' : 'no-price'}`}>{fmt(r.last_price_first)}</td>
+                          <td className="route-check">
+                            {r.last_checked ? new Date(r.last_checked).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ) : (
+              <section className="section">
+                <div className="empty-state" style={{ padding: 'var(--sp-6) 0' }}>
+                  <div className="empty-state-icon">📍</div>
+                  <h3>No custom routes yet</h3>
+                  <p>Add routes you care about and we&apos;ll alert you when fares drop.</p>
+                  <Link href="/routes" className="btn btn-primary" style={{ display: 'inline-flex', fontSize: 'var(--fs-sm)' }}>
+                    Add your first route →
+                  </Link>
+                </div>
+              </section>
+            )}
+
+            {/* Quick Links */}
+            <section className="section">
+              <h2>🔗 Quick Links</h2>
+              <div className="quick-links">
+                <Link href="/routes" className="quick-link">
+                  <div className="ql-icon" style={{ background: 'rgba(45,90,61,0.15)', color: 'var(--green)' }}>📍</div>
+                  <span className="ql-label">Browse All Routes</span>
+                </Link>
+                <Link href="/deals" className="quick-link">
+                  <div className="ql-icon" style={{ background: 'rgba(232,168,56,0.12)', color: 'var(--gold)' }}>💰</div>
+                  <span className="ql-label">Current Best Deals</span>
+                </Link>
+                <Link href="/alerts" className="quick-link">
+                  <div className="ql-icon" style={{ background: 'rgba(230,57,70,0.1)', color: 'var(--danger)' }}>🔔</div>
+                  <span className="ql-label">Deal History</span>
+                </Link>
+                <Link href="/settings" className="quick-link">
+                  <div className="ql-icon" style={{ background: 'rgba(79,156,249,0.1)', color: 'var(--accent)' }}>⚙️</div>
+                  <span className="ql-label">Settings</span>
+                </Link>
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </div>
   );

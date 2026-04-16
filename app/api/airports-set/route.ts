@@ -1,33 +1,20 @@
-import { ConvexHttpClient } from 'convex/browser';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+// @ts-nocheck
 import { NextResponse } from 'next/server';
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { getAuthUser } from '@/lib/auth';
+import { setUserAirports } from '@/lib/db-pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const authToken = cookieStore.get('auth_token')?.value;
-    if (!authToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    let payload: { userId: number; email: string };
-    try {
-      payload = jwt.verify(authToken, JWT_SECRET) as { userId: number; email: string };
-    } catch {
-      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-    }
+    const user = await getAuthUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
     const { airports } = body;
+    if (!Array.isArray(airports)) return NextResponse.json({ error: 'airports must be an array' }, { status: 400 });
 
-    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-    if (!convexUrl) return NextResponse.json({ error: 'Convex not configured' }, { status: 500 });
-
-    const client = new ConvexHttpClient(convexUrl);
-    await client.mutation('airports:setUserAirports' as any, { userId: payload.userId, airports });
+    await setUserAirports(user.userId, airports);
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message || 'Internal error' }, { status: 500 });

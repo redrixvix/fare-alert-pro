@@ -1,32 +1,14 @@
-import { ConvexHttpClient } from 'convex/browser';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+// @ts-nocheck
 import { NextResponse } from 'next/server';
-
-const JWT_SECRET = process.env.JWT_SECRET!;
+import { getAuthUser } from '@/lib/auth';
+import { getUserAirports } from '@/lib/db-pg';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
-    if (!token) return NextResponse.json({ airports: [] });
+  const user = await getAuthUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    let payload: { userId: number; email: string };
-    try {
-      payload = jwt.verify(token, JWT_SECRET) as { userId: number; email: string };
-    } catch {
-      return NextResponse.json({ airports: [] });
-    }
-
-    const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-    if (!convexUrl) return NextResponse.json({ airports: [] });
-
-    const client = new ConvexHttpClient(convexUrl);
-    const airports = await client.query('airports:getUserAirports' as any, { userId: payload.userId });
-    return NextResponse.json({ airports });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message || 'Internal error', airports: [] }, { status: 500 });
-  }
+  const airports = await getUserAirports(user.userId);
+  return NextResponse.json({ airports });
 }

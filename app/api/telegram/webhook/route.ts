@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getClient } from '@/lib/db-prod';
 import jwt from 'jsonwebtoken';
+import { setUserTelegram } from '@/lib/db-pg';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fare-alert-pro-jwt-secret-2024-secure';
 
@@ -21,14 +21,7 @@ export async function POST(request: Request) {
         const token = params.replace('link_', '');
         try {
           const payload = jwt.verify(token, JWT_SECRET) as { userId: number };
-
-          // Update user's telegram_chat_id via Convex mutation
-          const client = getClient();
-          await (client.mutation as any)('users:linkTelegramChat', {
-            userId: payload.userId,
-            chatId: String(chatId),
-            username: username,
-          });
+          await setUserTelegram(payload.userId, String(chatId), username);
 
           if (botToken) {
             await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {

@@ -21,6 +21,7 @@ LOG_DIR.mkdir(exist_ok=True)
 
 STATE_FILE = STATE_DIR / 'fare-worker-state.json'
 LOG_FILE = LOG_DIR / 'fare-worker.log'
+TELEGRAM_BOT_TOKEN = '8556171669:AAF-ap--si7lSdA7DWUT-2TgO95IEJMjtD4'
 
 # ── Neon connection ───────────────────────────────────────────────
 def get_conn():
@@ -222,6 +223,99 @@ def upsert_price(conn, route, cabin, date_str, p, origin):
     return True
 
 
+def send_telegram(chat_id: str, text: str):
+    try:
+        import urllib.request
+        import urllib.parse
+        payload = json.dumps({'chat_id': chat_id, 'text': text, 'parse_mode': 'Markdown'}).encode()
+        req = urllib.request.Request(
+            f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage',
+            data=payload,
+            headers={'Content-Type': 'application/json'},
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return json.loads(resp.read())
+    except Exception as e:
+        log(f'telegram send failed to {chat_id}: {e}')
+        return None
+
+
+def check_and_alert(conn, route: str):
+    """
+    After a cycle, check if any watched route+cabin just hit an error fare.
+    Sends Telegram alerts to users watching this route.
+    """
+    try:
+        cutoff = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+        today_str = datetime.now().strftime('%Y-%m-%d')
+
+        # Get baseline avg per cabin for this route
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT cabin, AVG(price) as avg_price
+                FROM prices
+                WHERE route = %s AND price > 0 AND search_date >= %s AND search_date < %s
+                GROUP BY cabin
+            """, (route, cutoff, today_str))
+            avg_by_cabin = {row[0]: row[1] for row in cur.fetchall()}
+
+
+        if not avg_by_cabin:
+            return
+
+        # Get the most recent prices for today
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT cabin, price, airline, search_date
+                FROM prices
+                WHERE route = %s AND price > 0 AND search_date = %s
+            """, (route, today_str))
+            today_prices = cur.fetchall()
+
+        # Get watches for this route
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT pw.id, pw.cabin, pw.target_price, pw.user_id,
+                       u.telegram_chat_id, u.telegram_username
+                FROM price_watches pw
+                JOIN users u ON u.id = pw.user_id
+                WHERE pw.route = %s AND pw.active = 1
+                  AND u.telegram_chat_id IS NOT NULL AND u.telegram_chat_id != ''
+            """, (route,))
+            watches = cur.fetchall()
+
+        if not watches:
+            return
+
+        for watch_id, watch_cabin, target_price, user_id, chat_id, username in watches:
+            if watch_cabin not in avg_by_cabin:
+                continue
+            hist_avg = avg_by_cabin[watch_cabin]
+            threshold = hist_avg * 0.5
+
+            # Find cheapest price for this cabin on this date
+            cabin_prices = [(cabin, price, airline) for cabin, price, airline, _ in today_prices if cabin == watch_cabin]
+            if not cabin_prices:
+                continue
+            cheapest_cabin, current_price, airline = min(cabin_prices, key=lambda x: x[1])
+
+            if current_price <= threshold:
+                savings_pct = ((hist_avg - current_price) / hist_avg) * 100
+                msg = (
+                    f'🎯 *Error Fare Detected!*\n\n'
+                    f'*{route}* — {watch_cabin.replace("_", " ").title()}\n'
+                    f'💰 ${current_price} (was ~${int(hist_avg)})\n'
+                    f'📉 *{int(savings_pct)}% below 30-day average*\n'
+                    f'✈️ {airline or "Unknown"} · {today_str}\n\n'
+                    f'Book now before it disappears!'
+                )
+                send_telegram(chat_id, msg)
+                log(f'alert sent {route} {watch_cabin} ${current_price} to user {user_id} ({username})')
+
+    except Exception as e:
+        log(f'alert check failed for {route}: {e}')
+
+
 # ── Main cycle ─────────────────────────────────────────────────
 def run_cycle():
     state = load_state()
@@ -257,8 +351,16 @@ def run_cycle():
                     if upsert_price(conn, route, cabin, date_str, p, origin):
                         inserted += 1
                 checked += 1
-    finally:
+
+    except Exception as e:
         conn.close()
+        raise
+
+    # Alert check before closing connection
+    if inserted > 0:
+        check_and_alert(conn, route)
+
+    conn.close()
 
     state['lastCompletedRoute'] = route
     state['lastRunAt'] = datetime.now(UTC).isoformat()
@@ -270,6 +372,7 @@ def run_cycle():
     )
     save_state(state)
     log(f'cycle done route={route} checked={checked} inserted={inserted} scrape_failures={scrape_failures}')
+
     return state
 
 

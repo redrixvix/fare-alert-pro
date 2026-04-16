@@ -476,3 +476,243 @@
 [2026-04-15T22:35:44.600184+00:00] cycle starting route=LAX-JFK
 [2026-04-15T22:36:52.932321+00:00] cycle done route=LAX-JFK checked=32 inserted=200 scrape_failures=0
 [2026-04-15T22:36:52.932373+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T22:51:53.328276+00:00] cycle starting route=ORD-LGA
+[2026-04-15T22:52:15.983030+00:00] scrape failed ORD-LGA 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'ORD', 'LGA', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T22:52:56.950325+00:00] cycle done route=ORD-LGA checked=32 inserted=146 scrape_failures=1
+[2026-04-15T22:52:56.950387+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-15T23:07:57.865788+00:00] cycle starting route=LGA-ORD
+[2026-04-15T23:08:18.538968+00:00] scrape failed LGA-ORD 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'LGA', 'ORD', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-15T23:08:57.133119+00:00] cycle done route=LGA-ORD checked=32 inserted=127 scrape_failures=1
+[2026-04-15T23:08:57.133188+00:00] sleeping seconds=900 consecutive_failure_cycles=2
+[2026-04-15T23:23:57.939248+00:00] cycle starting route=ATL-LAX
+[2026-04-15T23:25:16.773610+00:00] cycle done route=ATL-LAX checked=32 inserted=233 scrape_failures=0
+[2026-04-15T23:25:16.773664+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T23:40:18.248169+00:00] cycle starting route=LAX-ATL
+[2026-04-15T23:41:35.696706+00:00] cycle done route=LAX-ATL checked=32 inserted=250 scrape_failures=0
+[2026-04-15T23:41:35.696758+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-15T23:56:36.494843+00:00] cycle starting route=DFW-LAX
+[2026-04-15T23:58:03.590009+00:00] cycle done route=DFW-LAX checked=32 inserted=246 scrape_failures=0
+[2026-04-15T23:58:03.590110+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T00:13:04.588661+00:00] cycle starting route=LAX-DFW
+[2026-04-16T00:14:23.670540+00:00] cycle done route=LAX-DFW checked=32 inserted=272 scrape_failures=0
+[2026-04-16T00:14:23.670589+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T00:29:24.574372+00:00] cycle starting route=SFO-LAX
+[2026-04-16T00:30:26.253303+00:00] cycle done route=SFO-LAX checked=32 inserted=159 scrape_failures=0
+[2026-04-16T00:30:26.253357+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T00:45:27.034319+00:00] cycle starting route=LAX-SFO
+[2026-04-16T00:46:30.334048+00:00] cycle done route=LAX-SFO checked=32 inserted=184 scrape_failures=0
+[2026-04-16T00:46:30.334118+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T01:01:31.146615+00:00] cycle starting route=JFK-LAX
+[2026-04-16T01:01:52.670565+00:00] scrape failed JFK-LAX 2026-04-25 PREMIUM_ECONOMY: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-25', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:01:53.183434+00:00] scrape failed JFK-LAX 2026-04-26 PREMIUM_ECONOMY: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-26', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:01:57.606603+00:00] scrape failed JFK-LAX 2026-04-29 PREMIUM_ECONOMY: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-29', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:01:58.149375+00:00] scrape failed JFK-LAX 2026-04-30 PREMIUM_ECONOMY: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-30', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:01:58.788393+00:00] scrape failed JFK-LAX 2026-04-23 BUSINESS: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-23', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-16T01:01:59.298290+00:00] scrape failed JFK-LAX 2026-04-24 BUSINESS: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-24', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-16T01:02:06.821843+00:00] scrape failed JFK-LAX 2026-04-28 BUSINESS: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-28', '--class', 'BUSINESS']' returned non-zero exit status 1.
+[2026-04-16T01:02:18.489461+00:00] scrape failed JFK-LAX 2026-04-26 FIRST: Command '['fli', 'flights', 'JFK', 'LAX', '2026-04-26', '--class', 'FIRST']' returned non-zero exit status 1.
+[2026-04-16T01:02:27.305056+00:00] cycle done route=JFK-LAX checked=32 inserted=144 scrape_failures=8
+[2026-04-16T01:02:27.305112+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-16T01:17:28.141867+00:00] cycle starting route=LAX-JFK
+[2026-04-16T01:18:37.327561+00:00] cycle done route=LAX-JFK checked=32 inserted=213 scrape_failures=0
+[2026-04-16T01:18:37.327613+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T01:33:38.173018+00:00] cycle starting route=ORD-LGA
+[2026-04-16T01:33:56.827225+00:00] scrape failed ORD-LGA 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'ORD', 'LGA', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:34:35.851456+00:00] cycle done route=ORD-LGA checked=32 inserted=131 scrape_failures=1
+[2026-04-16T01:34:35.851506+00:00] sleeping seconds=900 consecutive_failure_cycles=1
+[2026-04-16T01:49:36.642291+00:00] cycle starting route=LGA-ORD
+[2026-04-16T01:49:55.564300+00:00] scrape failed LGA-ORD 2026-04-15 PREMIUM_ECONOMY: Command '['fli', 'flights', 'LGA', 'ORD', '2026-04-15', '--class', 'PREMIUM_ECONOMY']' returned non-zero exit status 1.
+[2026-04-16T01:50:32.807462+00:00] cycle done route=LGA-ORD checked=32 inserted=123 scrape_failures=1
+[2026-04-16T01:50:32.807514+00:00] sleeping seconds=900 consecutive_failure_cycles=2
+[2026-04-16T02:05:33.742284+00:00] cycle starting route=ATL-LAX
+[2026-04-16T02:06:46.430695+00:00] cycle done route=ATL-LAX checked=32 inserted=247 scrape_failures=0
+[2026-04-16T02:06:46.430743+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T02:21:47.253774+00:00] cycle starting route=LAX-ATL
+[2026-04-16T02:23:09.919411+00:00] cycle done route=LAX-ATL checked=32 inserted=257 scrape_failures=0
+[2026-04-16T02:23:09.919462+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T02:38:10.812174+00:00] cycle starting route=DFW-LAX
+[2026-04-16T02:39:29.073232+00:00] cycle done route=DFW-LAX checked=32 inserted=253 scrape_failures=0
+[2026-04-16T02:39:29.073283+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T02:54:29.916907+00:00] cycle starting route=LAX-DFW
+[2026-04-16T02:55:49.554226+00:00] cycle done route=LAX-DFW checked=32 inserted=255 scrape_failures=0
+[2026-04-16T02:55:49.554278+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T03:10:50.368375+00:00] cycle starting route=SFO-LAX
+[2026-04-16T03:11:51.342304+00:00] cycle done route=SFO-LAX checked=32 inserted=154 scrape_failures=0
+[2026-04-16T03:11:51.342356+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T03:26:52.186407+00:00] cycle starting route=LAX-SFO
+[2026-04-16T03:27:58.872226+00:00] cycle done route=LAX-SFO checked=32 inserted=164 scrape_failures=0
+[2026-04-16T03:27:58.872310+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T03:43:00.266572+00:00] cycle starting route=JFK-LAX
+[2026-04-16T03:44:09.933396+00:00] cycle done route=JFK-LAX checked=32 inserted=207 scrape_failures=0
+[2026-04-16T03:44:09.933447+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T03:59:10.904279+00:00] cycle starting route=LAX-JFK
+[2026-04-16T04:00:22.747664+00:00] cycle done route=LAX-JFK checked=32 inserted=235 scrape_failures=0
+[2026-04-16T04:00:22.747726+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T04:15:23.660225+00:00] cycle starting route=ORD-LGA
+[2026-04-16T04:16:28.344662+00:00] cycle done route=ORD-LGA checked=32 inserted=177 scrape_failures=0
+[2026-04-16T04:16:28.344713+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T04:31:29.346322+00:00] cycle starting route=LGA-ORD
+[2026-04-16T04:32:24.029628+00:00] cycle done route=LGA-ORD checked=32 inserted=152 scrape_failures=0
+[2026-04-16T04:32:24.029683+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T04:47:24.972460+00:00] cycle starting route=ATL-LAX
+[2026-04-16T04:48:39.331082+00:00] cycle done route=ATL-LAX checked=32 inserted=254 scrape_failures=0
+[2026-04-16T04:48:39.331173+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T05:03:40.204717+00:00] cycle starting route=LAX-ATL
+[2026-04-16T05:04:58.716997+00:00] cycle done route=LAX-ATL checked=32 inserted=246 scrape_failures=0
+[2026-04-16T05:04:58.717123+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T05:19:59.642797+00:00] cycle starting route=DFW-LAX
+[2026-04-16T05:21:10.903761+00:00] cycle done route=DFW-LAX checked=32 inserted=255 scrape_failures=0
+[2026-04-16T05:21:10.903812+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T05:36:12.157849+00:00] cycle starting route=LAX-DFW
+[2026-04-16T05:37:34.494829+00:00] cycle done route=LAX-DFW checked=32 inserted=268 scrape_failures=0
+[2026-04-16T05:37:34.494880+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T05:52:35.862695+00:00] cycle starting route=SFO-LAX
+[2026-04-16T05:53:37.991355+00:00] cycle done route=SFO-LAX checked=32 inserted=192 scrape_failures=0
+[2026-04-16T05:53:37.991404+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T06:08:38.908186+00:00] cycle starting route=LAX-SFO
+[2026-04-16T06:09:43.867174+00:00] cycle done route=LAX-SFO checked=32 inserted=199 scrape_failures=0
+[2026-04-16T06:09:43.867224+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T06:24:44.729473+00:00] cycle starting route=JFK-LAX
+[2026-04-16T06:25:56.559149+00:00] cycle done route=JFK-LAX checked=32 inserted=233 scrape_failures=0
+[2026-04-16T06:25:56.559225+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T06:40:57.363643+00:00] cycle starting route=LAX-JFK
+[2026-04-16T06:42:13.351400+00:00] cycle done route=LAX-JFK checked=32 inserted=270 scrape_failures=0
+[2026-04-16T06:42:13.351451+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T06:57:14.238463+00:00] cycle starting route=ORD-LGA
+[2026-04-16T06:58:16.534483+00:00] cycle done route=ORD-LGA checked=32 inserted=197 scrape_failures=0
+[2026-04-16T06:58:16.534542+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T07:13:17.498800+00:00] cycle starting route=LGA-ORD
+[2026-04-16T07:14:17.743737+00:00] cycle done route=LGA-ORD checked=32 inserted=154 scrape_failures=0
+[2026-04-16T07:14:17.743798+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T07:29:18.611847+00:00] cycle starting route=ATL-LAX
+[2026-04-16T07:30:35.044178+00:00] cycle done route=ATL-LAX checked=32 inserted=237 scrape_failures=0
+[2026-04-16T07:30:35.044229+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T07:45:36.443754+00:00] cycle starting route=LAX-ATL
+[2026-04-16T07:46:57.399682+00:00] cycle done route=LAX-ATL checked=32 inserted=220 scrape_failures=0
+[2026-04-16T07:46:57.399731+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T08:01:58.370351+00:00] cycle starting route=DFW-LAX
+[2026-04-16T08:03:16.324073+00:00] cycle done route=DFW-LAX checked=32 inserted=267 scrape_failures=0
+[2026-04-16T08:03:16.324138+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T08:18:17.125515+00:00] cycle starting route=LAX-DFW
+[2026-04-16T08:19:30.456346+00:00] cycle done route=LAX-DFW checked=32 inserted=251 scrape_failures=0
+[2026-04-16T08:19:30.456396+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T08:34:31.368322+00:00] cycle starting route=SFO-LAX
+[2026-04-16T08:35:34.014746+00:00] cycle done route=SFO-LAX checked=32 inserted=194 scrape_failures=0
+[2026-04-16T08:35:34.014794+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T08:50:34.959895+00:00] cycle starting route=LAX-SFO
+[2026-04-16T08:51:46.497975+00:00] cycle done route=LAX-SFO checked=32 inserted=219 scrape_failures=0
+[2026-04-16T08:51:46.498089+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T09:06:47.312555+00:00] cycle starting route=JFK-LAX
+[2026-04-16T09:08:04.844634+00:00] cycle done route=JFK-LAX checked=32 inserted=251 scrape_failures=0
+[2026-04-16T09:08:04.844685+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T09:23:05.846977+00:00] cycle starting route=LAX-JFK
+[2026-04-16T09:24:21.788929+00:00] cycle done route=LAX-JFK checked=32 inserted=297 scrape_failures=0
+[2026-04-16T09:24:21.788978+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T09:39:22.637086+00:00] cycle starting route=ORD-LGA
+[2026-04-16T09:40:23.465380+00:00] cycle done route=ORD-LGA checked=32 inserted=193 scrape_failures=0
+[2026-04-16T09:40:23.465480+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T09:55:24.286695+00:00] cycle starting route=LGA-ORD
+[2026-04-16T09:56:30.979895+00:00] cycle done route=LGA-ORD checked=32 inserted=179 scrape_failures=0
+[2026-04-16T09:56:30.979945+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T10:11:32.486238+00:00] cycle starting route=ATL-LAX
+[2026-04-16T10:12:50.845542+00:00] cycle done route=ATL-LAX checked=32 inserted=265 scrape_failures=0
+[2026-04-16T10:12:50.845592+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T10:27:51.739174+00:00] cycle starting route=LAX-ATL
+[2026-04-16T10:29:07.024450+00:00] cycle done route=LAX-ATL checked=32 inserted=252 scrape_failures=0
+[2026-04-16T10:29:07.024501+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T10:44:07.845054+00:00] cycle starting route=DFW-LAX
+[2026-04-16T10:45:25.637372+00:00] cycle done route=DFW-LAX checked=32 inserted=274 scrape_failures=0
+[2026-04-16T10:45:25.637449+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T11:00:25.863057+00:00] cycle starting route=LAX-DFW
+[2026-04-16T11:01:48.635695+00:00] cycle done route=LAX-DFW checked=32 inserted=256 scrape_failures=0
+[2026-04-16T11:01:48.635744+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T11:16:49.509941+00:00] cycle starting route=SFO-LAX
+[2026-04-16T11:17:56.698410+00:00] cycle done route=SFO-LAX checked=32 inserted=207 scrape_failures=0
+[2026-04-16T11:17:56.698489+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T11:32:57.471866+00:00] cycle starting route=LAX-SFO
+[2026-04-16T11:34:04.954600+00:00] cycle done route=LAX-SFO checked=32 inserted=238 scrape_failures=0
+[2026-04-16T11:34:04.954653+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T11:49:05.868207+00:00] cycle starting route=JFK-LAX
+[2026-04-16T11:50:15.101699+00:00] cycle done route=JFK-LAX checked=32 inserted=240 scrape_failures=0
+[2026-04-16T11:50:15.101749+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T12:05:15.897435+00:00] cycle starting route=LAX-JFK
+[2026-04-16T12:06:35.536358+00:00] cycle done route=LAX-JFK checked=32 inserted=280 scrape_failures=0
+[2026-04-16T12:06:35.536407+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T12:21:36.374137+00:00] cycle starting route=ORD-LGA
+[2026-04-16T12:22:38.667156+00:00] cycle done route=ORD-LGA checked=32 inserted=194 scrape_failures=0
+[2026-04-16T12:22:38.667207+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T12:37:39.749748+00:00] cycle starting route=LGA-ORD
+[2026-04-16T12:38:43.507879+00:00] cycle done route=LGA-ORD checked=32 inserted=167 scrape_failures=0
+[2026-04-16T12:38:43.507929+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T12:53:44.354649+00:00] cycle starting route=ATL-LAX
+[2026-04-16T12:54:59.269160+00:00] cycle done route=ATL-LAX checked=32 inserted=271 scrape_failures=0
+[2026-04-16T12:54:59.269216+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T13:10:00.148245+00:00] cycle starting route=LAX-ATL
+[2026-04-16T13:11:13.822818+00:00] cycle done route=LAX-ATL checked=32 inserted=230 scrape_failures=0
+[2026-04-16T13:11:13.822868+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T13:26:14.704751+00:00] cycle starting route=DFW-LAX
+[2026-04-16T13:27:32.807131+00:00] cycle done route=DFW-LAX checked=32 inserted=271 scrape_failures=0
+[2026-04-16T13:27:32.807184+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T13:42:33.661940+00:00] cycle starting route=LAX-DFW
+[2026-04-16T13:43:52.667864+00:00] cycle done route=LAX-DFW checked=32 inserted=233 scrape_failures=0
+[2026-04-16T13:43:52.667951+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T13:58:53.437539+00:00] cycle starting route=SFO-LAX
+[2026-04-16T13:59:56.440080+00:00] cycle done route=SFO-LAX checked=32 inserted=180 scrape_failures=0
+[2026-04-16T13:59:56.440129+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T14:14:57.334910+00:00] cycle starting route=LAX-SFO
+[2026-04-16T14:16:07.171190+00:00] cycle done route=LAX-SFO checked=32 inserted=235 scrape_failures=0
+[2026-04-16T14:16:07.171247+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T14:31:08.501609+00:00] cycle starting route=JFK-LAX
+[2026-04-16T14:32:22.021927+00:00] cycle done route=JFK-LAX checked=32 inserted=212 scrape_failures=0
+[2026-04-16T14:32:22.022001+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T14:47:22.854612+00:00] cycle starting route=LAX-JFK
+[2026-04-16T14:48:46.704137+00:00] cycle done route=LAX-JFK checked=32 inserted=265 scrape_failures=0
+[2026-04-16T14:48:46.704214+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T15:03:48.070964+00:00] cycle starting route=ORD-LGA
+[2026-04-16T15:04:51.225240+00:00] cycle done route=ORD-LGA checked=32 inserted=177 scrape_failures=0
+[2026-04-16T15:04:51.225291+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T15:19:52.066288+00:00] cycle starting route=LGA-ORD
+[2026-04-16T15:20:50.414516+00:00] cycle done route=LGA-ORD checked=32 inserted=168 scrape_failures=0
+[2026-04-16T15:20:50.414567+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T15:35:51.557456+00:00] cycle starting route=ATL-LAX
+[2026-04-16T15:37:07.512434+00:00] cycle done route=ATL-LAX checked=32 inserted=267 scrape_failures=0
+[2026-04-16T15:37:07.512519+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T15:37:57.701121+00:00] fare worker boot (postgres edition)
+[2026-04-16T15:37:57.959685+00:00] cycle starting route=LAX-ATL
+[2026-04-16T15:39:12.487003+00:00] cycle done route=LAX-ATL checked=32 inserted=249 scrape_failures=0
+[2026-04-16T15:39:12.487079+00:00] alert check failed for LAX-ATL: the connection is closed
+[2026-04-16T15:39:12.487120+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T15:54:13.241774+00:00] cycle starting route=DFW-LAX
+[2026-04-16T15:55:18.620414+00:00] cycle done route=DFW-LAX checked=29 inserted=237 scrape_failures=0
+[2026-04-16T15:55:18.620482+00:00] alert check failed for DFW-LAX: the connection is closed
+[2026-04-16T15:55:18.620525+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T16:10:19.399091+00:00] cycle starting route=LAX-DFW
+[2026-04-16T16:11:30.839026+00:00] cycle done route=LAX-DFW checked=32 inserted=240 scrape_failures=0
+[2026-04-16T16:11:30.839126+00:00] alert check failed for LAX-DFW: the connection is closed
+[2026-04-16T16:11:30.839180+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T16:26:32.268946+00:00] cycle starting route=SFO-LAX
+[2026-04-16T16:27:37.251491+00:00] cycle done route=SFO-LAX checked=32 inserted=182 scrape_failures=0
+[2026-04-16T16:27:37.251569+00:00] alert check failed for SFO-LAX: the connection is closed
+[2026-04-16T16:27:37.251642+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T16:42:38.069292+00:00] cycle starting route=LAX-SFO
+[2026-04-16T16:43:50.668290+00:00] cycle done route=LAX-SFO checked=32 inserted=194 scrape_failures=0
+[2026-04-16T16:43:50.668352+00:00] alert check failed for LAX-SFO: the connection is closed
+[2026-04-16T16:43:50.668410+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T16:58:51.580070+00:00] cycle starting route=JFK-LAX
+[2026-04-16T16:59:58.406528+00:00] cycle done route=JFK-LAX checked=27 inserted=177 scrape_failures=0
+[2026-04-16T16:59:58.406624+00:00] alert check failed for JFK-LAX: the connection is closed
+[2026-04-16T16:59:58.406680+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T17:13:20.929729+00:00] fare worker boot (postgres edition)
+[2026-04-16T17:13:22.070507+00:00] cycle starting route=LAX-JFK
+[2026-04-16T17:14:12.245129+00:00] cycle done route=LAX-JFK checked=20 inserted=165 scrape_failures=0
+[2026-04-16T17:14:12.245179+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T17:15:16.055565+00:00] fare worker boot (postgres edition)
+[2026-04-16T17:15:16.280762+00:00] cycle starting route=ORD-LGA
+[2026-04-16T17:15:58.457826+00:00] cycle done route=ORD-LGA checked=21 inserted=119 scrape_failures=0
+[2026-04-16T17:15:58.457897+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T17:30:59.331980+00:00] cycle starting route=LGA-ORD
+[2026-04-16T17:31:38.890639+00:00] cycle done route=LGA-ORD checked=21 inserted=105 scrape_failures=0
+[2026-04-16T17:31:38.890691+00:00] sleeping seconds=900 consecutive_failure_cycles=0
+[2026-04-16T17:46:40.057264+00:00] cycle starting route=ATL-LAX
+[2026-04-16T17:47:30.835103+00:00] cycle done route=ATL-LAX checked=20 inserted=159 scrape_failures=0
+[2026-04-16T17:47:30.835159+00:00] sleeping seconds=900 consecutive_failure_cycles=0
